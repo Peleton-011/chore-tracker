@@ -1,15 +1,17 @@
-"use client"
-import React from 'react'
-import styled from 'styled-components'
+"use client";
+import React from "react";
+import styled from "styled-components";
+import { useGlobalState } from "../../context/globalProvider";
 
 function Sidebar() {
-  return (
-    <div>Sidebar</div>
-  )
+	const { theme } = useGlobalState();
+
+	console.log(theme);
+	return <SidebarStyled>Sidebar</SidebarStyled>;
 }
 
-const SidebarStyles = styled.nav`
-    
-`
+const SidebarStyled = styled.nav`
+    background-color: red;
+`;
 
-export default Sidebar
+export default Sidebar;
