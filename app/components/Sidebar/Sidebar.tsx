@@ -10,16 +10,19 @@ function Sidebar() {
 	return (
 		<SidebarStyled theme={theme}>
 			<div className="profile">
-				<div className="profile-overlay">
-					<div className="image-wrapper">
-						<Image
-							src="/avatar.jpeg"
-							alt="profile picture"
-							width={70}
-							height={70}
-						/>
-					</div>
+				<div className="profile-overlay"></div>
+				<div className="image-wrapper">
+					<Image
+						src="/avatar.jpeg"
+						alt="profile picture"
+						width={70}
+						height={70}
+					/>
 				</div>
+				<h1>
+					<span>Ipi</span>
+					<span>Bola</span>
+				</h1>
 			</div>
 		</SidebarStyled>
 	);
