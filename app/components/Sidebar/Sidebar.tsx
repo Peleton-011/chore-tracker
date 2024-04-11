@@ -2,21 +2,36 @@
 import React from "react";
 import styled from "styled-components";
 import { useGlobalState } from "../../context/globalProvider";
+import Image from "next/image";
 
 function Sidebar() {
 	const { theme } = useGlobalState();
 
-	console.log(theme);
-	return <SidebarStyled theme={theme}>Sidebar</SidebarStyled>;
+	return (
+		<SidebarStyled theme={theme}>
+			<div className="profile">
+				<div className="profile-overlay">
+					<div className="image-wrapper">
+						<Image
+							src="/avatar.jpeg"
+							alt="profile picture"
+							width={70}
+							height={70}
+						/>
+					</div>
+				</div>
+			</div>
+		</SidebarStyled>
+	);
 }
 
 const SidebarStyled = styled.nav`
 	position: relative;
 	width: ${({ theme }) => theme.sidebarWidth};
 	background-color: ${({ theme }) => theme.colorBg2};
-    border: 2px solid ${({ theme }) => theme.borderColor2};
+	border: 2px solid ${({ theme }) => theme.borderColor2};
 
-    border-radius: 1rem;
+	border-radius: 1rem;
 `;
 
 export default Sidebar;
