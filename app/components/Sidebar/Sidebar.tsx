@@ -3,6 +3,8 @@ import React from "react";
 import styled from "styled-components";
 import { useGlobalState } from "../../context/globalProvider";
 import Image from "next/image";
+import menu from "../../utils/menu";
+import Link from "next/link";
 
 function Sidebar() {
 	const { theme } = useGlobalState();
@@ -24,6 +26,16 @@ function Sidebar() {
 					<span>Bola</span>
 				</h1>
 			</div>
+			<ul className="nav-items">
+				{menu.map((item) => {
+					return (
+						<li key={item.id}>
+							{item.icon}
+							<Link href={item.link}>{item.title}</Link>
+						</li>
+					);
+				})}
+			</ul>
 		</SidebarStyled>
 	);
 }
