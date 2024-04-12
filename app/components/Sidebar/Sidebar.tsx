@@ -138,6 +138,17 @@ const SidebarStyled = styled.nav`
 			font-size: clamp(1.2rem, 4vw, 1.4rem);
 			line-height: 100%;
 		}
+
+        &:hover {
+            .profile-overlay {
+                opacity: 1;
+                border: 2px solid ${({ theme }) => theme.borderColor2};
+            }
+
+            img {
+                transform: scale(1.2); //Maybe 1.1 ???
+            }
+        }
 	}
 `;
 
