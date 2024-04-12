@@ -74,52 +74,70 @@ const SidebarStyled = styled.nav`
 		margin: 1.5rem;
 		padding: 1rem 0.8rem;
 
-        border-radius: 1rem;
-        cursor: pointer;
+		border-radius: 1rem;
+		cursor: pointer;
 
-        font-weight: 500;
-        color: ${({ theme }) => theme.colorGray0};
+		font-weight: 500;
+		color: ${({ theme }) => theme.colorGray0};
 
-        display: flex;
-        align-items: center;
+		display: flex;
+		align-items: center;
 
-        .profile-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            backdrop-filter: blur(10px);
-            z-index: 0;
-            background-color: ${({ theme }) => theme.colorBg3};
-            transition: all 0.55s linear;
+		.profile-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			backdrop-filter: blur(10px);
+			z-index: 0;
+			background-color: ${({ theme }) => theme.colorBg3};
+			transition: all 0.55s linear;
 
-            border-radius: 1rem;
-            border: 2px solid ${({ theme }) => theme.borderColor2};
+			border-radius: 1rem;
+			border: 2px solid ${({ theme }) => theme.borderColor2};
 
-            opacity: 0.2;
-        }
+			opacity: 0.2;
+		}
 
-        h1 {
-            font-size: 1.2rem;
-            display: flex;
-            flex-direction: column;
+		h1 {
+			font-size: 1.2rem;
+			display: flex;
+			flex-direction: column;
 
-            line-height: 1.5;
-        }
+			line-height: 1.5;
+		}
 
-        .image-wrapper, h1 {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .image-wrapper {
-            flex-shrink: 0;
-            display: inline-block;
-            overflow: hidden;
-            transition: all 0.55s ease;
-            border-radius: 100%;
-        }
+		.image-wrapper,
+		h1 {
+			position: relative;
+			z-index: 1;
+		}
+
+		.image-wrapper {
+			flex-shrink: 0;
+			display: inline-block;
+			overflow: hidden;
+			transition: all 0.55s ease;
+			border-radius: 100%;
+
+			width: 70px;
+			height: 70px;
+
+			img {
+				width: 100%;
+				height: 100%;
+				border-radius: 100%;
+
+				transition: all 0.55s ease;
+			}
+		}
+
+		h1 {
+			margin-left: 0.8rem;
+			font-size: clamp(1.2rem, 4vw, 1.4rem);
+			line-height: 100%;
+		}
 	}
 `;
 
