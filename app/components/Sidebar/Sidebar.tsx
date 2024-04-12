@@ -99,6 +99,14 @@ const SidebarStyled = styled.nav`
 
             opacity: 0.2;
         }
+
+        h1 {
+            font-size: 1.2rem;
+            display: flex;
+            flex-direction: column;
+
+            line-height: 1.5;
+        }
         
 	}
 `;
