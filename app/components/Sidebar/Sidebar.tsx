@@ -107,7 +107,19 @@ const SidebarStyled = styled.nav`
 
             line-height: 1.5;
         }
+
+        .image-wrapper, h1 {
+            position: relative;
+            z-index: 1;
+        }
         
+        .image-wrapper {
+            flex-shrink: 0;
+            display: inline-block;
+            overflow: hidden;
+            transition: all 0.55s ease;
+            border-radius: 100%;
+        }
 	}
 `;
 
