@@ -51,6 +51,8 @@ function Sidebar() {
 					);
 				})}
 			</ul>
+
+            <button>Sign out</button>
 		</SidebarStyled>
 	);
 }
