@@ -11,7 +11,7 @@ function Sidebar() {
 	const { theme } = useGlobalState();
 
 	const router = useRouter();
-    const pathname = usePathname();
+	const pathname = usePathname();
 
 	const handleClick = (link: string) => {
 		router.push(link);
@@ -30,18 +30,19 @@ function Sidebar() {
 					/>
 				</div>
 				<h1>
-					<span>Ipi </span> 
+					<span>Ipi </span>
 					<span>Bola</span>
 				</h1>
 			</div>
 			<ul className="nav-items">
 				{menu.map((item) => {
-
-                    const link = item.link;
+					const link = item.link;
 					return (
 						<li
 							key={item.id}
-							className={`nav-item ${pathname === link ? "active" : ""}`}
+							className={`nav-item ${
+								pathname === link ? "active" : ""
+							}`}
 							onClick={() => handleClick(item.link)}
 						>
 							{item.icon}
@@ -61,6 +62,28 @@ const SidebarStyled = styled.nav`
 	border: 2px solid ${({ theme }) => theme.borderColor2};
 
 	border-radius: 1rem;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	color: ${({ theme }) => theme.colorGray3};
+
+	.profile {
+		position: relative;
+		margin: 1.5rem;
+		padding: 1rem 0.8rem;
+
+        border-radius: 1rem;
+        cursor: pointer;
+
+        font-weight: 500;
+        color: ${({ theme }) => theme.colorGray0};
+
+        display: flex;
+        align-items: center;
+        
+	}
 `;
 
 export default Sidebar;
