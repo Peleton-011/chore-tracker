@@ -5,9 +5,16 @@ import { useGlobalState } from "../../context/globalProvider";
 import Image from "next/image";
 import menu from "../../utils/menu";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Sidebar() {
 	const { theme } = useGlobalState();
+
+	const router = useRouter();
+
+	const handleClick = (link: string) => {
+		router.push(link);
+	};
 
 	return (
 		<SidebarStyled theme={theme}>
@@ -22,14 +29,18 @@ function Sidebar() {
 					/>
 				</div>
 				<h1>
-					<span>Ipi</span>
+					<span>Ipi </span> 
 					<span>Bola</span>
 				</h1>
 			</div>
 			<ul className="nav-items">
 				{menu.map((item) => {
 					return (
-						<li key={item.id}>
+						<li
+							key={item.id}
+							className="nav-item"
+							onClick={() => handleClick(item.link)}
+						>
 							{item.icon}
 							<Link href={item.link}>{item.title}</Link>
 						</li>
