@@ -82,6 +82,23 @@ const SidebarStyled = styled.nav`
 
         display: flex;
         align-items: center;
+
+        .profile-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(10px);
+            z-index: 0;
+            background-color: ${({ theme }) => theme.colorBg3};
+            transition: all 0.55s linear;
+
+            border-radius: 1rem;
+            border: 2px solid ${({ theme }) => theme.borderColor2};
+
+            opacity: 0.2;
+        }
         
 	}
 `;
