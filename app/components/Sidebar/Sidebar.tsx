@@ -52,7 +52,7 @@ function Sidebar() {
 				})}
 			</ul>
 
-            <button>Sign out</button>
+			<button>Sign out</button>
 		</SidebarStyled>
 	);
 }
@@ -141,26 +141,89 @@ const SidebarStyled = styled.nav`
 			line-height: 100%;
 		}
 
-        &:hover {
-            .profile-overlay {
-                opacity: 1;
-                border: 2px solid ${({ theme }) => theme.borderColor2};
-            }
+		&:hover {
+			.profile-overlay {
+				opacity: 1;
+				border: 2px solid ${({ theme }) => theme.borderColor2};
+			}
 
-            img {
-                transform: scale(1.2); //Maybe 1.1 ???
-            }
-        }
+			img {
+				transform: scale(1.2); //Maybe 1.1 ???
+			}
+		}
 	}
 
-    .nav-item {
-        padding: 0.6rem 1rem 1rem 2.1rem;
-        margin: 0.3rem 0;
+	.nav-item {
+		position: relative;
 
-        display: grid;
+		padding: 0.6rem 1rem 1rem 2.1rem;
+		margin: 0.3rem 0;
 
-        grid-template-columns: 40px 1fr;
-    }
+		display: grid;
+
+		grid-template-columns: 40px 1fr;
+
+		cursor: pointer;
+
+		&::after {
+			position: absolute;
+			content: "";
+			left: 0;
+			top: 0;
+			width: 0;
+			height: 100%;
+			background-color: ${({ theme }) => theme.activeNavLinkHover};
+			z-index: 1;
+			transition: all 0.3s ease-in-out;
+		}
+
+		&::before {
+			position: absolute;
+			content: "";
+			right: 0;
+			top: 0;
+			width: 0;
+			height: 100%;
+			background-color: ${({ theme }) => theme.colorGreenDark};
+			border-bottom-left-radius: 5px;
+			border-top-left-radius: 5px;
+		}
+
+		a {
+			font-weight: 500;
+			z-index: 2;
+			transition: all 0.3s ease-in-out;
+		}
+
+		i {
+			display: flex;
+			align-items: center;
+			color: ${({ theme }) => theme.colorIcons};
+		}
+
+		&:hover {
+			&::after {
+				width: 100%;
+			}
+		}
+	}
+
+	.active {
+		background-color: ${({ theme }) => theme.activeNavLink};
+
+		i,
+		a {
+			color: ${({ theme }) => theme.colorIcons2};
+		}
+	}
+
+	.active::before {
+		width: 0.3rem;
+	}
+
+	> button {
+		margin: 1.5rem;
+	}
 `;
 
 export default Sidebar;
