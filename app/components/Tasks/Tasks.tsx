@@ -12,7 +12,7 @@ function Tasks() {
 	);
 }
 
-const TaskStyled = styled.div`
+const TaskStyled = styled.main`
     padding: 2rem;
 	width: 100%;
     height: 100%;
