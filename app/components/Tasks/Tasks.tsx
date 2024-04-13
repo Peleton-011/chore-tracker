@@ -15,6 +15,7 @@ function Tasks() {
 const TaskStyled = styled.div`
     padding: 2rem;
 	width: 100%;
+    height: 100%;
 	background-color: ${({theme}) => theme.colorBg2};
 	border: 2px solid ${({ theme }) => theme.borderColor2};
 	border-radius: 1rem;
