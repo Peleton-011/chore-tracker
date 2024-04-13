@@ -1,9 +1,29 @@
-import React from 'react'
+"use client";
+import { useGlobalState } from "@/app/context/globalProvider";
+import React from "react";
+import styled from "styled-components";
 
 function Tasks() {
-  return (
-    <div>Tasks</div>
-  )
+	const { theme } = useGlobalState();
+	return (
+		<TaskStyled theme={theme}>
+			<div>Tasks</div>
+		</TaskStyled>
+	);
 }
 
-export default Tasks
+const TaskStyled = styled.div`
+    padding: 2rem;
+	width: 100%;
+	background-color: ${({theme}) => theme.colorBg2};
+	border: 2px solid ${({ theme }) => theme.borderColor2};
+	border-radius: 1rem;
+
+	overflow-y: auto;
+
+	&::-webkit-scrollbar {
+		width: 0.5rem;
+	}
+`;
+
+export default Tasks;
