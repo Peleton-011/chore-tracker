@@ -19,9 +19,12 @@ function ContextProvider({ children }: Props) {
 		return null;
 	}
 
-	return <GlobalProvider>
-        <Toaster />
-        {children}</GlobalProvider>;
+	return (
+		<GlobalProvider>
+			<Toaster />
+			{children}
+		</GlobalProvider>
+	);
 }
 
 export default ContextProvider;
