@@ -9,6 +9,19 @@ export async function POST(req: Request) {
         }
 
         const {title, description, date, completed, important} = await req.json();
+
+        if (!title || !description || !date) {
+            return NextResponse.json({ error: "Missing required fields",status: 400 });
+        }
+
+        if (title.length < 3) {
+            return NextResponse.json({ error: "Title must be at least three characters",status: 400 });
+        }
+
+        if (title.length > 100) {
+            return NextResponse.json({ error: "Title must be less than 100 characters",status: 400 });
+        }
+
     } catch (error) {
         console.log("ERROR CREATING TASK", error);
         return NextResponse.json({ error: "Something went wrong",status: 500 });
