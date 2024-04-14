@@ -1,25 +1,27 @@
 "use client";
 
 import React from "react";
-import {GlobalProvider} from "../context/globalProvider";
+import { GlobalProvider } from "../context/globalProvider";
+import toast, { Toaster } from "react-hot-toast";
 
 interface Props {
 	children: React.ReactNode;
 }
 
 function ContextProvider({ children }: Props) {
+	const [isReady, setIsReady] = React.useState(false);
 
-    const [isReady, setIsReady] = React.useState(false);
+	React.useEffect(() => {
+		setTimeout(() => setIsReady(true), 1000);
+	});
 
-    React.useEffect(() => {
-        setTimeout(() => setIsReady(true), 1000)
-    })
+	if (!isReady) {
+		return null;
+	}
 
-    if (!isReady) {
-        return null;
-    }
-
-	return <GlobalProvider>{children}</GlobalProvider>;
+	return <GlobalProvider>
+        <Toaster />
+        {children}</GlobalProvider>;
 }
 
 export default ContextProvider;
