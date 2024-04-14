@@ -47,6 +47,7 @@ function CreateContent() {
         try {
             const response = await axios.post("/api/tasks", task);
 
+            console.log(JSON.stringify(response));
             if (response.data.error) {
                 toast.error(response.data.error);
             }
