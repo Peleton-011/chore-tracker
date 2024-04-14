@@ -40,8 +40,8 @@ function CreateContent() {
             title,
             description,
             date,
-            isCompleted: completed,
-            isImportant: important
+            completed,
+            important
         }
 
         try {
@@ -50,8 +50,12 @@ function CreateContent() {
             if (response.data.error) {
                 toast.error(response.data.error);
             }
+
+            toast.success("Task created successfully");
+
         } catch (error) {
-            console.log(error);
+            toast.error("Something went wrong");
+            console.log("ERROR CREATING TASK: ", error);
         }
 
 	};
