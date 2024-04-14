@@ -54,6 +54,7 @@ function CreateContent() {
             toast.success("Task created successfully");
 
         } catch (error) {
+            console.log(error);
             toast.error("Something went wrong");
             console.log("ERROR CREATING TASK: ", error);
         }
@@ -94,7 +95,7 @@ function CreateContent() {
 				<input
 					name="date"
 					id="date"
-					type="date"
+					type="text"
 					placeholder="Date"
 					value={date}
 					onChange={(e) => handleChange("date", e.target.value)}

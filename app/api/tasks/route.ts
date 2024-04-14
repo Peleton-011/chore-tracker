@@ -33,6 +33,7 @@ export async function POST(req: Request) {
 			});
 		}
 
+
 		const task = await prisma.task.create({
 			data: {
 				title,
@@ -44,13 +45,13 @@ export async function POST(req: Request) {
 			},
 		});
 
-        console.log(task)
-        return NextResponse.json({
-            task
-        })
-
+		console.log(task);
+		return NextResponse.json({
+			task,
+		});
 	} catch (error) {
 		console.log("ERROR CREATING TASK", error);
+        
 		return NextResponse.json({
 			error: "Something went wrong",
 			status: 500,
@@ -60,6 +61,18 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
 	try {
+		const { userId } = auth();
+
+		if (!userId) {
+			return NextResponse.json({ error: "Unauthorized", status: 401 });
+		}
+
+		// const tasks = await prisma.task.findMany({
+		// 	where: {
+		// 		userId,
+		// 	},
+		// });
+
 		return new Response("Hello, Next.js!");
 	} catch (error) {
 		console.log("ERROR GETTING TASK", error);

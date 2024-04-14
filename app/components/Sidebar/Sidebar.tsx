@@ -6,6 +6,7 @@ import Image from "next/image";
 import menu from "../../utils/menu";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { UserButton } from "@clerk/nextjs";
 
 function Sidebar() {
 	const { theme } = useGlobalState();
@@ -52,7 +53,7 @@ function Sidebar() {
 				})}
 			</ul>
 
-			<button>Sign out</button>
+			<UserButton />
 		</SidebarStyled>
 	);
 }
