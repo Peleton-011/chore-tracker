@@ -1,17 +1,23 @@
-import { PrismaClient } from "@prisma/client";
+import mongoose from "mongoose";
 
-let prisma: PrismaClient;
+const { MONGODB_URI } = process.env ;
 
-if (process.env.NODE_ENV === "production") {
-	prisma = new PrismaClient();
-} else {
-	//@ts-ignore
-	if (!global.prisma) {
-		//@ts-ignore
-		global.prisma = new PrismaClient();
-	}
-	//@ts-ignore
-	prisma = global.prisma;
+if (!MONGODB_URI) {
+	throw new Error("MongoDB connection URI is not provided");
 }
 
-export default prisma;
+const mongooseConnection = () => mongoose
+	.connect(
+		MONGODB_URI
+		//     ,{
+		//   useNewUrlParser: true,
+		//   useUnifiedTopology: true,
+		// }
+	)
+	.then(() => console.log("Connected to MongoDB"))
+	.catch((error: unknown) => {
+		console.error("MongoDB connection error:", error);
+		throw error;
+	});
+
+export default mongooseConnection;
