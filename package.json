@@ -11,7 +11,11 @@
 	"dependencies": {
 		"@clerk/nextjs": "^4.29.12",
 		"@prisma/client": "^5.12.1",
+		"@types/express": "^4.17.21",
+		"@types/mongoose": "^5.11.97",
 		"axios": "^1.6.8",
+		"dotenv": "^16.4.5",
+		"express": "^4.19.2",
 		"mongodb": "^6.5.0",
 		"mongoose": "^8.3.2",
 		"next": "14.1.4",

@@ -36,30 +36,32 @@ function CreateContent() {
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-        const task = {
-            title,
-            description,
-            date,
-            completed,
-            important
-        }
+		const task = {
+			title,
+			description,
+			date,
+			completed,
+			important,
+		};
 
-        try {
-            const response = await axios.post("/api/tasks", task);
+		try {
+			// @ts-ignore
+			// const response = createTask(...task);
+			const response = await axios.post("/api/tasks", task);
 
-            console.log(JSON.stringify(response));
-            if (response.data.error) {
-                toast.error(response.data.error);
-            }
+			console.log(JSON.stringify(response));
+			// @ts-ignore
+			if (response.data.error) {
+				// @ts-ignore
+				toast.error(response.data.error);
+			}
 
-            toast.success("Task created successfully");
-
-        } catch (error) {
-            console.log(error);
-            toast.error("Something went wrong");
-            console.log("ERROR CREATING TASK: ", error);
-        }
-
+			toast.success("Task created successfully");
+		} catch (error) {
+			console.log(error);
+			toast.error("Something went wrong");
+			console.log("ERROR CREATING TASK: ", error);
+		}
 	};
 
 	return (

@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 
-const { MONGODB_URI } = process.env ;
+console.log(process.env)
+
+const MONGODB_URI  = process.env.MONGODB_URI || "sample" ;
 
 if (!MONGODB_URI) {
 	throw new Error("MongoDB connection URI is not provided");
