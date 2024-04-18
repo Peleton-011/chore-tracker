@@ -5,6 +5,11 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import GlobalStylesProvider from "./providers/GlobalStylesProvider";
 import ContextProvider from "./providers/ContextProvider";
 import { ClerkProvider, auth } from "@clerk/nextjs";
+// import mongooseConnection from "./utils/connect";
+// require('dotenv').config();
+
+
+// mongooseConnection()
 
 const inter = Inter({ subsets: ["latin"] });
 

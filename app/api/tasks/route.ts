@@ -1,6 +1,38 @@
-import prisma from "@/app/utils/connect";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
+// import taskModel from "@/mongoose/taskModel";
+import mongoose from "mongoose";
+const { Schema, model } = mongoose;
+
+
+mongoose.connect(
+	"mongodb+srv://nico:uYF1MlqJmvWlRxck@mytasks.7l9kmdf.mongodb.net/MyTasks"
+);
+
+const db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function () {
+	console.log("Connected successfully");
+});
+
+const taskSchema = new Schema(
+	{
+		title: { type: String, required: true },
+		description: String,
+		date: { type: String, required: true },
+		isCompleted: { type: Boolean, default: false },
+		isImportant: { type: Boolean, default: false },
+		userId: { type: String, required: true },
+	},
+	{
+		timestamps: true, // adds createdAt and updatedAt fields automatically
+	}
+);
+
+console.log("Bouta connecter");
+const taskModel = model("Task", taskSchema);
+
 
 export async function POST(req: Request) {
 	try {
@@ -33,16 +65,13 @@ export async function POST(req: Request) {
 			});
 		}
 
-
-		const task = await prisma.task.create({
-			data: {
-				title,
-				description,
-				date,
-				isCompleted: completed,
-				isImportant: important,
-				userId,
-			},
+		const task = await taskModel.create({
+			title,
+			description,
+			date,
+			isCompleted: completed,
+			isImportant: important,
+			userId,
 		});
 
 		console.log(task);
@@ -51,7 +80,7 @@ export async function POST(req: Request) {
 		});
 	} catch (error) {
 		console.log("ERROR CREATING TASK", error);
-        
+
 		return NextResponse.json({
 			error: "Something went wrong",
 			status: 500,
@@ -59,50 +88,50 @@ export async function POST(req: Request) {
 	}
 }
 
-export async function GET(req: Request) {
-	try {
-		const { userId } = auth();
+// export async function GET(req: Request) {
+// 	try {
+// 		const { userId } = auth();
 
-		if (!userId) {
-			return NextResponse.json({ error: "Unauthorized", status: 401 });
-		}
+// 		if (!userId) {
+// 			return NextResponse.json({ error: "Unauthorized", status: 401 });
+// 		}
 
-		// const tasks = await prisma.task.findMany({
-		// 	where: {
-		// 		userId,
-		// 	},
-		// });
+// 		// const tasks = await prisma.task.findMany({
+// 		// 	where: {
+// 		// 		userId,
+// 		// 	},
+// 		// });
 
-		return new Response("Hello, Next.js!");
-	} catch (error) {
-		console.log("ERROR GETTING TASK", error);
-		return NextResponse.json({
-			error: "Something went wrong",
-			status: 500,
-		});
-	}
-}
+// 		return new Response("Hello, Next.js!");
+// 	} catch (error) {
+// 		console.log("ERROR GETTING TASK", error);
+// 		return NextResponse.json({
+// 			error: "Something went wrong",
+// 			status: 500,
+// 		});
+// 	}
+// }
 
-export async function PUT(req: Request) {
-	try {
-		return new Response("Hello, Next.js!");
-	} catch (error) {
-		console.log("ERROR UPDATING TASK", error);
-		return NextResponse.json({
-			error: "Something went wrong",
-			status: 500,
-		});
-	}
-}
+// export async function PUT(req: Request) {
+// 	try {
+// 		return new Response("Hello, Next.js!");
+// 	} catch (error) {
+// 		console.log("ERROR UPDATING TASK", error);
+// 		return NextResponse.json({
+// 			error: "Something went wrong",
+// 			status: 500,
+// 		});
+// 	}
+// }
 
-export async function DELETE(req: Request) {
-	try {
-		return new Response("Hello, Next.js!");
-	} catch (error) {
-		console.log("ERROR DELETING TASK", error);
-		return NextResponse.json({
-			error: "Something went wrong",
-			status: 500,
-		});
-	}
-}
+// export async function DELETE(req: Request) {
+// 	try {
+// 		return new Response("Hello, Next.js!");
+// 	} catch (error) {
+// 		console.log("ERROR DELETING TASK", error);
+// 		return NextResponse.json({
+// 			error: "Something went wrong",
+// 			status: 500,
+// 		});
+// 	}
+// }
