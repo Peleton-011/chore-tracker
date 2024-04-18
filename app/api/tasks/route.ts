@@ -4,7 +4,6 @@ import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
-
 mongoose.connect(
 	"mongodb+srv://nico:uYF1MlqJmvWlRxck@mytasks.7l9kmdf.mongodb.net/MyTasks"
 );
@@ -32,7 +31,6 @@ const taskSchema = new Schema(
 
 console.log("Bouta connecter");
 const taskModel = model("Task", taskSchema);
-
 
 export async function POST(req: Request) {
 	try {
@@ -88,50 +86,41 @@ export async function POST(req: Request) {
 	}
 }
 
-// export async function GET(req: Request) {
-// 	try {
-// 		const { userId } = auth();
+export async function GET() {
+	try {
+		const { userId } = auth();
 
-// 		if (!userId) {
-// 			return NextResponse.json({ error: "Unauthorized", status: 401 });
-// 		}
+		if (!userId) {
+			return NextResponse.json({ error: "Unauthorized", status: 401 });
+		}
 
-// 		// const tasks = await prisma.task.findMany({
-// 		// 	where: {
-// 		// 		userId,
-// 		// 	},
-// 		// });
+		const tasks = await taskModel.find({ userId });
 
-// 		return new Response("Hello, Next.js!");
-// 	} catch (error) {
-// 		console.log("ERROR GETTING TASK", error);
-// 		return NextResponse.json({
-// 			error: "Something went wrong",
-// 			status: 500,
-// 		});
-// 	}
-// }
+		return NextResponse.json(tasks);
+	} catch (error) {
+		console.log("ERROR GETTING TASKS: ", error);
+		return NextResponse.json({ error: "Error updating task", status: 500 });
+	}
+}
 
-// export async function PUT(req: Request) {
-// 	try {
-// 		return new Response("Hello, Next.js!");
-// 	} catch (error) {
-// 		console.log("ERROR UPDATING TASK", error);
-// 		return NextResponse.json({
-// 			error: "Something went wrong",
-// 			status: 500,
-// 		});
-// 	}
-// }
+export async function PUT(req: Request) {
+	try {
+		const { userId } = auth();
+		const { isCompleted, id } = await req.json();
 
-// export async function DELETE(req: Request) {
-// 	try {
-// 		return new Response("Hello, Next.js!");
-// 	} catch (error) {
-// 		console.log("ERROR DELETING TASK", error);
-// 		return NextResponse.json({
-// 			error: "Something went wrong",
-// 			status: 500,
-// 		});
-// 	}
-// }
+		if (!userId) {
+			return NextResponse.json({ error: "Unauthorized", status: 401 });
+		}
+
+		const task = await taskModel.findByIdAndUpdate(
+			id,
+			{ isCompleted },
+			{ new: true }
+		);
+
+		return NextResponse.json(task);
+	} catch (error) {
+		console.log("ERROR UPDATING TASK: ", error);
+		return NextResponse.json({ error: "Error deleting task", status: 500 });
+	}
+}
