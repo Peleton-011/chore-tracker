@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 console.log(process.env)
 
-const MONGODB_URI  = process.env.MONGODB_URI || "sample" ;
+const MONGODB_URI  = process.env.MONGODB_URI || "mongodb+srv://nico:uYF1MlqJmvWlRxck@mytasks.7l9kmdf.mongodb.net/MyTasks" ;
 
 if (!MONGODB_URI) {
 	throw new Error("MongoDB connection URI is not provided");

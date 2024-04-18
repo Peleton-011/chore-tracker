@@ -1,7 +1,20 @@
-import { Schema, model } from "mongoose";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
+// import taskModel from "@/mongoose/taskModel";
+import mongoose from "mongoose";
+const { Schema, model } = mongoose;
 
+
+mongoose.connect(
+	"mongodb+srv://nico:uYF1MlqJmvWlRxck@mytasks.7l9kmdf.mongodb.net/MyTasks"
+);
+
+const db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function () {
+	console.log("Connected successfully");
+});
 
 const taskSchema = new Schema(
 	{
