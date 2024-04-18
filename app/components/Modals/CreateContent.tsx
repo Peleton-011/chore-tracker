@@ -81,10 +81,10 @@ function CreateContent() {
 
 			<div className="input-control">
 				<label htmlFor="description">Description</label>
-				<input
+				<textarea
 					name="description"
 					id="description"
-					type="text"
+                    rows={4}
 					placeholder="Description"
 					value={description}
 					onChange={(e) =>
