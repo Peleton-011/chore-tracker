@@ -4,17 +4,19 @@ import React from "react";
 import styled from "styled-components";
 import CreateContent from "../Modals/CreateContent";
 
+import TaskItem from "../TaskItem/TaskItem";
+
+
 function Tasks() {
 	const { theme, tasks } = useGlobalState();
     // console.log("TASKS: ", tasks)
 	return (
 		<TaskStyled theme={theme}>
 			<CreateContent />
-            {
-                tasks.map((task) => (
-                    <p key={task._id}>{task.title}</p>
-                ))
-            }
+
+            {tasks.map((task) => (
+                <TaskItem key={task._id} {...task} />
+            ))}
 		</TaskStyled>
 	);
 }
