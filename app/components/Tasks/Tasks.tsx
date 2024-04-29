@@ -5,10 +5,16 @@ import styled from "styled-components";
 import CreateContent from "../Modals/CreateContent";
 
 function Tasks() {
-	const { theme } = useGlobalState();
+	const { theme, tasks } = useGlobalState();
+    // console.log("TASKS: ", tasks)
 	return (
 		<TaskStyled theme={theme}>
 			<CreateContent />
+            {
+                tasks.map((task) => (
+                    <p key={task._id}>{task.title}</p>
+                ))
+            }
 		</TaskStyled>
 	);
 }
