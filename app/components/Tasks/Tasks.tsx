@@ -14,7 +14,7 @@ function Tasks() {
 		<TaskStyled theme={theme}>
 			<CreateContent />
 
-            {tasks.map((task) => (
+            {tasks.map((task: any) => (
                 <TaskItem key={task._id} {...task} />
             ))}
 		</TaskStyled>
