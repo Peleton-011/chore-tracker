@@ -4,6 +4,7 @@ import React from "react";
 import styled from "styled-components";
 import { plus } from "@/app/utils/Icons";
 import CreateContent from "../Modals/CreateContent";
+import Modal from "../Modals/Modal";
 
 import TaskItem from "../TaskItem/TaskItem";
 
