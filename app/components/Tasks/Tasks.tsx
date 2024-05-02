@@ -6,16 +6,21 @@ import CreateContent from "../Modals/CreateContent";
 
 import TaskItem from "../TaskItem/TaskItem";
 
+interface Props {
+    title: string;
+    tasks: any[];
+}
 
-function Tasks() {
-	const { theme, tasks } = useGlobalState();
+
+function Tasks({ title, tasks }: Props) {
+	const { theme } = useGlobalState();
     // console.log("TASKS: ", tasks)
 	return (
 		<TaskStyled theme={theme}>
 			<CreateContent />
 
             {tasks.map((task: any) => (
-                <TaskItem key={task._id} {...task} />
+                <TaskItem key={task.id} {...task} />
             ))}
 		</TaskStyled>
 	);
