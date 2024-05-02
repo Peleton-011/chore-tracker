@@ -6,10 +6,22 @@ import Image from "next/image";
 import menu from "../../utils/menu";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { UserButton } from "@clerk/nextjs";
+import { arrowLeft, bars, logout } from "@/app/utils/Icons";
+import { UserButton, useClerk, useUser } from "@clerk/nextjs";
+import Button from "../Button/Button";
 
 function Sidebar() {
-	const { theme } = useGlobalState();
+	const { theme, collapsed, collapseMenu } = useGlobalState();
+
+	const { signOut } = useClerk();
+
+	const { user } = useUser();
+
+	const { firstName, lastName, imageUrl } = user || {
+		firstName: "Ipi",
+		lastName: "Bola",
+		imageUrl: "/../../public/avatar.png",
+	};
 
 	const router = useRouter();
 	const pathname = usePathname();
@@ -19,20 +31,25 @@ function Sidebar() {
 	};
 
 	return (
-		<SidebarStyled theme={theme}>
+		<SidebarStyled theme={theme} collapsed={collapsed}>
+			<button className="toggle-nav" onClick={collapseMenu}>
+				{collapsed ? bars : arrowLeft}
+			</button>
 			<div className="profile">
 				<div className="profile-overlay"></div>
-				<div className="image-wrapper">
+				<div className="image">
 					<Image
-						src="/avatar.jpeg"
-						alt="profile picture"
 						width={70}
 						height={70}
+						src={imageUrl}
+						alt="profile"
 					/>
 				</div>
-				<h1>
-					<span>Ipi </span>
-					<span>Bola</span>
+				<div className="user-btn absolute z-20 top-0 w-full h-full">
+					<UserButton />
+				</div>
+				<h1 className="capitalize">
+					{firstName} {lastName}
 				</h1>
 			</div>
 			<ul className="nav-items">
@@ -44,189 +61,246 @@ function Sidebar() {
 							className={`nav-item ${
 								pathname === link ? "active" : ""
 							}`}
-							onClick={() => handleClick(item.link)}
+							onClick={() => {
+								handleClick(link);
+							}}
 						>
 							{item.icon}
-							<Link href={item.link}>{item.title}</Link>
+							<Link href={link}>{item.title}</Link>
 						</li>
 					);
 				})}
 			</ul>
 
-			<UserButton />
+
+			<div className="sign-out relative m-6">
+				<Button
+					name={"Sign Out"}
+					type={"submit"}
+					padding={"0.4rem 0.8rem"}
+					borderRad={"0.8rem"}
+					fw={"500"}
+					fs={"1.2rem"}
+					icon={logout}
+					click={() => {
+						signOut(() => router.push("/signin"));
+					}}
+				/>
+			</div>
 		</SidebarStyled>
 	);
 }
 
-const SidebarStyled = styled.nav`
-	position: relative;
-	width: ${({ theme }) => theme.sidebarWidth};
-	background-color: ${({ theme }) => theme.colorBg2};
-	border: 2px solid ${({ theme }) => theme.borderColor2};
+const SidebarStyled = styled.nav<{ collapsed: boolean }>`
+  position: relative;
+  width: ${({ theme }) => theme.sidebarWidth};
+  background-color: ${({ theme }) => theme.colorBg2};
+  border: 2px solid ${({ theme }) => theme.borderColor2};
+  border-radius: 1rem;
 
-	border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+  color: ${({ theme }) => theme.colorGrey3};
 
-	color: ${({ theme }) => theme.colorGray3};
+  @media screen and (max-width: 768px) {
+    position: fixed;
+    height: calc(100vh - 2rem);
+    z-index: 100;
 
-	.profile {
-		position: relative;
-		margin: 1.5rem;
-		padding: 1rem 0.8rem;
+    transition: all 0.3s cubic-bezier(0.53, 0.21, 0, 1);
+    transform: ${({ collapsed }) =>
+      collapsed ? "translateX(-107%)" : "translateX(0)"};
 
-		border-radius: 1rem;
-		cursor: pointer;
+    .toggle-nav {
+      display: block !important;
+    }
+  }
 
-		font-weight: 500;
-		color: ${({ theme }) => theme.colorGray0};
+  .toggle-nav {
+    display: none;
+    padding: 0.8rem 0.9rem;
+    position: absolute;
+    right: -69px;
+    top: 1.8rem;
 
-		display: flex;
-		align-items: center;
+    border-top-right-radius: 1rem;
+    border-bottom-right-radius: 1rem;
 
-		.profile-overlay {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			backdrop-filter: blur(10px);
-			z-index: 0;
-			background-color: ${({ theme }) => theme.colorBg3};
-			transition: all 0.55s linear;
+    background-color: ${({ theme }) => theme.colorBg2};
+    border-right: 2px solid ${({ theme }) => theme.borderColor2};
+    border-top: 2px solid ${({ theme }) => theme.borderColor2};
+    border-bottom: 2px solid ${({ theme }) => theme.borderColor2};
+  }
 
-			border-radius: 1rem;
-			border: 2px solid ${({ theme }) => theme.borderColor2};
+  .user-btn {
+    .cl-rootBox {
+      width: 100%;
+      height: 100%;
 
-			opacity: 0.2;
-		}
+      .cl-userButtonBox {
+        width: 100%;
+        height: 100%;
 
-		h1 {
-			font-size: 1.2rem;
-			display: flex;
-			flex-direction: column;
+        .cl-userButtonTrigger {
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+        }
+      }
+    }
+  }
 
-			line-height: 1.5;
-		}
+  .profile {
+    margin: 1.5rem;
+    padding: 1rem 0.8rem;
+    position: relative;
 
-		.image-wrapper,
-		h1 {
-			position: relative;
-			z-index: 1;
-		}
+    border-radius: 1rem;
+    cursor: pointer;
 
-		.image-wrapper {
-			flex-shrink: 0;
-			display: inline-block;
-			overflow: hidden;
-			transition: all 0.55s ease;
-			border-radius: 100%;
+    font-weight: 500;
+    color: ${({ theme }) => theme.colorGrey0};
 
-			width: 70px;
-			height: 70px;
+    display: flex;
+    align-items: center;
 
-			img {
-				width: 100%;
-				height: 100%;
-				border-radius: 100%;
+    .profile-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(10px);
+      z-index: 0;
+      background: ${({ theme }) => theme.colorBg3};
+      transition: all 0.55s linear;
+      border-radius: 1rem;
+      border: 2px solid ${({ theme }) => theme.borderColor2};
 
-				transition: all 0.55s ease;
-			}
-		}
+      opacity: 0.2;
+    }
 
-		h1 {
-			margin-left: 0.8rem;
-			font-size: clamp(1.2rem, 4vw, 1.4rem);
-			line-height: 100%;
-		}
+    h1 {
+      font-size: 1.2rem;
+      display: flex;
+      flex-direction: column;
 
-		&:hover {
-			.profile-overlay {
-				opacity: 1;
-				border: 2px solid ${({ theme }) => theme.borderColor2};
-			}
+      line-height: 1.4rem;
+    }
 
-			img {
-				transform: scale(1.2); //Maybe 1.1 ???
-			}
-		}
-	}
+    .image,
+    h1 {
+      position: relative;
+      z-index: 1;
+    }
 
-	.nav-item {
-		position: relative;
+    .image {
+      flex-shrink: 0;
+      display: inline-block;
+      overflow: hidden;
+      transition: all 0.5s ease;
+      border-radius: 100%;
 
-		padding: 1rem 1rem 1rem 2.1rem;
-		margin: 0.3rem 0;
+      width: 70px;
+      height: 70px;
 
-		display: grid;
+      img {
+        border-radius: 100%;
+        transition: all 0.5s ease;
+      }
+    }
 
-		grid-template-columns: 40px 1fr;
+    > h1 {
+      margin-left: 0.8rem;
+      font-size: clamp(1.2rem, 4vw, 1.4rem);
+      line-height: 100%;
+    }
 
-		cursor: pointer;
-        align-items: center;
+    &:hover {
+      .profile-overlay {
+        opacity: 1;
+        border: 2px solid ${({ theme }) => theme.borderColor2};
+      }
 
-		&::after {
-			position: absolute;
-			content: "";
-			left: 0;
-			top: 0;
-			width: 0;
-			height: 100%;
-			background-color: ${({ theme }) => theme.activeNavLinkHover};
-			z-index: 1;
-			transition: all 0.3s ease-in-out;
-		}
+      img {
+        transform: scale(1.1);
+      }
+    }
+  }
 
-		&::before {
-			position: absolute;
-			content: "";
-			right: 0;
-			top: 0;
-			width: 0;
-			height: 100%;
-			background-color: ${({ theme }) => theme.colorGreenDark};
-			border-bottom-left-radius: 5px;
-			border-top-left-radius: 5px;
-		}
+  .nav-item {
+    position: relative;
+    padding: 0.8rem 1rem 0.9rem 2.1rem;
+    margin: 0.3rem 0;
 
-		a {
-			font-weight: 500;
-			z-index: 2;
-			transition: all 0.3s ease-in-out;
-            line-height: 0;
-		}
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    cursor: pointer;
+    align-items: center;
 
-		i {
-			display: flex;
-			align-items: center;
-			color: ${({ theme }) => theme.colorIcons};
-		}
+    &::after {
+      position: absolute;
+      content: "";
+      left: 0;
+      top: 0;
+      width: 0;
+      height: 100%;
+      background-color: ${({ theme }) => theme.activeNavLinkHover};
+      z-index: 1;
+      transition: all 0.3s ease-in-out;
+    }
 
-		&:hover {
-			&::after {
-				width: 100%;
-			}
-		}
-	}
+    &::before {
+      position: absolute;
+      content: "";
+      right: 0;
+      top: 0;
+      width: 0%;
+      height: 100%;
+      background-color: ${({ theme }) => theme.colorGreenDark};
 
-	.active {
-		background-color: ${({ theme }) => theme.activeNavLink};
+      border-bottom-left-radius: 5px;
+      border-top-left-radius: 5px;
+    }
 
-		i,
-		a {
-			color: ${({ theme }) => theme.colorIcons2};
-		}
-	}
+    a {
+      font-weight: 500;
+      transition: all 0.3s ease-in-out;
+      z-index: 2;
+      line-height: 0;
+    }
 
-	.active::before {
-		width: 0.3rem;
-	}
+    i {
+      display: flex;
+      align-items: center;
+      color: ${({ theme }) => theme.colorIcons};
+    }
 
-	> button {
-		margin: 1.5rem;
-	}
+    &:hover {
+      &::after {
+        width: 100%;
+      }
+    }
+  }
+
+  .active {
+    background-color: ${({ theme }) => theme.activeNavLink};
+
+    i,
+    a {
+      color: ${({ theme }) => theme.colorIcons2};
+    }
+  }
+
+  .active::before {
+    width: 0.3rem;
+  }
+
+  > button {
+    margin: 1.5rem;
+  }
 `;
 
 export default Sidebar;
