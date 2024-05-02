@@ -10,32 +10,44 @@ export const GlobalUpdateContext = createContext();
 export const GlobalProvider = ({ children }) => {
 	//The themes are stored in an array; the first one is 0, the second is 1
 	const [selectedTheme, setSelectedTheme] = useState(0);
-    const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [modal, setModal] = useState(false);
 	const theme = themes[selectedTheme];
 
-    const [tasks, setTasks] = useState([]);
+	const [tasks, setTasks] = useState([]);
 
-    const allTasks = async () => {
-        setIsLoading(true);
-        try {
-            const res = await axios.get("/api/tasks");
-            setTasks(res.data);
-            setIsLoading(false);
-            console.log(res.data)
-        } catch (error) {
-            console.log(error);
-        }
-    }
+	const openModal = () => {
+		setModal(true);
+	};
 
-    useEffect(() => {
-        allTasks();
-    }, [])
+	const closeModal = () => {
+		setModal(false);
+	};
+
+	const allTasks = async () => {
+		setIsLoading(true);
+		try {
+			const res = await axios.get("/api/tasks");
+			setTasks(res.data);
+			setIsLoading(false);
+			console.log(res.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		allTasks();
+	}, []);
 
 	return (
 		<GlobalContext.Provider
 			value={{
 				theme,
-                tasks
+				tasks,
+                modal,
+                openModal,
+                closeModal,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
