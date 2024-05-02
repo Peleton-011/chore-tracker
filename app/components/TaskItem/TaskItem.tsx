@@ -3,7 +3,7 @@ import { useGlobalState } from "@/app/context/globalProvider";
 import { edit, trash } from "@/app/utils/Icons";
 import React from "react";
 import styled from "styled-components";
-// import formatDate from "@/app/utils/formatDate";
+import formatDate from "@/app/utils/formatDate";
 
 interface Props {
   title: string;
@@ -19,7 +19,7 @@ function TaskItem({ title, description, date, isCompleted, id }: Props) {
     <TaskItemStyled theme={theme}>
       <h1>{title}</h1>
       <p>{description}</p>
-      <p className="date">{date}</p>
+      <p className="date">{formatDate(date)}</p>
       <div className="task-footer">
         {isCompleted ? (
           <button

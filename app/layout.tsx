@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Nunito } from "next/font/google";
 import "./globals.css";
 import Sidebar from "./components/Sidebar/Sidebar";
 import GlobalStylesProvider from "./providers/GlobalStylesProvider";
@@ -11,7 +11,7 @@ import { ClerkProvider, auth } from "@clerk/nextjs";
 
 // mongooseConnection()
 
-const inter = Inter({ subsets: ["latin"] });
+const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -38,7 +38,7 @@ export default function RootLayout({
 						referrerPolicy="no-referrer"
 					/>
 				</head>
-				<body className={inter.className}>
+				<body className={nunito.className}>
 					<ContextProvider>
 						<GlobalStylesProvider>
 							{userId && <Sidebar />}
