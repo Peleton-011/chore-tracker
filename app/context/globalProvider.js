@@ -23,7 +23,7 @@ export const GlobalProvider = ({ children }) => {
             setIsLoading(false);
             console.log(res.data)
         } catch (error) {
-            
+            console.log(error);
         }
     }
 
