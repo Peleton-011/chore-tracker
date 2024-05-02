@@ -67,9 +67,9 @@ function TaskItem({ title, description, date, isCompleted, id }: Props) {
 const TaskItemStyled = styled.div`
   padding: 1.2rem 1rem;
   border-radius: 1rem;
-  background-color: ${(props) => props.theme.borderColor2};
-  box-shadow: ${(props) => props.theme.shadow7};
-  border: 2px solid ${(props) => props.theme.borderColor2};
+  background-color: ${({theme}) => theme.borderColor2};
+  box-shadow: ${({theme}) => theme.shadow7};
+  border: 2px solid ${({theme}) => theme.borderColor2};
 
   height: 16rem;
   display: flex;
