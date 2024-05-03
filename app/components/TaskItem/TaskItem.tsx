@@ -54,6 +54,7 @@ function TaskItem({ title, description, date, isCompleted, id }: Props) {
         <button
           className="delete"
           onClick={() => {
+            console.log(id)
             deleteTask(id);
           }}
         >

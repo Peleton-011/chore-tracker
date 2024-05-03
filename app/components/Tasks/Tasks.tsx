@@ -26,8 +26,8 @@ function Tasks({ title, tasks }: Props) {
 			</button>
 
 			<div className="tasks grid">
-				{tasks.map((task: any) => (
-					<TaskItem key={task.id} {...task} />
+				{tasks && tasks.map((task: any) => (
+					<TaskItem key={task._id} id={task._id} {...task} />
 				))}
 
 				<button className="create-task" onClick={openModal}>{plus} Add New Task</button>
