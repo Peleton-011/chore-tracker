@@ -21,9 +21,8 @@ function TaskItem({ title, description, date, isCompleted, id }: Props) {
       <p>{description}</p>
       <p className="date">{formatDate(date)}</p>
       <div className="task-footer">
-        {isCompleted ? (
           <button
-            className="completed"
+            className={isCompleted ? "completed" : "incomplete"}
             onClick={() => {
               const task = {
                 id,
@@ -33,23 +32,8 @@ function TaskItem({ title, description, date, isCompleted, id }: Props) {
               updateTask(task);
             }}
           >
-            Completed
+            {isCompleted ? "Completed" : "Incomplete"}
           </button>
-        ) : (
-          <button
-            className="incomplete"
-            onClick={() => {
-              const task = {
-                id,
-                isCompleted: !isCompleted,
-              };
-
-              updateTask(task);
-            }}
-          >
-            Incomplete
-          </button>
-        )}
         <button className="edit">{edit}</button>
         <button
           className="delete"
