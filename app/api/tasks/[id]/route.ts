@@ -27,7 +27,7 @@ export async function DELETE(
 		// }
 
 		// Find and delete task
-		const task = await taskModel.findByIdAndDelete(id);
+		const task = await taskModel.findByIdAndDelete(id as string);
 
 		if (!task) {
 			return NextResponse.json({ error: "Task not found", status: 404 });
