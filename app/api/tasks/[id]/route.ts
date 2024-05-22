@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import taskModel from "@/mongoose/taskModel"; // Assuming you have a Task model defined
+import Task from "@/models/Task"; // Assuming you have a Task model defined
 
 export async function DELETE(
 	req: Request,
@@ -27,7 +27,7 @@ export async function DELETE(
 		// }
 
 		// Find and delete task
-		const task = await taskModel.findByIdAndDelete(id as string);
+		const task = await Task.findByIdAndDelete(id as string);
 
 		if (!task) {
 			return NextResponse.json({ error: "Task not found", status: 404 });

@@ -1,6 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import taskModel from "@/mongoose/taskModel";
+import Task from "@/models/Task";
 
 
 export async function POST(req: Request) {
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 			});
 		}
 
-		const task = await taskModel.create({
+		const task = await Task.create({
 			title,
 			description,
 			date,
@@ -65,7 +65,7 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
-		const tasks = await taskModel.find({ userId });
+		const tasks = await Task.find({ userId });
 
 		return NextResponse.json(tasks);
 	} catch (error) {
@@ -83,7 +83,7 @@ export async function PUT(req: Request) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
-		const task = await taskModel.findByIdAndUpdate(
+		const task = await Task.findByIdAndUpdate(
 			id,
 			{ isCompleted },
 			{ new: true }
