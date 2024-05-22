@@ -1,20 +1,9 @@
 import mongoose from "mongoose";
 const { Schema, model } = mongoose;
 
-//-------------------------------------------
+import mongooseConnection from "@/app/utils/connect";
 
-mongoose.connect(
-	"mongodb+srv://nico:uYF1MlqJmvWlRxck@mytasks.7l9kmdf.mongodb.net/MyTasks"
-);
-
-const db = mongoose.connection;
-
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", function () {
-	console.log("Connected successfully");
-});
-
-//-------------------------------------------
+mongooseConnection();
 
 const taskSchema = new Schema(
 	{
