@@ -15,17 +15,6 @@ export async function DELETE(
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
 
-		// Ensure MongoDB is connected
-		// if (mongoose.connection.readyState !== 1) {
-		// 	await mongoose.connect(
-		// 		"mongodb://localhost:27017/your-database-name",
-		// 		{
-		// 			useNewUrlParser: true,
-		// 			useUnifiedTopology: true,
-		// 		}
-		// 	);
-		// }
-
 		// Find and delete task
 		const task = await Task.findByIdAndDelete(id as string);
 
