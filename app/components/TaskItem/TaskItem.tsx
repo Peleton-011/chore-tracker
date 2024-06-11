@@ -1,6 +1,6 @@
 "use client";
 import { useGlobalState } from "@/app/context/globalProvider";
-import { edit, trash } from "@/app/utils/Icons";
+import { edit, trash, exclamation } from "@/app/utils/Icons";
 import React from "react";
 import styled from "styled-components";
 import formatDate from "@/app/utils/formatDate";
@@ -10,16 +10,19 @@ interface Props {
 	description: string;
 	date: string;
 	isCompleted: boolean;
+	isImportant: boolean;
 	id: string;
 	editTask: ({
 		id,
 		isCompleted,
+		isImportant,
 		title,
 		description,
 		date,
 	}: {
 		id: string;
 		isCompleted: boolean;
+		isImportant: boolean;
 		title: string;
 		description: string;
 		date: string;
@@ -31,13 +34,16 @@ function TaskItem({
 	description,
 	date,
 	isCompleted,
+	isImportant,
 	id,
 	editTask,
 }: Props) {
 	const { theme, deleteTask, updateTask } = useGlobalState();
 	return (
 		<TaskItemStyled theme={theme}>
-			<h1>{title}</h1>
+			<h1>
+				{title} {isImportant ? exclamation : ""}
+			</h1>
 			<p>{description}</p>
 			<p className="date">{formatDate(date)}</p>
 			<div className="task-footer">
@@ -54,15 +60,19 @@ function TaskItem({
 				>
 					{isCompleted ? "Completed" : "Incomplete"}
 				</button>
-				<button className="edit" onClick={() => editTask(
-                    {
-                        id,
-                        isCompleted,
-                        title,
-                        description,
-                        date
-                    }
-                )}>
+				<button
+					className="edit"
+					onClick={() =>
+						editTask({
+							id,
+							isCompleted,
+                            isImportant,
+							title,
+							description,
+							date,
+						})
+					}
+				>
 					{edit}
 				</button>
 				<button
