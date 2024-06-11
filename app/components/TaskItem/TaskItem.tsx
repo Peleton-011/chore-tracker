@@ -42,7 +42,7 @@ function TaskItem({
 	return (
 		<TaskItemStyled theme={theme}>
 			<h1>
-				{title} {isImportant ? exclamation : ""}
+				<span>{title}</span> <span>{isImportant ? exclamation : ""}</span>
 			</h1>
 			<p>{description}</p>
 			<p className="date">{formatDate(date)}</p>
@@ -108,6 +108,14 @@ const TaskItemStyled = styled.div`
 	> h1 {
 		font-size: 1.5rem;
 		font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        padding-right: 1rem;
+
+        span:last-child {
+            font-size: 2rem;
+            line-height: 1rem;
+        }
 	}
 
 	.task-footer {
