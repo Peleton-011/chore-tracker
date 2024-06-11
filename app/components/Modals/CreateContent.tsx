@@ -122,7 +122,7 @@ function CreateContent({
 
 	return (
 		<CreateContentStyled onSubmit={handleSubmit} theme={theme}>
-			<h1>Create a Task</h1>
+			<h1>{isUpdate ? "Update a Task" : "Create a Task"}</h1>
 			<div className="input-control">
 				<label htmlFor="title">Title</label>
 				<input
