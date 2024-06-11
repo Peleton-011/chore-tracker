@@ -5,14 +5,31 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
 import Button from "../Button/Button";
-import { add, plus } from "@/app/utils/Icons";
+import { edit, add, plus } from "@/app/utils/Icons";
 
-function CreateContent() {
-	const [title, setTitle] = useState("");
-	const [description, setDescription] = useState("");
-	const [date, setDate] = useState("");
-	const [completed, setCompleted] = useState(false);
-	const [important, setImportant] = useState(false);
+function CreateContent({
+	task: {
+		id,
+		title: argtitle,
+		description: argdescription,
+		date: argdate,
+		completed: argcompleted,
+		important: argimportant,
+	},
+}: any) {
+	const [title, setTitle] = useState(argtitle || "");
+	const [description, setDescription] = useState(argdescription || "");
+	const [date, setDate] = useState(argdate || "");
+	const [completed, setCompleted] = useState(argcompleted || false);
+	const [important, setImportant] = useState(argimportant || false);
+
+	const isUpdate =
+		!!id ||
+		!!argtitle ||
+		!!argdescription ||
+		!!argdate ||
+		!!argcompleted ||
+		!!argimportant;
 
 	const { theme, allTasks, closeModal } = useGlobalState();
 
@@ -41,6 +58,37 @@ function CreateContent() {
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
+
+		if (isUpdate) {
+			const task = {
+				id,
+				title,
+				description,
+				date,
+				completed,
+				important,
+			};
+
+			try {
+				// @ts-ignore
+				// const response = updateTask(...task);
+				const response = await axios.put("/api/tasks", task);
+				// @ts-ignore
+				if (response.data.error) {
+					// @ts-ignore
+					toast.error(response.data.error);
+				}
+				toast.success("Task updated successfully");
+				allTasks();
+				closeModal();
+			} catch (error) {
+				console.log(error);
+				toast.error("Something went wrong");
+				console.log("ERROR UPDATING TASK: ", error);
+			}
+
+			return;
+		}
 
 		const task = {
 			title,
@@ -140,8 +188,8 @@ function CreateContent() {
 			<div className="submit-btn flex justify-end">
 				<Button
 					type="submit"
-					name="Create Task"
-					icon={add}
+					name={isUpdate ? "Update Task" : "Create Task"}
+					icon={isUpdate ? edit : add}
 					padding={"0.8rem 2rem"}
 					borderRad={"0.8rem"}
 					fw={"500"}
@@ -154,82 +202,82 @@ function CreateContent() {
 }
 
 const CreateContentStyled = styled.form`
-  > h1 {
-    font-size: clamp(1.2rem, 5vw, 1.6rem);
-    font-weight: 600;
-  }
+	> h1 {
+		font-size: clamp(1.2rem, 5vw, 1.6rem);
+		font-weight: 600;
+	}
 
-  color: ${({theme}) => theme.colorGrey1};
+	color: ${({ theme }) => theme.colorGrey1};
 
-  .input-control {
-    position: relative;
-    margin: 1.6rem 0;
-    font-weight: 500;
+	.input-control {
+		position: relative;
+		margin: 1.6rem 0;
+		font-weight: 500;
 
-    @media screen and (max-width: 450px) {
-      margin: 1rem 0;
-    }
+		@media screen and (max-width: 450px) {
+			margin: 1rem 0;
+		}
 
-    label {
-      margin-bottom: 0.5rem;
-      display: inline-block;
-      font-size: clamp(0.9rem, 5vw, 1.2rem);
+		label {
+			margin-bottom: 0.5rem;
+			display: inline-block;
+			font-size: clamp(0.9rem, 5vw, 1.2rem);
 
-      span {
-        color: ${({theme}) => theme.colorGrey3};
-      }
-    }
+			span {
+				color: ${({ theme }) => theme.colorGrey3};
+			}
+		}
 
-    input,
-    textarea {
-      width: 100%;
-      padding: 1rem;
+		input,
+		textarea {
+			width: 100%;
+			padding: 1rem;
 
-      resize: none;
-      background-color: ${({theme}) => theme.colorGreyDark};
-      color: ${({theme}) => theme.colorGrey2};
-      border-radius: 0.5rem;
-    }
-  }
+			resize: none;
+			background-color: ${({ theme }) => theme.colorGreyDark};
+			color: ${({ theme }) => theme.colorGrey2};
+			border-radius: 0.5rem;
+		}
+	}
 
-  .submit-btn button {
-    transition: all 0.35s ease-in-out;
+	.submit-btn button {
+		transition: all 0.35s ease-in-out;
 
-    @media screen and (max-width: 500px) {
-      font-size: 0.9rem !important;
-      padding: 0.6rem 1rem !important;
+		@media screen and (max-width: 500px) {
+			font-size: 0.9rem !important;
+			padding: 0.6rem 1rem !important;
 
-      i {
-        font-size: 1.2rem !important;
-        margin-right: 0.5rem !important;
-      }
-    }
+			i {
+				font-size: 1.2rem !important;
+				margin-right: 0.5rem !important;
+			}
+		}
 
-    i {
-      color: ${({theme}) => theme.colorGrey0};
-    }
+		i {
+			color: ${({ theme }) => theme.colorGrey0};
+		}
 
-    &:hover {
-      background: ${({theme}) => theme.colorPrimaryGreen} !important;
-      color: ${({theme}) => theme.colorWhite} !important;
-    }
-  }
+		&:hover {
+			background: ${({ theme }) => theme.colorPrimaryGreen} !important;
+			color: ${({ theme }) => theme.colorWhite} !important;
+		}
+	}
 
-  .toggler {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+	.toggler {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 
-    cursor: pointer;
+		cursor: pointer;
 
-    label {
-      flex: 1;
-    }
+		label {
+			flex: 1;
+		}
 
-    input {
-      width: initial;
-    }
-  }
+		input {
+			width: initial;
+		}
+	}
 `;
 
 export default CreateContent;
