@@ -75,23 +75,39 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
-	try {
-		const { userId } = auth();
-		const { isCompleted, id } = await req.json();
+    try {
+        const { userId } = auth();
+        if (!userId) {
+            return NextResponse.json({ error: "Unauthorized", status: 401 });
+        }
 
-		if (!userId) {
-			return NextResponse.json({ error: "Unauthorized", status: 401 });
-		}
+        const updates = await req.json();
+        const { id, ...updateFields } = updates;
 
-		const task = await Task.findByIdAndUpdate(
-			id,
-			{ isCompleted },
-			{ new: true }
-		);
+        if (!id) {
+            return NextResponse.json({ error: "Missing task ID", status: 400 });
+        }
 
-		return NextResponse.json(task);
-	} catch (error) {
-		console.log("ERROR UPDATING TASK: ", error);
-		return NextResponse.json({ error: "Error deleting task", status: 500 });
-	}
-}
+        const task = await Task.findById(id);
+
+        if (!task) {
+            return NextResponse.json({ error: "Task not found", status: 404 });
+        }
+
+        // Ensure that the task belongs to the user
+        if (task.userId.toString() !== userId) {
+            return NextResponse.json({ error: "Unauthorized", status: 401 });
+        }
+
+        Object.keys(updateFields).forEach((key) => {
+            task[key] = updateFields[key];
+        });
+
+        await task.save();
+
+        return NextResponse.json(task);
+    } catch (error) {
+        console.log("ERROR UPDATING TASK: ", error);
+        return NextResponse.json({ error: "Error updating task", status: 500 });
+    }
+};
