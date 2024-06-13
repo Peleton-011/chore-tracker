@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useState, useContext, useEffect } from "react";
-import themes from "./themes";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -13,7 +12,7 @@ export const GlobalProvider = ({ children }) => {
 	const [selectedTheme, setSelectedTheme] = useState(0);
 	const [isLoading, setIsLoading] = useState(false);
 	const [modal, setModal] = useState(false);
-	const theme = themes[selectedTheme];
+	// const theme = themes[selectedTheme];
 	const [collapsed, setCollapsed] = useState(false);
 
 	const [tasks, setTasks] = useState([]);
@@ -78,7 +77,7 @@ export const GlobalProvider = ({ children }) => {
 	return (
 		<GlobalContext.Provider
 			value={{
-				theme,
+				// theme,
 				tasks,
 				allTasks,
 				deleteTask,

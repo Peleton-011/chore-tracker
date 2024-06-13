@@ -2,7 +2,6 @@
 import { useGlobalState } from "@/app/context/globalProvider";
 
 import React from "react";
-import styled from "styled-components";
 
 interface Props {
 	icon?: React.ReactNode;
@@ -31,10 +30,9 @@ function Button({
 	border,
 	color,
 }: Props) {
-	const { theme } = useGlobalState();
-
 	return (
-		<ButtonStyled
+		<button
+			className="button-module"
 			type={type}
 			style={{
 				background: background,
@@ -43,40 +41,14 @@ function Button({
 				fontWeight: fw || "500",
 				fontSize: fs,
 				border: border || "none",
-				color: color || theme.colorGrey0,
+				color: color, //|| theme.colorGrey0,
 			}}
-			theme={theme}
 			onClick={click}
 		>
 			{icon && icon}
 			{name}
-		</ButtonStyled>
+		</button>
 	);
 }
-
-const ButtonStyled = styled.button`
-	position: relative;
-	display: flex;
-	align-items: center;
-	color: ${({ theme }) => theme.colorGrey2};
-	z-index: 5;
-	cursor: pointer;
-
-	transition: all 0.55s ease-in-out;
-
-	i {
-		margin-right: 1rem;
-		color: ${({ theme }) => theme.colorGrey2};
-		font-size: 1.5rem;
-		transition: all 0.55s ease-in-out;
-	}
-
-	&:hover {
-		color: ${({ theme }) => theme.colorGrey0};
-		i {
-			color: ${({ theme }) => theme.colorGrey0};
-		}
-	}
-`;
 
 export default Button;

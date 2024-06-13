@@ -1,17 +1,8 @@
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
-import "./globals.css";
+// import "../styles/global.css";
 import Sidebar from "./components/Sidebar/Sidebar";
-import GlobalStylesProvider from "./providers/GlobalStylesProvider";
 import ContextProvider from "./providers/ContextProvider";
 import { ClerkProvider, auth } from "@clerk/nextjs";
-// import mongooseConnection from "./utils/connect";
-// require('dotenv').config();
-
-
-// mongooseConnection()
-
-const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -23,7 +14,6 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-
 	const { userId } = auth();
 
 	return (
@@ -38,12 +28,10 @@ export default function RootLayout({
 						referrerPolicy="no-referrer"
 					/>
 				</head>
-				<body className={nunito.className}>
+				<body>
 					<ContextProvider>
-						<GlobalStylesProvider>
-							{userId && <Sidebar />}
-							<div className="w-full">{children}</div>
-						</GlobalStylesProvider>
+						{userId && <Sidebar />}
+						<div className="w-full">{children}</div>
 					</ContextProvider>
 				</body>
 			</html>
