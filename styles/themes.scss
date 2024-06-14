@@ -1,25 +1,26 @@
-To convert the themes objects into SCSS variables, you can extract each property from the themes and define them as SCSS variables. Here's how you can do it:
-
-```scss
 // Default Theme
 $default-color-bg: #252525;
 $default-color-bg2: #212121;
 $default-color-bg3: #181818;
-$default-color-bg4: #1A1A1A;
-$default-color-button: #3A3B3C;
+$default-color-bg4: #1a1a1a;
+$default-color-button: #3a3b3c;
 $default-color-danger: #fe6854;
 $default-color-font-primary: #e5e7eb;
-$default-color-text-secondary: #B0B3B8;
-$default-color-text-primary: #FFFFFF;
+$default-color-text-secondary: #b0b3b8;
+$default-color-text-primary: #ffffff;
 $default-color-text-light: #f8f8f8;
-$default-color-background: #FBFBFD;
-$default-color-gradient: linear-gradient(110.42deg, #CF57A3 29.2%, #4731B6 63.56%);
-$default-color-green-dark: #27AE60;
+$default-color-background: #fbfbfd;
+$default-color-gradient: linear-gradient(
+	110.42deg,
+	#cf57a3 29.2%,
+	#4731b6 63.56%
+);
+$default-color-green-dark: #27ae60;
 $default-color-green-light: #dbe1e8;
-$default-active-nav-link: rgba(249,249,249, 0.08);
-$default-active-nav-link-hover: rgba(249,249,249, 0.03);
-$default-color-primary: #7263F3;
-$default-color-primary2: #705DF2;
+$default-active-nav-link: rgba(249, 249, 249, 0.08);
+$default-active-nav-link-hover: rgba(249, 249, 249, 0.03);
+$default-color-primary: #7263f3;
+$default-color-primary2: #705df2;
 $default-color-grey-dark: #131313;
 $default-color-grey0: #f8f8f8;
 $default-color-grey1: #dbe1e8;
@@ -29,9 +30,9 @@ $default-color-grey4: #454e56;
 $default-color-grey5: #2a2e35;
 $default-color-grey6: #12181b;
 $default-color-white: #fff;
-$default-color-primary-green: #6FCF97;
-$default-border-color: rgba(249,249,249, 0.08);
-$default-border-color2: rgba(249,249,249, 0.08);
+$default-color-primary-green: #6fcf97;
+$default-border-color: rgba(249, 249, 249, 0.08);
+$default-border-color2: rgba(249, 249, 249, 0.08);
 $default-shadow7: 1px 7px 12px rgba(8, 18, 69, 0.1);
 $default-sidebar-width: 15rem;
 $default-sidebar-collapsed: 5.4rem;
@@ -40,31 +41,35 @@ $default-font-small: 14px;
 $default-font-small2: 15px;
 $default-grid-gap: 2rem;
 $default-pad-lr-sm: 0 2rem;
-$default-color-icons: rgba(249,249,249, 0.35);
-$default-color-icons2: rgba(249,249,249, 0.75);
-$default-color-icons3: rgba(249,249,249, 0.08);
-$default-color-icons4: rgba(0,0,0, 0.3);
+$default-color-icons: rgba(249, 249, 249, 0.35);
+$default-color-icons2: rgba(249, 249, 249, 0.75);
+$default-color-icons3: rgba(249, 249, 249, 0.08);
+$default-color-icons4: rgba(0, 0, 0, 0.3);
 $default-mar-lr-sm: 0 1rem;
 
 // Light Theme
 $light-color-bg: #fff;
-$light-color-bg2: #F9F9F9;
-$light-color-bg3: #EDEDED;
-$light-color-bg4: #1A1A1A;
-$light-color-button: #3A3B3C;
+$light-color-bg2: #f9f9f9;
+$light-color-bg3: #ededed;
+$light-color-bg4: #1a1a1a;
+$light-color-button: #3a3b3c;
 $light-color-danger: #fe6854;
 $light-color-font-primary: #6c7983;
-$light-color-text-secondary: #B0B3B8;
-$light-color-text-primary: #FFFFFF;
+$light-color-text-secondary: #b0b3b8;
+$light-color-text-primary: #ffffff;
 $light-color-text-light: #f8f8f8;
-$light-color-background: #FBFBFD;
-$light-color-gradient: linear-gradient(110.42deg, #CF57A3 29.2%, #4731B6 63.56%);
-$light-color-green-dark: #27AE60;
+$light-color-background: #fbfbfd;
+$light-color-gradient: linear-gradient(
+	110.42deg,
+	#cf57a3 29.2%,
+	#4731b6 63.56%
+);
+$light-color-green-dark: #27ae60;
 $light-color-green-light: #dbe1e8;
-$light-active-nav-link: rgba(230,230,230, .87);
-$light-active-nav-link-hover: #C5C5C5;
-$light-color-primary: #7263F3;
-$light-color-primary2: #705DF2;
+$light-active-nav-link: rgba(230, 230, 230, 0.87);
+$light-active-nav-link-hover: #c5c5c5;
+$light-color-primary: #7263f3;
+$light-color-primary2: #705df2;
 $light-color-grey-dark: #131313;
 $light-color-grey0: #f8f8f8;
 $light-color-grey1: #dbe1e8;
@@ -74,32 +79,89 @@ $light-color-grey4: #454e56;
 $light-color-grey5: #2a2e35;
 $light-color-grey6: #12181b;
 $light-color-white: #fff;
-$light-button-gradient1: linear-gradient(110.42deg, rgba(107, 190, 146, 0.7) 29.2%, rgba(245, 102, 146, 0.7) 63.56%);
-$light-button-gradient2: linear-gradient(110.42deg, rgba(25, 151, 222, 0.7) 29.2%, rgba(168, 85, 247, 0.7) 63.56%);
-$light-button-gradient3: linear-gradient(110.42deg, rgba(25, 151, 222, 0.7) 29.2%, rgba(168, 85, 247, 0.7) 63.56%);
-$light-button-gradient4: linear-gradient(110.42deg, rgba(168, 85, 247, 0.7) 29.2%, rgba(245, 102, 146, 0.7) 63.56%);
-$light-button-gradient5: linear-gradient(110.42deg, rgba(25, 151, 222, 0.7) 29.2%, rgba(168, 85, 247, 0.7) 63.56%);
-$light-button-gradient6: linear-gradient(110.42deg, rgba(25, 151, 222, 0.7) 29.2%, rgba(168, 85, 247, 0.7) 63.56%);
-$light-button-gradient7: linear-gradient(110.42deg, rgba(41, 25, 222, 0.7) 29.2%, rgba(235, 87, 87, 0.7) 63.56%);
-$light-button-gradient8: linear-gradient(110.42deg, rgba(25, 151, 222, 0.7) 29.2%, rgba(168, 85, 247, 0.7) 63.56%);
-$light-button-gradient9: linear-gradient(110.42deg, rgba(226, 195, 33, 0.7) 29.2%, rgba(247, 104, 85, 0.7) 63.56%);
-$light-button-gradient10: linear-gradient(110.42deg, rgba(235, 87, 87, 0.7) 29.2%, rgba(189, 68, 166, 0.7) 53.82%, rgba(247, 85, 143, 0.1) 63.56%);
-$light-button-gradient11: linear-gradient(110.42deg, rgba(25, 151, 222, 0.7) 29.2%, rgba(168, 85, 247, 0.7) 63.56%);
-$light-button-gradient12: linear-gradient(110.42deg, rgba(226, 195, 33, 0.7) 29.2%, rgba(247, 104, 85, 0.7) 63.56%);
-$light-button-gradient13: linear-gradient(110.42deg, rgba(226, 195, 33, 0.7) 29.2%, rgba(99, 3, 255, 0.7) 63.56%);
-$light-button-gradient14: linear-gradient(110.42deg, rgba(41, 25, 222, 0.7) 29.2%, rgba(235, 87, 87, 0.7) 63.56%);
+$light-button-gradient1: linear-gradient(
+	110.42deg,
+	rgba(107, 190, 146, 0.7) 29.2%,
+	rgba(245, 102, 146, 0.7) 63.56%
+);
+$light-button-gradient2: linear-gradient(
+	110.42deg,
+	rgba(25, 151, 222, 0.7) 29.2%,
+	rgba(168, 85, 247, 0.7) 63.56%
+);
+$light-button-gradient3: linear-gradient(
+	110.42deg,
+	rgba(25, 151, 222, 0.7) 29.2%,
+	rgba(168, 85, 247, 0.7) 63.56%
+);
+$light-button-gradient4: linear-gradient(
+	110.42deg,
+	rgba(168, 85, 247, 0.7) 29.2%,
+	rgba(245, 102, 146, 0.7) 63.56%
+);
+$light-button-gradient5: linear-gradient(
+	110.42deg,
+	rgba(25, 151, 222, 0.7) 29.2%,
+	rgba(168, 85, 247, 0.7) 63.56%
+);
+$light-button-gradient6: linear-gradient(
+	110.42deg,
+	rgba(25, 151, 222, 0.7) 29.2%,
+	rgba(168, 85, 247, 0.7) 63.56%
+);
+$light-button-gradient7: linear-gradient(
+	110.42deg,
+	rgba(41, 25, 222, 0.7) 29.2%,
+	rgba(235, 87, 87, 0.7) 63.56%
+);
+$light-button-gradient8: linear-gradient(
+	110.42deg,
+	rgba(25, 151, 222, 0.7) 29.2%,
+	rgba(168, 85, 247, 0.7) 63.56%
+);
+$light-button-gradient9: linear-gradient(
+	110.42deg,
+	rgba(226, 195, 33, 0.7) 29.2%,
+	rgba(247, 104, 85, 0.7) 63.56%
+);
+$light-button-gradient10: linear-gradient(
+	110.42deg,
+	rgba(235, 87, 87, 0.7) 29.2%,
+	rgba(189, 68, 166, 0.7) 53.82%,
+	rgba(247, 85, 143, 0.1) 63.56%
+);
+$light-button-gradient11: linear-gradient(
+	110.42deg,
+	rgba(25, 151, 222, 0.7) 29.2%,
+	rgba(168, 85, 247, 0.7) 63.56%
+);
+$light-button-gradient12: linear-gradient(
+	110.42deg,
+	rgba(226, 195, 33, 0.7) 29.2%,
+	rgba(247, 104, 85, 0.7) 63.56%
+);
+$light-button-gradient13: linear-gradient(
+	110.42deg,
+	rgba(226, 195, 33, 0.7) 29.2%,
+	rgba(99, 3, 255, 0.7) 63.56%
+);
+$light-button-gradient14: linear-gradient(
+	110.42deg,
+	rgba(41, 25, 222, 0.7) 29.2%,
+	rgba(235, 87, 87, 0.7) 63.56%
+);
 $light-border-radius-md: 12px;
 $light-border-radius-md2: 15px;
 $light-border-radius-sm: 8px;
-$light-border-color: rgba(249,249,249, 0.08);
-$light-border-color2: rgba(249,249,249, 0.08);
+$light-border-color: rgba(249, 249, 249, 0.08);
+$light-border-color2: rgba(249, 249, 249, 0.08);
 $light-shadow1: 4px 4px 84px rgba(16, 10, 86, 0.04);
 $light-shadow2: 0px 48px 77px rgba(8, 18, 69, 0.07);
 $light-shadow3: 0 14px 40px rgb(0 0 0 / 25%);
 $light-shadow7: 0px 48px 77px rgba(8, 18, 69, 0.16);
-$light-shadow5: 0px 4px 0px rgba(249,249,249, 0.35);
-$light-shadow6: 0px 6px 20px rgba(0, 0, 0, 0.15), 0px -3px 20px rgba(0, 0, 0, 0.1);
+$light-shadow5: 0px 4px 0px rgba(249, 249, 249, 0.35);
+$light-shadow6: 0px 6px 20px rgba(0, 0, 0, 0.15),
+	0px -3px 20px rgba(0, 0, 0, 0.1);
 $light-sidebar-width: 15rem;
 $light-sidebar-collapsed: 5.4rem;
 $light-f-h4: 19px;
-$light-font-small: 

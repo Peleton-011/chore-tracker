@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { plus } from "@/app/utils/Icons";
 import CreateContent from "../Modals/CreateContent";
 import Modal from "../Modals/Modal";
-
 import TaskItem from "../TaskItem/TaskItem";
 
 interface Props {
@@ -55,7 +54,7 @@ function Tasks({ title, tasks }: Props) {
 
 	// console.log("TASKS: ", tasks)
 	return (
-		<div className="tasks-container">
+		<div className="tasks-container container">
 			{modal && <Modal content={<CreateContent task={editedTask} />} />}
 			<h1>{title}</h1>
 
@@ -63,7 +62,7 @@ function Tasks({ title, tasks }: Props) {
 				{plus}
 			</button>
 
-			<div className="tasks grid">
+			<div className="tasks">
 				{tasks &&
 					tasks.map((task: any) => (
 						<TaskItem
