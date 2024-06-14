@@ -10,7 +10,7 @@ export const GlobalUpdateContext = createContext();
 export const GlobalProvider = ({ children }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [modal, setModal] = useState(false);
-	const [collapsed, setCollapsed] = useState(false);
+	const [collapsed, setCollapsed] = useState(true);
 
 	const [tasks, setTasks] = useState([]);
 
