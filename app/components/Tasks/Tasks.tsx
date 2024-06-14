@@ -54,7 +54,7 @@ function Tasks({ title, tasks }: Props) {
 
 	// console.log("TASKS: ", tasks)
 	return (
-		<div className="tasks-container container">
+		<div className="tasks-container">
 			{modal && <Modal content={<CreateContent task={editedTask} />} />}
 			<h1>{title}</h1>
 
