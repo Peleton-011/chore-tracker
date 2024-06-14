@@ -17,36 +17,21 @@ interface Props {
 	color?: string;
 }
 
-function Button({
-	icon,
-	name,
-	background,
-	padding,
-	borderRad,
-	fw,
-	fs,
-	click,
-	type,
-	border,
-	color,
-}: Props) {
+function Button({ icon, name, click, type, border, color }: Props) {
 	return (
 		<button
 			className="button-module"
 			type={type}
 			style={{
-				background: background,
-				padding: padding || "0.5rem 1rem",
-				borderRadius: borderRad || "0.5rem",
-				fontWeight: fw || "500",
-				fontSize: fs,
 				border: border || "none",
 				color: color, //|| theme.colorGrey0,
 			}}
 			onClick={click}
 		>
-			{icon && icon}
-			{name}
+			<span>
+				{icon && icon}
+				{name}
+			</span>
 		</button>
 	);
 }

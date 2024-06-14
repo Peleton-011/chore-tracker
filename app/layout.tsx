@@ -29,10 +29,24 @@ export default function RootLayout({
 					/>
 				</head>
 				<body>
-					<ContextProvider>
-						{userId && <Sidebar />}
-						<div className="w-full">{children}</div>
-					</ContextProvider>
+					<main>
+						<ContextProvider>
+							<aside>{userId && <Sidebar />}</aside>
+							<div className="container-fluid">{children}</div>
+						</ContextProvider>
+					</main>
+					<footer>
+						<p>
+							Check out our{" "}
+							<a
+								href="https://github.com/Peleton-011/chore-tracker"
+								target="_blank"
+							>
+								GitHub repository{" "}
+								<i className="fab fa-github"></i>
+							</a>
+						</p>
+					</footer>
 				</body>
 			</html>
 		</ClerkProvider>

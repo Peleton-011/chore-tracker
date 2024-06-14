@@ -12,7 +12,7 @@ interface Props {
 }
 
 function Tasks({ title, tasks }: Props) {
-	const { theme, isLoading, openModal, modal } = useGlobalState();
+	const { isLoading, openModal, modal } = useGlobalState();
 
 	const [editedTask, setEditedTask] = useState({
 		id: "",

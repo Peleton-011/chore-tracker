@@ -2,20 +2,40 @@
 	$theme-color: "purple"
 );
 
+@use "@picocss/pico/scss/colors" as *;
+
 //Possible color choices: amber, azure, blue, cyan, fuchsia, green, grey, indigo, jade, lime, orange, pink, pumpkin, purple, red, sand, slate, violet, yellow, zinc
 
 @import "./themes.scss";
 
+body {
+	padding: 2.5rem;
+	gap: 2.5rem;
+	height: 100vh;
+
+	font-size: 17px;
+
+	height: 100vh;
+}
+
+main {
+	display: flex;
+	max-height: calc(100% - 1rem);
+}
+
+footer {
+	width: 100%;
+	margin: -0.75rem;
+	text-align: center;
+}
+
 .tasks-container {
 	position: relative;
-	padding: 2rem;
+	padding: 1rem;
 	width: 100%;
-	background-color: $default-color-bg2;
-	border: 2px solid $default-border-color2;
-	border-radius: 1rem;
-	height: 100%;
+	max-height: 100%;
 
-	overflow-y: auto;
+	overflow-y: scroll;
 
 	&::-webkit-scrollbar {
 		width: 0.5rem;
@@ -29,10 +49,9 @@
 		height: 3rem;
 		border-radius: 50%;
 
-		background-color: $default-color-bg;
 		border: 2px solid $default-border-color2;
 		box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
-		color: $default-color-grey2;
+		color: $default-color-grey0;
 		font-size: 1.4rem;
 
 		display: flex;
@@ -66,7 +85,7 @@
 			left: 0;
 			width: 3rem;
 			height: 0.2rem;
-			background-color: $default-color-primary-green;
+			background-color: $purple-600;
 			border-radius: 0.5rem;
 		}
 	}
@@ -77,12 +96,14 @@
 		justify-content: center;
 		gap: 0.5rem;
 
+		background-color: $purple-900;
+
 		height: 16rem;
-		color: $default-color-grey2;
+		color: $purple-400;
 		font-weight: 600;
 		cursor: pointer;
-		border-radius: 1rem;
-		border: 3px dashed $default-color-grey5;
+		border-radius: 0.5rem;
+		border: 3px dashed $purple-600;
 		transition: all 0.3s ease;
 
 		i {
@@ -91,7 +112,7 @@
 		}
 
 		&:hover {
-			background-color: $default-color-grey5;
+			background-color: $purple-800;
 			color: $default-color-grey0;
 		}
 	}
@@ -99,8 +120,8 @@
 
 .task-item {
 	padding: 1.2rem 1rem;
-	border-radius: 1rem;
-	background-color: $default-border-color2;
+	border-radius: 0.5rem;
+	background-color: rgba($color: $purple-900, $alpha: 0.5);
 	box-shadow: $default-shadow7;
 	border: 2px solid $default-border-color2;
 
@@ -138,7 +159,7 @@
 
 			i {
 				font-size: 1.4rem;
-				color: $default-color-grey2;
+				color: $purple-200;
 			}
 		}
 
@@ -146,16 +167,22 @@
 			margin-left: auto;
 		}
 
+		.edit,
+		.delete {
+			background: none;
+		}
+
 		.completed,
 		.incomplete {
 			display: inline-block;
 			padding: 0.4rem 1rem;
-			background: $default-color-danger;
-			border-radius: 30px;
+			background: $pumpkin-300;
+			color: $purple-800;
+			font-weight: 600;
 		}
 
 		.completed {
-			background: $default-color-green-dark !important;
+			background: $lime-300 !important;
 		}
 	}
 }
@@ -163,15 +190,14 @@
 .sidebar {
 	position: relative;
 	width: $default-sidebar-width;
-	background-color: $default-color-bg2;
-	border: 2px solid $default-border-color2;
-	border-radius: 1rem;
+	height: 100%;
 
 	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
 
-	color: $default-color-grey3;
+	flex-direction: column;
+
+	align-items: center;
+	justify-content: space-between;
 
 	@media screen and (max-width: 768px) {
 		position: fixed;
@@ -179,8 +205,11 @@
 		z-index: 100;
 
 		transition: all 0.3s cubic-bezier(0.53, 0.21, 0, 1);
-		//   transform: ${({ collapsed }) =>
-		// collapsed ? "translateX(-107%)" : "translateX(0)";
+
+		transform: translateX(0);
+		&.collapsed {
+			transform: translateX(-107%);
+		}
 
 		.toggle-nav {
 			display: block !important;
@@ -222,15 +251,14 @@
 	}
 
 	.profile {
-		margin: 1.5rem;
+		width: 100%;
 		padding: 1rem 0.8rem;
 		position: relative;
 
-		border-radius: 1rem;
-		cursor: pointer;
+        background-color: rgba($color: $purple-900, $alpha: 0.5);
 
+		cursor: pointer;
 		font-weight: 500;
-		color: $default-color-grey0;
 
 		display: flex;
 		align-items: center;
@@ -243,7 +271,6 @@
 			height: 100%;
 			backdrop-filter: blur(10px);
 			z-index: 0;
-			background: $default-color-bg3;
 			transition: all 0.55s linear;
 			border-radius: 1rem;
 			border: 2px solid $default-border-color2;
@@ -300,10 +327,12 @@
 	}
 
 	.nav-items {
+		width: 100%;
 		display: flex;
 		flex-direction: column;
 	}
 	.nav-item {
+		width: 100%;
 		position: relative;
 		padding: 0.8rem 1rem 0.9rem 2.1rem;
 		margin: 0.3rem 0;
@@ -320,7 +349,8 @@
 			top: 0;
 			width: 0;
 			height: 100%;
-			background-color: $default-active-nav-link-hover;
+			background-color: $purple-400;
+			opacity: 0.2;
 			z-index: 1;
 			transition: all 0.3s ease-in-out;
 		}
@@ -332,7 +362,7 @@
 			top: 0;
 			width: 0%;
 			height: 100%;
-			background-color: $default-color-green-dark;
+			background-color: $purple-600;
 
 			border-bottom-left-radius: 5px;
 			border-top-left-radius: 5px;
@@ -348,7 +378,7 @@
 		i {
 			display: flex;
 			align-items: center;
-			color: $default-color-icons;
+			color: $purple-400;
 		}
 
 		&:hover {
@@ -359,11 +389,11 @@
 	}
 
 	.active {
-		background-color: $default-active-nav-link;
+		background-color: $purple-900;
 
 		i,
 		a {
-			color: $default-color-icons2;
+			color: $purple-200;
 		}
 	}
 
@@ -372,23 +402,18 @@
 	}
 
 	> button {
+        width: 100%;
 		margin: 1.5rem;
 	}
 }
 
 .button-module {
 	position: relative;
-	display: flex;
-	align-items: center;
-	color: $default-color-grey2;
-	z-index: 5;
-	cursor: pointer;
-
 	transition: all 0.55s ease-in-out;
+	color: $purple-200;
 
 	i {
 		margin-right: 1rem;
-		color: $default-color-grey2;
 		font-size: 1.5rem;
 		transition: all 0.55s ease-in-out;
 	}
@@ -534,14 +559,3 @@
 // 		--background-end-rgb: 0, 0, 0;
 // 	}
 // }
-
-body {
-	padding: 2.5rem;
-	display: flex;
-	gap: 2.5rem;
-	height: 100%;
-
-	font-size: 17px;
-
-	height: 100vh;
-}

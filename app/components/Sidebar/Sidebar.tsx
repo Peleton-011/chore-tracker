@@ -10,7 +10,7 @@ import { UserButton, useClerk, useUser } from "@clerk/nextjs";
 import Button from "../Button/Button";
 
 function Sidebar() {
-	const { theme, collapsed, collapseMenu } = useGlobalState();
+	const { collapsed, collapseMenu } = useGlobalState();
 
 	const { signOut } = useClerk();
 
@@ -30,9 +30,7 @@ function Sidebar() {
 	};
 
 	return (
-		<nav className="sidebar" 
-            // style={{ "--theme": theme }} collapsed={collapsed}
-            >
+		<nav className={"sidebar" + (collapsed ? " collapsed" : "")}>
 			<button className="toggle-nav" onClick={collapseMenu}>
 				{collapsed ? bars : arrowLeft}
 			</button>
@@ -46,7 +44,7 @@ function Sidebar() {
 						alt="profile"
 					/>
 				</div>
-				<div className="user-btn absolute z-20 top-0 w-full h-full">
+				<div className="user-btn">
 					<UserButton />
 				</div>
 				<h1 className="capitalize">
@@ -73,21 +71,18 @@ function Sidebar() {
 				})}
 			</ul>
 
-
-			<div className="sign-out relative m-6">
-				<Button
-					name={"Sign Out"}
-					type={"submit"}
-					padding={"0.4rem 0.8rem"}
-					borderRad={"0.8rem"}
-					fw={"500"}
-					fs={"1.2rem"}
-					icon={logout}
-					click={() => {
-						signOut(() => router.push("/signin"));
-					}}
-				/>
-			</div>
+			<Button
+				name={"Sign Out"}
+				type={"submit"}
+				padding={"0.4rem 0.8rem"}
+				borderRad={"0.8rem"}
+				fw={"500"}
+				fs={"1.2rem"}
+				icon={logout}
+				click={() => {
+					signOut(() => router.push("/signin"));
+				}}
+			/>
 		</nav>
 	);
 }

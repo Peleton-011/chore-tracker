@@ -37,9 +37,9 @@ function TaskItem({
 	id,
 	editTask,
 }: Props) {
-	const { theme, deleteTask, updateTask } = useGlobalState();
+	const { deleteTask, updateTask } = useGlobalState();
 	return (
-		<div className="task-item">
+		<div className="task-item container">
 			<h1>
 				<span>{title}</span>{" "}
 				<span>{isImportant ? exclamation : ""}</span>
