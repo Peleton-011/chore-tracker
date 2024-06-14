@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-// import "../styles/global.css";
+import "../styles/globals.scss";
 import Sidebar from "./components/Sidebar/Sidebar";
 import ContextProvider from "./providers/ContextProvider";
 import { ClerkProvider, auth } from "@clerk/nextjs";
