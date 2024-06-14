@@ -3,7 +3,6 @@ import { useGlobalState } from "@/app/context/globalProvider";
 import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import styled from "styled-components";
 import Button from "../Button/Button";
 import { edit, add, plus } from "@/app/utils/Icons";
 
@@ -121,7 +120,7 @@ function CreateContent({
 	};
 
 	return (
-		<CreateContentStyled onSubmit={handleSubmit} theme={theme}>
+		<form onSubmit={handleSubmit} className="create-content-form">
 			<h1>{isUpdate ? "Update a Task" : "Create a Task"}</h1>
 			<div className="input-control">
 				<label htmlFor="title">Title</label>
@@ -162,27 +161,35 @@ function CreateContent({
 			</div>
 
 			<div className="input-control toggler">
-				<label htmlFor="completed">Toggle Complete</label>
-				<input
-					name="completed"
-					id="completed"
-					type="checkbox"
-					placeholder="Completed"
-					value={completed.toString()}
-					onChange={(e) => handleChange("completed", e.target.value)}
-				/>
+				<label htmlFor="completed">
+					Toggle Complete
+					<input
+						name="completed"
+						id="completed"
+						type="checkbox"
+						placeholder="Completed"
+						value={completed.toString()}
+						onChange={(e) =>
+							handleChange("completed", e.target.value)
+						}
+					/>
+				</label>
 			</div>
 
 			<div className="input-control toggler">
-				<label htmlFor="important">Toggle Important</label>
-				<input
-					name="important"
-					id="important"
-					type="checkbox"
-					placeholder="Important"
-					value={important.toString()}
-					onChange={(e) => handleChange("important", e.target.value)}
-				/>
+				<label htmlFor="important">
+					Toggle Important
+					<input
+						name="important"
+						id="important"
+						type="checkbox"
+						placeholder="Important"
+						value={important.toString()}
+						onChange={(e) =>
+							handleChange("important", e.target.value)
+						}
+					/>
+				</label>
 			</div>
 
 			<div className="submit-btn flex justify-end">
@@ -197,87 +204,8 @@ function CreateContent({
 					background={"rgb(0, 163, 255)"}
 				/>
 			</div>
-		</CreateContentStyled>
+		</form>
 	);
 }
-
-const CreateContentStyled = styled.form`
-	> h1 {
-		font-size: clamp(1.2rem, 5vw, 1.6rem);
-		font-weight: 600;
-	}
-
-	color: ${({ theme }) => theme.colorGrey1};
-
-	.input-control {
-		position: relative;
-		margin: 1.6rem 0;
-		font-weight: 500;
-
-		@media screen and (max-width: 450px) {
-			margin: 1rem 0;
-		}
-
-		label {
-			margin-bottom: 0.5rem;
-			display: inline-block;
-			font-size: clamp(0.9rem, 5vw, 1.2rem);
-
-			span {
-				color: ${({ theme }) => theme.colorGrey3};
-			}
-		}
-
-		input,
-		textarea {
-			width: 100%;
-			padding: 1rem;
-
-			resize: none;
-			background-color: ${({ theme }) => theme.colorGreyDark};
-			color: ${({ theme }) => theme.colorGrey2};
-			border-radius: 0.5rem;
-		}
-	}
-
-	.submit-btn button {
-		transition: all 0.35s ease-in-out;
-
-		@media screen and (max-width: 500px) {
-			font-size: 0.9rem !important;
-			padding: 0.6rem 1rem !important;
-
-			i {
-				font-size: 1.2rem !important;
-				margin-right: 0.5rem !important;
-			}
-		}
-
-		i {
-			color: ${({ theme }) => theme.colorGrey0};
-		}
-
-		&:hover {
-			background: ${({ theme }) => theme.colorPrimaryGreen} !important;
-			color: ${({ theme }) => theme.colorWhite} !important;
-		}
-	}
-
-	.toggler {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		cursor: pointer;
-
-		label {
-			flex: 1;
-		}
-
-		input {
-			width: initial;
-		}
-	}
-`;
 
 export default CreateContent;

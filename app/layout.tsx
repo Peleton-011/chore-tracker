@@ -1,17 +1,8 @@
 import type { Metadata } from "next";
-import { Nunito } from "next/font/google";
-import "./globals.css";
+import "../styles/globals.scss";
 import Sidebar from "./components/Sidebar/Sidebar";
-import GlobalStylesProvider from "./providers/GlobalStylesProvider";
 import ContextProvider from "./providers/ContextProvider";
 import { ClerkProvider, auth } from "@clerk/nextjs";
-// import mongooseConnection from "./utils/connect";
-// require('dotenv').config();
-
-
-// mongooseConnection()
-
-const nunito = Nunito({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -23,7 +14,6 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-
 	const { userId } = auth();
 
 	return (
@@ -38,13 +28,25 @@ export default function RootLayout({
 						referrerPolicy="no-referrer"
 					/>
 				</head>
-				<body className={nunito.className}>
-					<ContextProvider>
-						<GlobalStylesProvider>
-							{userId && <Sidebar />}
-							<div className="w-full">{children}</div>
-						</GlobalStylesProvider>
-					</ContextProvider>
+				<body>
+					<main>
+						<ContextProvider>
+							<aside>{userId && <Sidebar />}</aside>
+							<div className="container-fluid">{children}</div>
+						</ContextProvider>
+					</main>
+					<footer>
+						<span>
+							Check out our{" "}
+							<a
+								href="https://github.com/Peleton-011/chore-tracker"
+								target="_blank"
+							>
+								GitHub repository{" "}
+								<i className="fab fa-github"></i>
+							</a>
+						</span>
+					</footer>
 				</body>
 			</html>
 		</ClerkProvider>
