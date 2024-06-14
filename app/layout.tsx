@@ -36,7 +36,7 @@ export default function RootLayout({
 						</ContextProvider>
 					</main>
 					<footer>
-						<p>
+						<span>
 							Check out our{" "}
 							<a
 								href="https://github.com/Peleton-011/chore-tracker"
@@ -45,7 +45,7 @@ export default function RootLayout({
 								GitHub repository{" "}
 								<i className="fab fa-github"></i>
 							</a>
-						</p>
+						</span>
 					</footer>
 				</body>
 			</html>

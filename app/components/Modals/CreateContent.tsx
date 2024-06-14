@@ -161,27 +161,35 @@ function CreateContent({
 			</div>
 
 			<div className="input-control toggler">
-				<label htmlFor="completed">Toggle Complete</label>
-				<input
-					name="completed"
-					id="completed"
-					type="checkbox"
-					placeholder="Completed"
-					value={completed.toString()}
-					onChange={(e) => handleChange("completed", e.target.value)}
-				/>
+				<label htmlFor="completed">
+					Toggle Complete
+					<input
+						name="completed"
+						id="completed"
+						type="checkbox"
+						placeholder="Completed"
+						value={completed.toString()}
+						onChange={(e) =>
+							handleChange("completed", e.target.value)
+						}
+					/>
+				</label>
 			</div>
 
 			<div className="input-control toggler">
-				<label htmlFor="important">Toggle Important</label>
-				<input
-					name="important"
-					id="important"
-					type="checkbox"
-					placeholder="Important"
-					value={important.toString()}
-					onChange={(e) => handleChange("important", e.target.value)}
-				/>
+				<label htmlFor="important">
+					Toggle Important
+					<input
+						name="important"
+						id="important"
+						type="checkbox"
+						placeholder="Important"
+						value={important.toString()}
+						onChange={(e) =>
+							handleChange("important", e.target.value)
+						}
+					/>
+				</label>
 			</div>
 
 			<div className="submit-btn flex justify-end">

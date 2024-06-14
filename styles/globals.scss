@@ -8,6 +8,11 @@
 
 @import "./themes.scss";
 
+html {
+    width: 100vw;
+    overflow: hidden;
+}
+
 body {
 	padding: 2.5rem;
 	gap: 2.5rem;
@@ -16,6 +21,7 @@ body {
 	font-size: 17px;
 
 	height: 100vh;
+    width: 100vw;
 }
 
 main {
@@ -24,8 +30,9 @@ main {
 }
 
 footer {
+	position: absolute;
+	bottom: 0;
 	width: 100%;
-	margin: -0.75rem;
 	text-align: center;
 }
 
@@ -255,7 +262,7 @@ footer {
 		padding: 1rem 0.8rem;
 		position: relative;
 
-        background-color: rgba($color: $purple-900, $alpha: 0.5);
+		background-color: rgba($color: $purple-900, $alpha: 0.5);
 
 		cursor: pointer;
 		font-weight: 500;
@@ -402,7 +409,7 @@ footer {
 	}
 
 	> button {
-        width: 100%;
+		width: 100%;
 		margin: 1.5rem;
 	}
 }
@@ -412,10 +419,18 @@ footer {
 	transition: all 0.55s ease-in-out;
 	color: $purple-200;
 
+	display: flex;
+	justify-content: center;
+
 	i {
 		margin-right: 1rem;
 		font-size: 1.5rem;
 		transition: all 0.55s ease-in-out;
+	}
+
+	span {
+		display: flex;
+		align-items: center;
 	}
 
 	&:hover {
@@ -485,8 +500,11 @@ footer {
 		}
 
 		label {
+			width: 100%;
 			margin-bottom: 0.5rem;
-			display: inline-block;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
 			font-size: clamp(0.9rem, 5vw, 1.2rem);
 
 			span {
@@ -506,6 +524,22 @@ footer {
 		}
 	}
 
+	.toggler {
+		// display: flex;
+		// align-items: center;
+		// justify-content: space-between;
+
+		cursor: pointer;
+
+		label {
+			flex: 1;
+		}
+
+		input {
+			width: initial;
+		}
+	}
+
 	.submit-btn button {
 		transition: all 0.35s ease-in-out;
 
@@ -521,27 +555,6 @@ footer {
 
 		i {
 			color: $default-color-grey0;
-		}
-	}
-
-	&:hover {
-		background: $default-color-primary-green !important;
-		color: $default-color-white !important;
-	}
-
-	.toggler {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-
-		cursor: pointer;
-
-		label {
-			flex: 1;
-		}
-
-		input {
-			width: initial;
 		}
 	}
 }
