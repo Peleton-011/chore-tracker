@@ -13,11 +13,11 @@ function App({ userId, children }: props) {
 
 	return (
 		<>
-			{userId && !isMobile && <Sidebar />}
+			{userId && !isMobile && <Sidebar isMobile={isMobile} />}
 			<main>
 				<div className="container-fluid">{children}</div>
 			</main>
-			{userId && isMobile && <Sidebar />}
+			{userId && isMobile && <Sidebar isMobile={isMobile} />}
 		</>
 	);
 }

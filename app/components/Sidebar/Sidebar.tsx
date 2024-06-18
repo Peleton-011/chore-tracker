@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
-import { useGlobalState } from "../../context/globalProvider";
 import menu from "../../utils/menu";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-function Sidebar() {
-	const { collapsed, collapseMenu } = useGlobalState();
+interface props {
+	isMobile: boolean;
+}
 
+function Sidebar({ isMobile }: props) {
 	const router = useRouter();
 	const pathname = usePathname();
 
@@ -17,13 +18,15 @@ function Sidebar() {
 
 	return (
 		<nav className="sidebar">
-			<ul>
-				<li>
-					<Link href={menu[0].link}>
-						<h1>HouseHold Hero</h1>
-					</Link>
-				</li>
-			</ul>
+			{!isMobile && (
+				<ul>
+					<li>
+						<Link href={menu[0].link}>
+							<h1>HouseHold Hero</h1>
+						</Link>
+					</li>
+				</ul>
+			)}
 			<ul className="nav-items">
 				{menu.map((item) => {
 					const link = item.link;
@@ -37,8 +40,9 @@ function Sidebar() {
 								handleClick(link);
 							}}
 						>
-							{item.icon}
-							<Link href={link}>{item.title}</Link>
+							<Link href={link}>
+								{item.icon} {!isMobile && item.title}
+							</Link>
 						</li>
 					);
 				})}
