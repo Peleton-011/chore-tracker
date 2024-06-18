@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "../styles/globals.scss";
-import Sidebar from "./components/Sidebar/Sidebar";
 import ContextProvider from "./providers/ContextProvider";
 import { ClerkProvider, auth } from "@clerk/nextjs";
+import App from "./App";
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -30,10 +30,7 @@ export default function RootLayout({
 				</head>
 				<body>
 					<ContextProvider>
-						{userId && <Sidebar />}
-						<main>
-							<div className="container-fluid">{children}</div>
-						</main>
+						<App userId={userId} children={children} />
 					</ContextProvider>
 					{false && (
 						<footer>
