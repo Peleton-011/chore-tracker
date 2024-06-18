@@ -27,7 +27,7 @@ function Sidebar({ isMobile }: props) {
 					</li>
 				</ul>
 			)}
-			<ul className="nav-items">
+			<ul className={"nav-items " + (isMobile ? "mobile" : "")}>
 				{menu.map((item) => {
 					const link = item.link;
 					return (
