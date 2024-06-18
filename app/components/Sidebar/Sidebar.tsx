@@ -17,7 +17,7 @@ function Sidebar({ isMobile }: props) {
 	};
 
 	return (
-		<nav className={"sidebar " + (isMobile ? "mobile" : "")}>
+		<nav className="sidebar">
 			{!isMobile && (
 				<ul>
 					<li>

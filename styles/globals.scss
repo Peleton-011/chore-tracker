@@ -195,43 +195,43 @@ footer {
 	}
 }
 
-.sidebar.mobile {
-	.nav-items {
-		width: 100%;
-		display: flex;
-		justify-content: space-between;
-
-		font-size: 30px;
-
-		.nav-item {
+.sidebar {
+	@media screen and (max-width: 768px) {
+		.nav-items {
 			width: 100%;
 			display: flex;
-			justify-content: center;
+			justify-content: space-between;
 
-			&::after {
-				top: 100%;
-				bottom: 0;
-			}
+			font-size: 30px;
 
-			&::before {
-				top: 0;
-				bottom: 100%;
+			.nav-item {
+				width: 100%;
+				display: flex;
+				justify-content: center;
 
-				border-top-left-radius: 5px;
-				border-top-right-radius: 5px;
-			}
-
-			&:hover {
 				&::after {
-					height: 100%;
-					top: 0%;
+					top: 100%;
+					bottom: 0;
+				}
+
+				&::before {
+					top: 0;
+					bottom: 100%;
+
+					border-top-left-radius: 5px;
+					border-top-right-radius: 5px;
+				}
+
+				&:hover {
+					&::after {
+						height: 100%;
+						top: 0%;
+					}
 				}
 			}
 		}
 	}
-}
 
-.sidebar {
 	.nav-item {
 		position: relative;
 		cursor: pointer;
