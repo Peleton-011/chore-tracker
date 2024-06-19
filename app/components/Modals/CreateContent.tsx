@@ -122,77 +122,79 @@ function CreateContent({
 	return (
 		<form onSubmit={handleSubmit} className="create-content-form">
 			<h1>{isUpdate ? "Update a Task" : "Create a Task"}</h1>
-			<div className="input-control">
-				<label htmlFor="title">Title</label>
-				<input
-					name="title"
-					id="title"
-					type="text"
-					placeholder="Title"
-					value={title}
-					onChange={(e) => handleChange("title", e.target.value)}
-				/>
-			</div>
-
-			<div className="input-control">
-				<label htmlFor="description">Description</label>
-				<textarea
-					name="description"
-					id="description"
-					rows={4}
-					placeholder="Description"
-					value={description}
-					onChange={(e) =>
-						handleChange("description", e.target.value)
-					}
-				/>
-			</div>
-
-			<div className="input-control">
-				<label htmlFor="date">Date</label>
-				<input
-					name="date"
-					id="date"
-					type="text"
-					placeholder="Date"
-					value={date}
-					onChange={(e) => handleChange("date", e.target.value)}
-				/>
-			</div>
-
-			<div className="input-control toggler">
-				<label htmlFor="completed">
-					Toggle Complete
+			<div className="create-content-body grid">
+				<div className="input-control">
+					<label htmlFor="title">Title</label>
 					<input
-						name="completed"
-						id="completed"
-						type="checkbox"
-						placeholder="Completed"
-						value={completed.toString()}
+						name="title"
+						id="title"
+						type="text"
+						placeholder="Title"
+						value={title}
+						onChange={(e) => handleChange("title", e.target.value)}
+					/>
+				</div>
+
+				<div className="input-control">
+					<label htmlFor="date">Date</label>
+					<input
+						name="date"
+						id="date"
+						type="text"
+						placeholder="Date"
+						value={date}
+						onChange={(e) => handleChange("date", e.target.value)}
+					/>
+				</div>
+
+				<div className="input-control">
+					<label htmlFor="description">Description</label>
+					<textarea
+						name="description"
+						id="description"
+						rows={4}
+						placeholder="Description"
+						value={description}
 						onChange={(e) =>
-							handleChange("completed", e.target.value)
+							handleChange("description", e.target.value)
 						}
 					/>
-				</label>
-			</div>
+				</div>
+				<div className="toggler-group">
+					<div className="input-control toggler">
+						<label htmlFor="completed">
+							Toggle Complete
+							<input
+								name="completed"
+								id="completed"
+								type="checkbox"
+								placeholder="Completed"
+								value={completed.toString()}
+								onChange={(e) =>
+									handleChange("completed", e.target.value)
+								}
+							/>
+						</label>
+					</div>
 
-			<div className="input-control toggler">
-				<label htmlFor="important">
-					Toggle Important
-					<input
-						name="important"
-						id="important"
-						type="checkbox"
-						placeholder="Important"
-						value={important.toString()}
-						onChange={(e) =>
-							handleChange("important", e.target.value)
-						}
-					/>
-				</label>
+					<div className="input-control toggler">
+						<label htmlFor="important">
+							Toggle Important
+							<input
+								name="important"
+								id="important"
+								type="checkbox"
+								placeholder="Important"
+								value={important.toString()}
+								onChange={(e) =>
+									handleChange("important", e.target.value)
+								}
+							/>
+						</label>
+					</div>
+				</div>
 			</div>
-
-			<div className="submit-btn flex justify-end">
+			<div className="submit-btn">
 				<Button
 					type="submit"
 					name={isUpdate ? "Update Task" : "Create Task"}
