@@ -297,7 +297,7 @@ footer {
 		a,
 		i {
 			display: flex;
-            gap: .5rem;
+			gap: 0.5rem;
 			align-items: center;
 			// font-weight: 500;
 			transition: all 0.3s ease-in-out;
@@ -328,7 +328,11 @@ footer {
 	}
 
 	.btn-rounded {
-        margin: .5rem .5rem 0 .5rem;
+		margin: 0.5rem 0.5rem 0 0.5rem;
+
+		@media screen and (max-width: 768px) {
+			margin-top: 0;
+		}
 
 		box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
 		color: $default-color-grey0;
