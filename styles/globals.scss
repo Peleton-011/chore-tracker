@@ -31,22 +31,22 @@ body {
 
 main {
 	margin: 2.5rem;
-    margin-top: 0;
-    @media screen and (max-width: 768px) {
-        margin-top: 2.5rem;
-        margin-bottom: 0;
-    }
+	margin-top: 0;
+	@media screen and (max-width: 768px) {
+		margin-top: 2.5rem;
+		margin-bottom: 0;
+	}
 	display: flex;
 	flex-direction: column;
-    overflow-y: auto;
+	overflow-y: auto;
 	// max-height: calc(100% - 1rem);
 }
 
 .app-container {
 	height: 100vh;
-	flex: 1;
 	display: flex;
-	flex-direction: column;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 footer {
@@ -75,7 +75,7 @@ footer {
 		width: 3rem;
 		height: 3rem;
 		border-radius: 50%;
-        opacity: 1;
+		opacity: 1;
 
 		border: 2px solid $default-border-color2;
 		box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
