@@ -230,7 +230,7 @@ footer {
 		.btn-rounded {
 			height: 110%;
 			aspect-ratio: 1;
-            z-index: 100;
+			z-index: 100;
 			border-radius: 50%;
 			margin: 0 1rem;
 		}
@@ -448,7 +448,9 @@ footer {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: space-around;
+        justify-content: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	.toggler {
