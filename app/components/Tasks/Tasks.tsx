@@ -5,6 +5,7 @@ import { plus } from "@/app/utils/Icons";
 import CreateContent from "../Modals/CreateContent";
 import Modal from "../Modals/Modal";
 import TaskItem from "../TaskItem/TaskItem";
+import IconsDisplay from "@/app/utils/IconsDisplay";
 
 interface Props {
 	title: string;
@@ -17,6 +18,10 @@ function Tasks({ title, tasks }: Props) {
 	// console.log("TASKS: ", tasks)
 	return (
 		<div className="tasks-container">
+
+
+            <IconsDisplay />
+
 			{modal && <Modal content={<CreateContent task={editedTask} />} />}
 			<h1>{title}</h1>
 
