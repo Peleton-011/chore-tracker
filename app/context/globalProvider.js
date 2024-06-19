@@ -14,6 +14,15 @@ export const GlobalProvider = ({ children }) => {
 
 	const [tasks, setTasks] = useState([]);
 
+    const [editedTask, setEditedTask] = useState({
+		id: "",
+		title: "",
+		description: "",
+		date: "",
+		isCompleted: false,
+		isImportant: false,
+	});
+
 	const openModal = () => {
 		setModal(true);
 	};
@@ -24,6 +33,35 @@ export const GlobalProvider = ({ children }) => {
 
 	const collapseMenu = () => {
 		setCollapsed(!collapsed);
+	};
+
+    const resetEditedTask = () => {
+		setEditedTask({
+			id: "",
+			title: "",
+			description: "",
+			date: "",
+			isCompleted: false,
+			isImportant: false,
+		});
+	};
+
+	const createTask = () => {
+		resetEditedTask();
+		openModal();
+	};
+
+    const editTask = (task) => {
+		setEditedTask({
+			id: task.id,
+			title: task.title,
+			description: task.description,
+			date: task.date,
+			isCompleted: task.isCompleted,
+			isImportant: task.isImportant,
+		});
+
+		openModal();
 	};
 
 	const allTasks = async () => {
@@ -88,6 +126,9 @@ export const GlobalProvider = ({ children }) => {
 				closeModal,
 				collapsed,
 				collapseMenu,
+                editedTask,
+                editTask,
+                createTask,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>

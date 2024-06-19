@@ -12,55 +12,13 @@ interface Props {
 }
 
 function Tasks({ title, tasks }: Props) {
-	const { isLoading, openModal, modal } = useGlobalState();
-
-	const [editedTask, setEditedTask] = useState({
-		id: "",
-		title: "",
-		description: "",
-		date: "",
-		isCompleted: false,
-		isImportant: false,
-	});
-
-	const resetEditedTask = () => {
-		setEditedTask({
-			id: "",
-			title: "",
-			description: "",
-			date: "",
-			isCompleted: false,
-			isImportant: false,
-		});
-	};
-
-	const createTask = () => {
-		resetEditedTask();
-		openModal();
-	};
-
-	const editTask = (task: any) => {
-		setEditedTask({
-			id: task.id,
-			title: task.title,
-			description: task.description,
-			date: task.date,
-			isCompleted: task.isCompleted,
-			isImportant: task.isImportant,
-		});
-
-		openModal();
-	};
+	const { isLoading, modal, editedTask, createTask, editTask } = useGlobalState();
 
 	// console.log("TASKS: ", tasks)
 	return (
 		<div className="tasks-container">
 			{modal && <Modal content={<CreateContent task={editedTask} />} />}
 			<h1>{title}</h1>
-
-			<button className="btn-rounded" onClick={createTask}>
-				{plus}
-			</button>
 
 			<div className="tasks">
 				{tasks &&
