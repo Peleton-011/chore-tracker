@@ -32,7 +32,7 @@ function Sidebar({ isMobile }: props) {
 					}}
 				>
 					<Link href={link}>
-						{item.icon} {!isMobile && item.title}
+						{item.icon}{!isMobile && item.title}
 					</Link>
 				</li>
 			);

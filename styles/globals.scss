@@ -30,7 +30,7 @@ body {
 }
 
 main {
-	margin: 2.5rem;
+	margin: 2rem;
 	margin-top: 0;
 	@media screen and (max-width: 768px) {
 		margin-top: 2.5rem;
@@ -46,7 +46,9 @@ main {
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
+	@media screen and (max-width: 768px) {
+		justify-content: space-between;
+	}
 }
 
 footer {
@@ -236,7 +238,28 @@ footer {
 		}
 	}
 
+	//To make the h1 slimmer
+	h1 {
+		margin: 0 !important;
+	}
+
+	> :first-child {
+		margin-left: var(--pico-nav-element-spacing-horizontal) !important;
+
+		//To make the h1 slimmer
+		> :first-child {
+			padding-bottom: 0 !important;
+		}
+	}
+
+	> :last-child {
+		margin-right: calc(
+			2 * var(--pico-nav-element-spacing-horizontal)
+		) !important;
+	}
+
 	.nav-item {
+		height: 100%;
 		position: relative;
 		cursor: pointer;
 
@@ -271,16 +294,15 @@ footer {
 			border-bottom-right-radius: 5px;
 		}
 
-		a {
-			font-weight: 500;
-			transition: all 0.3s ease-in-out;
-			z-index: 2;
-			line-height: 0;
-		}
-
+		a,
 		i {
 			display: flex;
+            gap: .5rem;
 			align-items: center;
+			// font-weight: 500;
+			transition: all 0.3s ease-in-out;
+			// z-index: 2;
+			// line-height: 0;
 			color: $purple-400;
 		}
 
@@ -306,6 +328,8 @@ footer {
 	}
 
 	.btn-rounded {
+        margin: .5rem .5rem 0 .5rem;
+
 		box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
 		color: $default-color-grey0;
 		font-size: 1.4rem;
@@ -448,7 +472,7 @@ footer {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-        justify-content: center;
+		justify-content: center;
 		gap: 1rem;
 		margin-bottom: 1rem;
 	}
