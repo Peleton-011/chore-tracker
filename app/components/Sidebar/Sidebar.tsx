@@ -1,27 +1,16 @@
 "use client";
 import React from "react";
-import { useGlobalState } from "../../context/globalProvider";
-import Image from "next/image";
 import menu from "../../utils/menu";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { arrowLeft, bars, logout } from "@/app/utils/Icons";
-import { UserButton, useClerk, useUser } from "@clerk/nextjs";
-import Button from "../Button/Button";
+import { plus } from "@/app/utils/Icons";
+import { useGlobalState } from "@/app/context/globalProvider";
 
-function Sidebar() {
-	const { collapsed, collapseMenu } = useGlobalState();
+interface props {
+	isMobile: boolean;
+}
 
-	const { signOut } = useClerk();
-
-	const { user } = useUser();
-
-	const { firstName, lastName, imageUrl } = user || {
-		firstName: "Ipi",
-		lastName: "Bola",
-		imageUrl: "/../../public/avatar.png",
-	};
-
+function Sidebar({ isMobile }: props) {
 	const router = useRouter();
 	const pathname = usePathname();
 
@@ -29,60 +18,57 @@ function Sidebar() {
 		router.push(link);
 	};
 
-	return (
-		<nav className={"sidebar" + (collapsed ? " collapsed" : "")}>
-			<button className="toggle-nav" onClick={collapseMenu}>
-				{collapsed ? bars : arrowLeft}
-			</button>
-			<div className="profile">
-				<div className="profile-overlay"></div>
-				<div className="image">
-					<Image
-						width={70}
-						height={70}
-						src={imageUrl}
-						alt="profile"
-					/>
-				</div>
-				<div className="user-btn">
-					<UserButton />
-				</div>
-				<h1 className="capitalize">
-					{firstName} {lastName}
-				</h1>
-			</div>
-			<ul className="nav-items">
-				{menu.map((item) => {
-					const link = item.link;
-					return (
-						<li
-							key={item.id}
-							className={`nav-item ${
-								pathname === link ? "active" : ""
-							}`}
-							onClick={() => {
-								handleClick(link);
-							}}
-						>
-							{item.icon}
-							<Link href={link}>{item.title}</Link>
-						</li>
-					);
-				})}
-			</ul>
+	const { createTask } = useGlobalState();
 
-			<Button
-				name={"Sign Out"}
-				type={"submit"}
-				padding={"0.4rem 0.8rem"}
-				borderRad={"0.8rem"}
-				fw={"500"}
-				fs={"1.2rem"}
-				icon={logout}
-				click={() => {
-					signOut(() => router.push("/signin"));
-				}}
-			/>
+	const makeNavbarItems = (items: Array<any>) => {
+		return items.map((item) => {
+			const link = item.link;
+			return (
+				<li
+					key={item.id}
+					className={`nav-item ${pathname === link ? "active" : ""}`}
+					onClick={() => {
+						handleClick(link);
+					}}
+				>
+					<Link href={link}>
+						{item.icon}{!isMobile && item.title}
+					</Link>
+				</li>
+			);
+		});
+	};
+
+	return (
+		<nav className="sidebar">
+			{!isMobile && (
+				<ul>
+					<li>
+						<Link href={menu[0].link}>
+							<h1>HouseHold Hero</h1>
+						</Link>
+					</li>
+				</ul>
+			)}
+			<ul className="nav-items">
+				{makeNavbarItems(menu.slice(0, 2))}
+				{isMobile && (
+					<button className="btn-rounded" onClick={createTask}>
+						{plus}
+					</button>
+				)}
+				{makeNavbarItems(menu.slice(2))}
+
+				{!isMobile && (
+						<li className="nav-item">
+							<Link href="/about">About</Link>
+						</li>
+					) && (
+						<button className="btn-rounded" onClick={createTask}>
+							{plus}
+						</button>
+					)}
+			</ul>
 		</nav>
 	);
 }
