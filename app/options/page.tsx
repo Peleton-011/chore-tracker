@@ -5,7 +5,12 @@ import Tasks from "../components/Tasks/Tasks";
 
 function page() {
 	const { completedTasks } = useGlobalState();
-	return <Tasks title="Completed Tasks" tasks={completedTasks} />;
+	return (
+		<div>
+			<h1>Options</h1>
+			{false && <Tasks title="Completed Tasks" tasks={completedTasks} />}
+		</div>
+	);
 }
 
 export default page;

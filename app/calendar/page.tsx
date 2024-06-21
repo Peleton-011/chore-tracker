@@ -16,7 +16,7 @@ function page() {
 
 	return (
 		<div className="app">
-			<h1 className="text-center">React Calendar</h1>
+			<h1 className="text-center">Calendar</h1>
 			<div className="calendar-container">
 				<Calendar value={date} onChange={onChange} />
 			</div>
