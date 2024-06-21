@@ -3,27 +3,27 @@ import { list, calendar, users, gear } from "./Icons";
 const menu = [
   {
     id: 1,
-    title: "All Tasks",
+    title: "Tasks",
     icon: list,
     link: "/",
   },
   {
     id: 2,
-    title: "Important!",
+    title: "Calendar",
     icon: calendar,
-    link: "/important",
+    link: "/calendar",
   },
   {
     id: 3,
-    title: "Completed!",
+    title: "Household",
     icon: users,
-    link: "/completed",
+    link: "/household",
   },
   {
     id: 4,
-    title: "Do It Now",
+    title: "Options",
     icon: gear,
-    link: "/incomplete",
+    link: "/options",
   },
 ];
 

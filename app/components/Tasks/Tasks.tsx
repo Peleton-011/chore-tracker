@@ -20,7 +20,7 @@ function Tasks({ title, tasks }: Props) {
 		<div className="tasks-container">
 
 
-            <IconsDisplay />
+            {false && <IconsDisplay />}
 
 			{modal && <Modal content={<CreateContent task={editedTask} />} />}
 			<h1>{title}</h1>
