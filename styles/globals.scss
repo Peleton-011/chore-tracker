@@ -195,6 +195,9 @@ footer {
 
 .sidebar {
 	@media screen and (max-width: 768px) {
+		position: fixed;
+		bottom: 0;
+		width: 100%;
 		.nav-items {
 			width: 100%;
 			display: flex;
