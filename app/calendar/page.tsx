@@ -18,7 +18,7 @@ function page() {
 		<div className="app">
 			<h1 className="text-center">Calendar</h1>
 			<div className="calendar-container">
-				<Calendar value={date} onChange={onChange} />
+				<Calendar value={date} onChange={onChange} next2Label={null} prev2Label={null} />
 			</div>
 			<p className="text-center">
 				<span className="bold">Selected Date:</span>{" "}

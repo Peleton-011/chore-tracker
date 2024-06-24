@@ -8,32 +8,11 @@
 
 @import "./themes.scss";
 
-html {
-	width: 100vw;
-	height: 100vh;
-	overflow: hidden;
-}
-
-body {
-	gap: 2.5rem;
-	height: 100vh;
-
-	position: absolute;
-	top: 0;
-
-	flex: 1;
-
-	font-size: 17px;
-
-	height: 100vh;
-	width: 100vw;
-}
-
 main {
 	margin: 2rem;
 	margin-top: 0;
 	@media screen and (max-width: 768px) {
-		margin-top: 2.5rem;
+		margin-top: 2rem;
 		margin-bottom: 0;
 	}
 	display: flex;
@@ -43,7 +22,7 @@ main {
 }
 
 .app-container {
-	height: 100vh;
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 	@media screen and (max-width: 768px) {
@@ -54,6 +33,7 @@ main {
 footer {
 	position: absolute;
 	bottom: 0;
+	padding: 1rem;
 	width: 100%;
 	text-align: center;
 }
@@ -66,9 +46,16 @@ footer {
 
 	overflow-y: scroll;
 
+	//SCCROLLBAR STUFF vvvvvv
+
 	&::-webkit-scrollbar {
 		width: 0.5rem;
 	}
+
+	scrollbar-width: thin;
+	scrollbar-color: $purple-600 $purple-900;
+
+	//SCCROLLBAR STUFF ^^^^^^
 
 	.tasks {
 		margin: 2rem 0;
@@ -230,14 +217,16 @@ footer {
 					}
 				}
 			}
-		}
-
-		.btn-rounded {
-			height: 110%;
-			aspect-ratio: 1;
-			z-index: 100;
-			border-radius: 50%;
-			margin: 0 1rem;
+			.nav-new-task {
+				height: 110%;
+				margin: 0 1rem;
+				.btn-rounded {
+                    margin: -1rem;
+					aspect-ratio: 1;
+					z-index: 100;
+					border-radius: 50%;
+				}
+			}
 		}
 	}
 
@@ -331,12 +320,8 @@ footer {
 	}
 
 	.btn-rounded {
-		margin: 0.5rem 0.5rem 0 0.5rem;
-
-		@media screen and (max-width: 768px) {
-			margin-top: 0;
-		}
-
+		margin-bottom: calc(var(--pico-nav-link-spacing-vertical) * -1);
+		margin-top: calc(var(--pico-nav-link-spacing-vertical) * -0.5);
 		box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
 		color: $default-color-grey0;
 		font-size: 1.4rem;
@@ -344,11 +329,6 @@ footer {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-	}
-
-	> button {
-		width: 100%;
-		margin: 1.5rem;
 	}
 }
 
