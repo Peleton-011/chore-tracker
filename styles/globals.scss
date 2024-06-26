@@ -187,8 +187,6 @@ footer {
 		width: 100%;
 		.nav-items {
 			width: 100%;
-			display: flex;
-			justify-content: space-between;
 
 			font-size: 30px;
 
@@ -215,16 +213,6 @@ footer {
 						height: 100%;
 						top: 0%;
 					}
-				}
-			}
-			.nav-new-task {
-				height: 110%;
-				margin: 0 1rem;
-				.btn-rounded {
-                    margin: -1rem;
-					aspect-ratio: 1;
-					z-index: 100;
-					border-radius: 50%;
 				}
 			}
 		}
