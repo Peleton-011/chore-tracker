@@ -15,7 +15,7 @@ function page() {
 	const { importantTasks } = useGlobalState();
 	const [date, setDate] = useState<Value>(new Date());
 
-	const onChange = (date: Date | Date[]) => {
+	const onChange = (date: Value) => {
 		setDate(date);
 	};
 
@@ -27,7 +27,7 @@ function page() {
 			</div>
 			<p className="text-center">
 				<span className="bold">Selected Date:</span>{" "}
-				{date.toDateString()}
+				{date?.toString()}
 			</p>
 			{false && <Tasks title="Importent Tasks" tasks={importantTasks} />}
 		</div>
