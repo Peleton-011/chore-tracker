@@ -216,6 +216,15 @@ footer {
 				}
 			}
 		}
+		.nav-new-task {
+			width: 100%;
+            padding: 0.5rem;
+			.nav-add-button {
+				width: 100%;
+                margin: 0.75rem 0;
+                padding: calc(var(--pico-nav-element-spacing-vertical) - 0.25rem) var(--pico-nav-element-spacing-horizontal) ;
+			}
+		}
 	}
 
 	//To make the h1 slimmer
@@ -307,16 +316,21 @@ footer {
 		height: 0.3rem;
 	}
 
-	.btn-rounded {
-		margin-bottom: calc(var(--pico-nav-link-spacing-vertical) * -1);
-		margin-top: calc(var(--pico-nav-link-spacing-vertical) * -0.5);
-		box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
-		color: $default-color-grey0;
-		font-size: 1.4rem;
+	.nav-new-task {
+		width: 100%;
+		.nav-add-button {
+			width: 100%;
+			height: 100%;
+			margin-bottom: calc(var(--pico-nav-link-spacing-vertical) * -1);
+			margin-top: calc(var(--pico-nav-link-spacing-vertical) * -0.5);
+			box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+			color: $default-color-grey0;
+			font-size: 1.4rem;
 
-		display: flex;
-		align-items: center;
-		justify-content: center;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 }
 

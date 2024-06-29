@@ -55,7 +55,7 @@ function Sidebar({ isMobile }: props) {
 				{makeNavbarItems(menu.slice(0, 2))}
 				{isMobile && (
 					<li className="nav-new-task">
-						<button className="btn-rounded" onClick={createTask}>
+						<button className="nav-add-button" onClick={createTask}>
 							{plus}
 						</button>
 					</li>
@@ -67,9 +67,9 @@ function Sidebar({ isMobile }: props) {
 							<Link href="/about">About</Link>
 						</li>
 					) && (
-						<li className="nav-item">
+						<li className="nav-new-task">
 							<button
-								className="btn-rounded"
+								className="nav-add-button"
 								onClick={createTask}
 							>
 								{plus}
