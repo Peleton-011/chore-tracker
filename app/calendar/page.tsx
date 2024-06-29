@@ -6,9 +6,14 @@ import { useState } from "react";
 import Calendar from "react-calendar";
 import "@/styles/calendar.scss";
 
+
+type ValuePiece = Date | null;
+
+type Value = ValuePiece | [ValuePiece, ValuePiece];
+
 function page() {
 	const { importantTasks } = useGlobalState();
-	const [date, setDate] = useState<Date | Date[]>(new Date());
+	const [date, setDate] = useState<Value>(new Date());
 
 	const onChange = (date: Date | Date[]) => {
 		setDate(date);
