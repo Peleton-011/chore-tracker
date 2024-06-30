@@ -4,8 +4,15 @@ import { useGlobalState } from "@/app/context/globalProvider";
 import Tasks from "../components/Tasks/Tasks";
 
 function page() {
-	const { completedTasks } = useGlobalState();
-	return <Tasks title="Completed Tasks" tasks={completedTasks} />;
+	const { incompleteTasks } = useGlobalState();
+	return (
+		<div>
+			<h1>HouseHold</h1>
+			{false && (
+				<Tasks title="Incomplete Tasks" tasks={incompleteTasks} />
+			)}
+		</div>
+	);
 }
 
 export default page;

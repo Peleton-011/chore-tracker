@@ -1,29 +1,29 @@
-import { list, check, todo, home } from "./Icons";
+import { list, calendar, users, gear } from "./Icons";
 
 const menu = [
   {
     id: 1,
-    title: "All Tasks",
-    icon: home,
+    title: "Tasks",
+    icon: list,
     link: "/",
   },
   {
     id: 2,
-    title: "Important!",
-    icon: list,
-    link: "/important",
+    title: "Calendar",
+    icon: calendar,
+    link: "/calendar",
   },
   {
     id: 3,
-    title: "Completed!",
-    icon: check,
-    link: "/completed",
+    title: "Household",
+    icon: users,
+    link: "/household",
   },
   {
     id: 4,
-    title: "Do It Now",
-    icon: todo,
-    link: "/incomplete",
+    title: "Options",
+    icon: gear,
+    link: "/options",
   },
 ];
 
