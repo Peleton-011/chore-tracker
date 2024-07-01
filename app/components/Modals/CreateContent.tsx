@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import Button from "../Button/Button";
 import { edit, add, plus } from "@/app/utils/Icons";
+import Calendar from "react-calendar";
 
 function CreateContent({
 	task: {
@@ -18,7 +19,7 @@ function CreateContent({
 }: any) {
 	const [title, setTitle] = useState(argtitle || "");
 	const [description, setDescription] = useState(argdescription || "");
-	const [date, setDate] = useState(argdate || "");
+	const [date, setDate] = useState(argdate || new Date());
 	const [completed, setCompleted] = useState(argcompleted || false);
 	const [important, setImportant] = useState(argimportant || false);
 
@@ -136,18 +137,6 @@ function CreateContent({
 				</div>
 
 				<div className="input-control">
-					<label htmlFor="date">Date</label>
-					<input
-						name="date"
-						id="date"
-						type="text"
-						placeholder="Date"
-						value={date}
-						onChange={(e) => handleChange("date", e.target.value)}
-					/>
-				</div>
-
-				<div className="input-control">
 					<label htmlFor="description">Description</label>
 					<textarea
 						name="description"
@@ -158,6 +147,17 @@ function CreateContent({
 						onChange={(e) =>
 							handleChange("description", e.target.value)
 						}
+					/>
+				</div>
+				<div className="input-control">
+					<label htmlFor="date">Date</label>
+					<Calendar
+						onChange={(e) => handleChange("date", e)}
+						value={date}
+						name="date"
+						id="date"
+						next2Label={null}
+						prev2Label={null}
 					/>
 				</div>
 				<div className="toggler-group">
