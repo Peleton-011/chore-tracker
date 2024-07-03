@@ -9,7 +9,7 @@ const taskSchema = new Schema(
 	{
 		title: { type: String, required: true },
 		description: String,
-		date: { type: String, required: true },
+		date: { type: Date, required: true },
 		isCompleted: { type: Boolean, default: false },
 		isImportant: { type: Boolean, default: false },
 		userId: { type: String, required: true },

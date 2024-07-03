@@ -14,7 +14,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const [tasks, setTasks] = useState([]);
 
-    const [editedTask, setEditedTask] = useState({
+	const [editedTask, setEditedTask] = useState({
 		id: "",
 		title: "",
 		description: "",
@@ -35,7 +35,7 @@ export const GlobalProvider = ({ children }) => {
 		setCollapsed(!collapsed);
 	};
 
-    const resetEditedTask = () => {
+	const resetEditedTask = () => {
 		setEditedTask({
 			id: "",
 			title: "",
@@ -51,7 +51,7 @@ export const GlobalProvider = ({ children }) => {
 		openModal();
 	};
 
-    const editTask = (task) => {
+	const editTask = (task) => {
 		setEditedTask({
 			id: task.id,
 			title: task.title,
@@ -68,7 +68,10 @@ export const GlobalProvider = ({ children }) => {
 		setIsLoading(true);
 		try {
 			const res = await axios.get("/api/tasks");
-			setTasks(res.data);
+			const orderedTasks = res.data.sort((a, b) => {
+				return new Date(b.date) - new Date(a.date);
+			});
+			setTasks(orderedTasks);
 			setIsLoading(false);
 			console.log(res.data);
 		} catch (error) {
@@ -126,9 +129,9 @@ export const GlobalProvider = ({ children }) => {
 				closeModal,
 				collapsed,
 				collapseMenu,
-                editedTask,
-                editTask,
-                createTask,
+				editedTask,
+				editTask,
+				createTask,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
