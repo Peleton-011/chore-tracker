@@ -1,7 +1,7 @@
-import moment from "moment"
+import { format } from 'date-fns';
 
 const formatDate = (date) => {
-    return moment(date).format("DD/MM/YYYY");
+    return format(date, 'EEEE d/M yy');
 }
 
 export default formatDate
