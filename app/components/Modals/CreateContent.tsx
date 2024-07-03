@@ -23,6 +23,10 @@ function CreateContent({
 	const [completed, setCompleted] = useState(argcompleted || false);
 	const [important, setImportant] = useState(argimportant || false);
 
+	type ValuePiece = Date | null;
+
+	type Value = ValuePiece | [ValuePiece, ValuePiece];
+
 	const isUpdate =
 		!!id ||
 		!!argtitle ||
@@ -33,7 +37,7 @@ function CreateContent({
 
 	const { theme, allTasks, closeModal } = useGlobalState();
 
-	const handleChange = (key: string, value: string) => {
+	const handleChange = (key: string, value: string | Value) => {
 		switch (key) {
 			case "title":
 				setTitle(value);
@@ -154,8 +158,8 @@ function CreateContent({
 					<Calendar
 						onChange={(e) => handleChange("date", e)}
 						value={date}
-						name="date"
-						id="date"
+						// name="date"
+						// id="date"
 						next2Label={null}
 						prev2Label={null}
 					/>
