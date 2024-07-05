@@ -4,6 +4,8 @@ import { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+import dateTaskUtils from "../utils/dateTaskUtils";
+
 export const GlobalContext = createContext();
 export const GlobalUpdateContext = createContext();
 
@@ -13,6 +15,13 @@ export const GlobalProvider = ({ children }) => {
 	const [collapsed, setCollapsed] = useState(true);
 
 	const [tasks, setTasks] = useState([]);
+	const [filteredTasks, setFilteredTasks] = useState({
+		overdue: [],
+		today: [],
+		laterThisWeek: [],
+		laterThisMonth: [],
+		someday: [],
+	});
 
 	const [editedTask, setEditedTask] = useState({
 		id: "",
@@ -69,9 +78,18 @@ export const GlobalProvider = ({ children }) => {
 		try {
 			const res = await axios.get("/api/tasks");
 			const orderedTasks = res.data.sort((a, b) => {
-				return new Date(b.date) - new Date(a.date);
+				return new Date(a.date) - new Date(b.date);
 			});
 			setTasks(orderedTasks);
+
+            setFilteredTasks({
+                overdue: dateTaskUtils.overdue(orderedTasks),
+                today: dateTaskUtils.today(orderedTasks),
+                laterThisWeek: dateTaskUtils.laterThisWeek(orderedTasks),
+                laterThisMonth: dateTaskUtils.laterThisMonth(orderedTasks),
+                someday: dateTaskUtils.someday(orderedTasks),
+            });
+
 			setIsLoading(false);
 			console.log(res.data);
 		} catch (error) {
@@ -117,6 +135,7 @@ export const GlobalProvider = ({ children }) => {
 			value={{
 				tasks,
 				allTasks,
+                filteredTasks,
 				deleteTask,
 				isLoading,
 				completedTasks,
