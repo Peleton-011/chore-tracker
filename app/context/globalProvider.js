@@ -6,6 +6,18 @@ import toast from "react-hot-toast";
 
 import dateTaskUtils from "../utils/dateTaskUtils";
 
+// interface Household {
+//     _id: string;
+//     name: string;
+// }
+
+// interface GlobalContextProps {
+//     userId: string;
+//     households: Household[];
+//     fetchHouseholds: () => void;
+//     setUserId: (id: string) => void;
+// }
+
 export const GlobalContext = createContext();
 export const GlobalUpdateContext = createContext();
 
@@ -13,6 +25,26 @@ export const GlobalProvider = ({ children }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [modal, setModal] = useState(false);
 	const [collapsed, setCollapsed] = useState(true);
+
+	const [userId, setUserId] = useState(/*< string > */ ""); // Replace this with logic to get the current user's ID
+	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
+
+	useEffect(() => {
+		if (userId) {
+			fetchHouseholds();
+		}
+	}, [userId]);
+
+	const fetchHouseholds = async () => {
+		try {
+			const response = await axios.get(`/api/household`, {
+				params: { userId },
+			});
+			setHouseholds(response.data.households);
+		} catch (error) {
+			console.error("Failed to fetch households", error);
+		}
+	};
 
 	const [tasks, setTasks] = useState([]);
 	const [filteredTasks, setFilteredTasks] = useState({
@@ -82,13 +114,13 @@ export const GlobalProvider = ({ children }) => {
 			});
 			setTasks(orderedTasks);
 
-            setFilteredTasks({
-                overdue: dateTaskUtils.overdue(orderedTasks),
-                today: dateTaskUtils.today(orderedTasks),
-                laterThisWeek: dateTaskUtils.laterThisWeek(orderedTasks),
-                laterThisMonth: dateTaskUtils.laterThisMonth(orderedTasks),
-                someday: dateTaskUtils.someday(orderedTasks),
-            });
+			setFilteredTasks({
+				overdue: dateTaskUtils.overdue(orderedTasks),
+				today: dateTaskUtils.today(orderedTasks),
+				laterThisWeek: dateTaskUtils.laterThisWeek(orderedTasks),
+				laterThisMonth: dateTaskUtils.laterThisMonth(orderedTasks),
+				someday: dateTaskUtils.someday(orderedTasks),
+			});
 
 			setIsLoading(false);
 			console.log(res.data);
@@ -135,7 +167,7 @@ export const GlobalProvider = ({ children }) => {
 			value={{
 				tasks,
 				allTasks,
-                filteredTasks,
+				filteredTasks,
 				deleteTask,
 				isLoading,
 				completedTasks,
@@ -151,6 +183,11 @@ export const GlobalProvider = ({ children }) => {
 				editedTask,
 				editTask,
 				createTask,
+				userId,
+				setUserId,
+				households,
+				setHouseholds,
+				fetchHouseholds,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
