@@ -19,10 +19,4 @@ const TaskSchema = new Schema(
 	}
 );
 
-console.log("Bouta connecter");
-// const taskModel = /* mongoose.models.Task ? model("Task") :*/ model(
-// 	"Task",
-// 	taskSchema
-// );
-
 export default mongoose.models["Task"] || mongoose.model("Task", TaskSchema);
