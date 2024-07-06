@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import Task from "@/models/Task"; // Assuming you have a Task model defined
+import {Task} from "@/models/index"; // Assuming you have a Task model defined
 
 export async function DELETE(
 	req: Request,
