@@ -11,7 +11,7 @@ interface Household {
 }
 
 function page() {
-	const { userId, households, fetchHouseholds } = useGlobalState();
+	const { households, fetchHouseholds } = useGlobalState();
 	const [newHouseholdName, setNewHouseholdName] = useState("");
 	const [error, setError] = useState<string>("");
 
@@ -23,7 +23,6 @@ function page() {
 
 		try {
 			const response = await axios.post("/api/household", {
-				userId,
 				name: newHouseholdName,
 			});
 

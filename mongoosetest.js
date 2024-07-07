@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
-// Replace 'your_database_url' with your actual MongoDB connection string
-const uri =
-	"mongodb+srv://nico:uYF1MlqJmvWlRxck@mytasks.7l9kmdf.mongodb.net/MyTasks";
+const MONGODB_URI = process.argv[2];
 
-mongoose.connect(uri);
+if (!MONGODB_URI) {
+	throw new Error("MongoDB connection URI is not provided");
+}
+mongoose.connect(MONGODB_URI);
 
 const db = mongoose.connection;
 
@@ -28,8 +29,17 @@ const taskSchema = new Schema(
 	}
 );
 
+const HouseholdSchema = new Schema({
+	name: { type: String, required: true },
+	members: [{ type: Schema.Types.ObjectId, ref: "User" }],
+	tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
+	recurringTasks: [{ type: Schema.Types.ObjectId, ref: "RecurringTask" }],
+});
+
 console.log("Bouta connecter");
 const taskModel = model("Task", taskSchema);
+
+const householdModel = model("Household", HouseholdSchema);
 
 const createTask = async () => {
 	try {
@@ -49,9 +59,23 @@ const createTask = async () => {
 	}
 };
 
+const createHousehold = async () => {
+	try {
+		const household = await householdModel.create({
+			name: "My Household",
+			members: ["668a97a156b0ccfd0e0b5044"],
+		});
+		console.log("Household created:", household);
+		return household;
+	} catch (error) {
+		console.error("Error creating household:", error);
+		throw error;
+	}
+};
+
 (async () => {
 	try {
-		const task = await createTask();
+		const task = await createHousehold();
 		console.log(task);
 	} catch (error) {
 		console.error("Error:", error);

@@ -26,21 +26,13 @@ export const GlobalProvider = ({ children }) => {
 	const [modal, setModal] = useState(false);
 	const [collapsed, setCollapsed] = useState(true);
 
-	const [userId, setUserId] = useState(/*< string > */ ""); // Replace this with logic to get the current user's ID
 	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
-
-	useEffect(() => {
-		if (userId) {
-			fetchHouseholds();
-		}
-	}, [userId]);
 
 	const fetchHouseholds = async () => {
 		try {
-			const response = await axios.get(`/api/household`, {
-				params: { userId },
-			});
-			setHouseholds(response.data.households);
+			const response = await axios.get(`/api/household`);
+			console.log(response.data);
+			response.data.households && setHouseholds(response.data.households);
 		} catch (error) {
 			console.error("Failed to fetch households", error);
 		}
@@ -159,6 +151,7 @@ export const GlobalProvider = ({ children }) => {
 	const incompleteTasks = tasks.filter((task) => task.isCompleted === false);
 
 	useEffect(() => {
+		fetchHouseholds();
 		allTasks();
 	}, []);
 
@@ -183,8 +176,6 @@ export const GlobalProvider = ({ children }) => {
 				editedTask,
 				editTask,
 				createTask,
-				userId,
-				setUserId,
 				households,
 				setHouseholds,
 				fetchHouseholds,
