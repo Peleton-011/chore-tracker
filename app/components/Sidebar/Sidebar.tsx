@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { plus } from "@/app/utils/Icons";
 import { useGlobalState } from "@/app/context/globalProvider";
+import Profile from "../Profile/Profile";
 
 interface props {
 	isMobile: boolean;
@@ -76,6 +77,10 @@ function Sidebar({ isMobile }: props) {
 							</button>
 						</li>
 					)}
+
+                    <li>
+                        <Profile />
+                    </li>
 			</ul>
 		</nav>
 	);
