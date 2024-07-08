@@ -1,10 +1,9 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import mongooseConnection from "@/app/utils/connect";
 import { Household, User } from "@/models/index";
 import { auth } from "@clerk/nextjs";
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextRequest, res: NextResponse) {
 	try {
 		const user = await User.findOne({ userId: auth().userId }).populate(
 			"households"
@@ -20,7 +19,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
 	}
 }
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
+export async function POST(req: NextRequest, res: NextResponse) {
 	// return NextResponse.json({ ass: auth() });
 	const { name } = req.body;
 
