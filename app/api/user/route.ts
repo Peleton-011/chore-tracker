@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { User } from "@/models/index";
 import { auth } from "@clerk/nextjs";
 
-export default async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest, res: NextResponse) {
 	const { userId, email, username } = req.body;
 
 	try {
