@@ -3,7 +3,7 @@ import { User } from "@/models/index";
 import { auth } from "@clerk/nextjs";
 
 export async function POST(req: NextRequest, res: NextResponse) {
-	const { userId, email, username } = req.body;
+	const { userId, email, username } = await req.json();
 
 	try {
 		const existingUser = await User.findOne({ userId });

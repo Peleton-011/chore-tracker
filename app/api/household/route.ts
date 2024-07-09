@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
 export async function POST(req: NextRequest, res: NextResponse) {
 	// return NextResponse.json({ ass: auth() });
-	const { name } = req.body;
+	const { name } = await req.json();
 
 	try {
 		const user = await User.findOne({ userId: auth().userId });
