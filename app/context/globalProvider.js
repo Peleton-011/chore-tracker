@@ -4,6 +4,20 @@ import { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+import dateTaskUtils from "../utils/dateTaskUtils";
+
+// interface Household {
+//     _id: string;
+//     name: string;
+// }
+
+// interface GlobalContextProps {
+//     userId: string;
+//     households: Household[];
+//     fetchHouseholds: () => void;
+//     setUserId: (id: string) => void;
+// }
+
 export const GlobalContext = createContext();
 export const GlobalUpdateContext = createContext();
 
@@ -12,7 +26,26 @@ export const GlobalProvider = ({ children }) => {
 	const [modal, setModal] = useState(false);
 	const [collapsed, setCollapsed] = useState(true);
 
+	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
+
+	const fetchHouseholds = async () => {
+		try {
+			const response = await axios.get(`/api/household`);
+			console.log(response.data);
+			response.data.households && setHouseholds(response.data.households);
+		} catch (error) {
+			console.error("Failed to fetch households", error);
+		}
+	};
+
 	const [tasks, setTasks] = useState([]);
+	const [filteredTasks, setFilteredTasks] = useState({
+		overdue: [],
+		today: [],
+		laterThisWeek: [],
+		laterThisMonth: [],
+		someday: [],
+	});
 
 	const [editedTask, setEditedTask] = useState({
 		id: "",
@@ -69,9 +102,18 @@ export const GlobalProvider = ({ children }) => {
 		try {
 			const res = await axios.get("/api/tasks");
 			const orderedTasks = res.data.sort((a, b) => {
-				return new Date(b.date) - new Date(a.date);
+				return new Date(a.date) - new Date(b.date);
 			});
 			setTasks(orderedTasks);
+
+			setFilteredTasks({
+				overdue: dateTaskUtils.overdue(orderedTasks),
+				today: dateTaskUtils.today(orderedTasks),
+				laterThisWeek: dateTaskUtils.laterThisWeek(orderedTasks),
+				laterThisMonth: dateTaskUtils.laterThisMonth(orderedTasks),
+				someday: dateTaskUtils.someday(orderedTasks),
+			});
+
 			setIsLoading(false);
 			console.log(res.data);
 		} catch (error) {
@@ -109,6 +151,7 @@ export const GlobalProvider = ({ children }) => {
 	const incompleteTasks = tasks.filter((task) => task.isCompleted === false);
 
 	useEffect(() => {
+		fetchHouseholds();
 		allTasks();
 	}, []);
 
@@ -117,6 +160,7 @@ export const GlobalProvider = ({ children }) => {
 			value={{
 				tasks,
 				allTasks,
+				filteredTasks,
 				deleteTask,
 				isLoading,
 				completedTasks,
@@ -132,6 +176,9 @@ export const GlobalProvider = ({ children }) => {
 				editedTask,
 				editTask,
 				createTask,
+				households,
+				setHouseholds,
+				fetchHouseholds,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>

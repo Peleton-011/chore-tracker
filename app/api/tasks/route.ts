@@ -1,7 +1,6 @@
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import Task from "@/models/Task";
-
+import { Task } from "@/models/index";
 
 export async function POST(req: Request) {
 	try {
@@ -75,39 +74,39 @@ export async function GET() {
 }
 
 export async function PUT(req: Request) {
-    try {
-        const { userId } = auth();
-        if (!userId) {
-            return NextResponse.json({ error: "Unauthorized", status: 401 });
-        }
+	try {
+		const { userId } = auth();
+		if (!userId) {
+			return NextResponse.json({ error: "Unauthorized", status: 401 });
+		}
 
-        const updates = await req.json();
-        const { id, ...updateFields } = updates;
+		const updates = await req.json();
+		const { id, ...updateFields } = updates;
 
-        if (!id) {
-            return NextResponse.json({ error: "Missing task ID", status: 400 });
-        }
+		if (!id) {
+			return NextResponse.json({ error: "Missing task ID", status: 400 });
+		}
 
-        const task = await Task.findById(id);
+		const task = await Task.findById(id);
 
-        if (!task) {
-            return NextResponse.json({ error: "Task not found", status: 404 });
-        }
+		if (!task) {
+			return NextResponse.json({ error: "Task not found", status: 404 });
+		}
 
-        // Ensure that the task belongs to the user
-        if (task.userId.toString() !== userId) {
-            return NextResponse.json({ error: "Unauthorized", status: 401 });
-        }
+		// Ensure that the task belongs to the user
+		if (task.userId.toString() !== userId) {
+			return NextResponse.json({ error: "Unauthorized", status: 401 });
+		}
 
-        Object.keys(updateFields).forEach((key) => {
-            task[key] = updateFields[key];
-        });
+		Object.keys(updateFields).forEach((key) => {
+			task[key] = updateFields[key];
+		});
 
-        await task.save();
+		await task.save();
 
-        return NextResponse.json(task);
-    } catch (error) {
-        console.log("ERROR UPDATING TASK: ", error);
-        return NextResponse.json({ error: "Error updating task", status: 500 });
-    }
-};
+		return NextResponse.json(task);
+	} catch (error) {
+		console.log("ERROR UPDATING TASK: ", error);
+		return NextResponse.json({ error: "Error updating task", status: 500 });
+	}
+}

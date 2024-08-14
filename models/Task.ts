@@ -5,7 +5,7 @@ import mongooseConnection from "@/app/utils/connect";
 
 mongooseConnection();
 
-const taskSchema = new Schema(
+const TaskSchema = new Schema(
 	{
 		title: { type: String, required: true },
 		description: String,
@@ -19,10 +19,4 @@ const taskSchema = new Schema(
 	}
 );
 
-console.log("Bouta connecter");
-// const taskModel = /* mongoose.models.Task ? model("Task") :*/ model(
-// 	"Task",
-// 	taskSchema
-// );
-
-export default mongoose.models["Task"] || mongoose.model("Task", taskSchema);
+export default mongoose.models["Task"] || mongoose.model("Task", TaskSchema);

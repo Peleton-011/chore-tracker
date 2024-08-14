@@ -29,7 +29,7 @@ function page() {
 				<span className="bold">Selected Date:</span>{" "}
 				{date?.toString()}
 			</p>
-			{false && <Tasks title="Importent Tasks" tasks={importantTasks} />}
+			{false && <Tasks title="Importent Tasks" lists={importantTasks} />}
 		</div>
 	);
 }
