@@ -1,4 +1,4 @@
-import { authMiddleware, clerkMiddle } from "@clerk/nextjs/server";
+import { authMiddleware } from "@clerk/nextjs/server";
 // import { clerkMiddleware } from "./middleware/clerkMiddleware";
 import { NextRequest } from "next/server";
 

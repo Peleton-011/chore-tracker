@@ -8,7 +8,7 @@ function page() {
 	return (
 		<div>
 			<h1>Options</h1>
-			{false && <Tasks title="Completed Tasks" tasks={completedTasks} />}
+			{false && <Tasks title="Completed Tasks" lists={completedTasks} />}
 		</div>
 	);
 }
