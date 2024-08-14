@@ -14,6 +14,7 @@ interface TaskList {
 
 interface Props {
 	lists: TaskList[];
+    title: string;
 }
 
 function Tasks({ lists }: Props) {
