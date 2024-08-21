@@ -3,6 +3,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
+// import { useRouter } from "next/router";
 
 import dateTaskUtils from "../utils/dateTaskUtils";
 
@@ -22,11 +23,21 @@ export const GlobalContext = createContext();
 export const GlobalUpdateContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
+	// const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [modal, setModal] = useState(false);
 	const [collapsed, setCollapsed] = useState(true);
 
 	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
+	// const router = useRouter();
+// 
+	// useEffect(() => {
+		// console.log(router.pathname);
+	// }, [router.isReady]);
+// 
+	// useEffect(() => {
+		// console.log("changed");
+	// }, [error]);
 
 	const fetchHouseholds = async () => {
 		try {
@@ -35,6 +46,7 @@ export const GlobalProvider = ({ children }) => {
 			response.data.households && setHouseholds(response.data.households);
 		} catch (error) {
 			console.error("Failed to fetch households", error);
+			setError(error.message);
 		}
 	};
 
@@ -118,6 +130,7 @@ export const GlobalProvider = ({ children }) => {
 			console.log(res.data);
 		} catch (error) {
 			console.log(error);
+			setError(error.message);
 		}
 	};
 
@@ -179,6 +192,7 @@ export const GlobalProvider = ({ children }) => {
 				households,
 				setHouseholds,
 				fetchHouseholds,
+				error,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
