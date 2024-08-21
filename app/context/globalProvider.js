@@ -23,7 +23,7 @@ export const GlobalContext = createContext();
 export const GlobalUpdateContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
-	// const [error, setError] = useState(null);
+	const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const [modal, setModal] = useState(false);
 	const [collapsed, setCollapsed] = useState(true);
