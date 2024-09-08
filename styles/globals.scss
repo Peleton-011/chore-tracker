@@ -39,13 +39,58 @@ footer {
 	text-align: center;
 }
 
+.landing-page {
+	margin: 0;
+	.hero {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		padding-left: 5vw;
+		margin-top: 25vh;
+		.title,
+		.subtitle {
+			text-align: left;
+			width: 100%;
+		}
+
+		.title {
+			font-size: 7rem;
+		}
+
+		.subtitle {
+			.space {
+				
+                opacity: 0;
+			}
+			font-size: 2rem;
+		}
+	}
+
+	.buttons {
+		width: 100%;
+		padding-left: 5vw;
+		margin: 2rem;
+		> * {
+			width: 10rem;
+		}
+        .divide {
+            margin: 0 1rem;
+            font-size: 1.6rem;
+        }
+	}
+
+	height: 100%;
+}
+
 .no-tasks {
 	display: flex;
-    flex-direction: column;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-    width: 100%;
+	width: 100%;
 
 	background-color: $purple-900;
 
