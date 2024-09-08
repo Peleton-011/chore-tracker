@@ -17,6 +17,7 @@ const Profile = () => {
 
 	const { signOut } = useClerk();
 
+	return <UserButton />;
 	return (
 		<>
 			<div className="profile">
