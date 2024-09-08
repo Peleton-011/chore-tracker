@@ -14,7 +14,7 @@ interface TaskList {
 
 interface Props {
 	lists: TaskList[];
-    title?: string;
+	title?: string;
 }
 
 function Tasks({ lists }: Props) {
@@ -60,6 +60,13 @@ function Tasks({ lists }: Props) {
 					</>
 				);
 			})}
+
+			{lists.every((list) => list.tasks.length === 0) && (
+				<button onClick={createTask} className="no-tasks">
+					<h3>No Tasks Found :c</h3>
+					<div>Click here and add a new task to get started</div>
+				</button>
+			)}
 		</div>
 	);
 }

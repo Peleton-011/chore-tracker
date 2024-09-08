@@ -43,9 +43,11 @@ function Sidebar({ isMobile }: props) {
 
 	return (
 		<nav className="sidebar">
+			{isMobile && <Profile />}
 			{!isMobile && (
 				<ul>
-					<li>
+					<li className="title">
+						<Profile />
 						<Link href={menu[0].link}>
 							<h1>HouseHold Hero</h1>
 						</Link>
@@ -77,10 +79,6 @@ function Sidebar({ isMobile }: props) {
 							</button>
 						</li>
 					)}
-
-                    <li>
-                        <Profile />
-                    </li>
 			</ul>
 		</nav>
 	);
