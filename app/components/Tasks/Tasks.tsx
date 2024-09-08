@@ -62,12 +62,10 @@ function Tasks({ lists }: Props) {
 			})}
 
 			{lists.every((list) => list.tasks.length === 0) && (
-				<div className="no-tasks">
+				<button onClick={createTask} className="no-tasks">
 					<h3>No Tasks Found :c</h3>
-					<button onClick={createTask}>
-						Add a new task to get started
-					</button>
-				</div>
+					<div>Click here and add a new task to get started</div>
+				</button>
 			)}
 		</div>
 	);
