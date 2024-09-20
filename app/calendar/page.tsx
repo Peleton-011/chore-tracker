@@ -41,11 +41,11 @@ function page() {
 		});
 	}, [date]);
 
-	function getListTitle(date: Value) {
+	function getListTitle(date: Value | Date) {
 		if (date === null) {
 			return "Today";
 		}
-		if (isTomorrow(date)) {
+		if (isTomorrow(new Date(date?.toString()))) {
 			return "Tomorrow";
 		} else {
 			return formatDate(date);
