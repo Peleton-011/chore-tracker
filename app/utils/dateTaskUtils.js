@@ -8,6 +8,7 @@ import {
 	endOfWeek,
 	endOfMonth,
 	startOfToday,
+    endOfToday,
 	startOfDay,
 } from "date-fns";
 
@@ -32,7 +33,7 @@ export default {
 		return tasks.filter((task) => isToday(new Date(task.date)));
 	},
 	laterThisWeek: (tasks) => {
-		const today = startOfToday();
+		const today = endOfToday();
 		const startOfThisWeek = startOfWeek(today, { weekStartsOn: 1 }); // Assuming the week starts on Monday
 		const endOfThisWeek = endOfWeek(today, { weekStartsOn: 1 });
 
