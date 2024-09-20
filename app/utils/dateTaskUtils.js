@@ -2,8 +2,9 @@ import {
 	isToday,
 	isAfter,
 	isBefore,
+	isSameDay,
 	startOfWeek,
-    startOfMonth,
+	startOfMonth,
 	endOfWeek,
 	endOfMonth,
 	startOfToday,
@@ -11,6 +12,13 @@ import {
 } from "date-fns";
 
 export default {
+	//A function that takes in an array of tasks and a date and returns only those tasks that are due that day
+	onDay: (tasks, date) => {
+		return tasks.filter((task) => {
+			const taskDate = new Date(task.date);
+			return isSameDay(taskDate, date);
+		});
+	},
 	overdue: (tasks) => {
 		return tasks.filter((task) => {
 			const date = new Date(task.date);
