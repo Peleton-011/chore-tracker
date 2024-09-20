@@ -17,7 +17,7 @@ interface Props {
 	title?: string;
 }
 
-function Tasks({ lists }: Props) {
+function Tasks({ lists, title }: Props) {
 	const { isLoading, modal, editedTask, createTask, editTask } =
 		useGlobalState();
 
