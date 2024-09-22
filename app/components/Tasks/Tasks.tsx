@@ -6,6 +6,7 @@ import CreateContent from "../Modals/CreateContent";
 import Modal from "../Modals/Modal";
 import TaskItem from "../TaskItem/TaskItem";
 import IconsDisplay from "@/app/utils/IconsDisplay";
+import useDeviceType from "@/app/hooks/useDeviceType";
 
 interface TaskList {
 	title: string;
@@ -21,13 +22,15 @@ function Tasks({ lists, title }: Props) {
 	const { isLoading, modal, editedTask, createTask, editTask } =
 		useGlobalState();
 
+    const isMobile = useDeviceType();
+
 	lists = lists.filter((list) => list.tasks.length > 0);
 	// console.log("TASKS: ", tasks)
 	return (
 		<div className="tasks-container">
 			{false && <IconsDisplay />}
 
-			{modal && <Modal content={<CreateContent task={editedTask} />} />}
+			{modal && <Modal content={<CreateContent task={editedTask} isMobile={isMobile} />} />}
 
 			{lists.map(({ title, tasks }, index) => {
 				return (

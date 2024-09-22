@@ -16,6 +16,7 @@ function CreateContent({
 		completed: argcompleted,
 		important: argimportant,
 	},
+	isMobile,
 }: any) {
 	const [title, setTitle] = useState(argtitle || "");
 	const [description, setDescription] = useState(argdescription || "");
@@ -128,75 +129,34 @@ function CreateContent({
 		<form onSubmit={handleSubmit} className="create-content-form">
 			<h1>{isUpdate ? "Update a Task" : "Create a Task"}</h1>
 			<div className="create-content-body grid">
-				<div className="input-control">
-					<label htmlFor="title">Title</label>
-					<input
-						name="title"
-						id="title"
-						type="text"
-						placeholder="Title"
-						value={title}
-						onChange={(e) => handleChange("title", e.target.value)}
-					/>
-				</div>
+				{isMobile && (
+					<TitleInput title={title} handleChange={handleChange} />
+				)}
 
-				<div className="input-control">
-					<label htmlFor="description">Description</label>
-					<textarea
-						name="description"
-						id="description"
-						rows={4}
-						placeholder="Description"
-						value={description}
-						onChange={(e) =>
-							handleChange("description", e.target.value)
-						}
-					/>
-				</div>
-				<div className="input-control">
-					<label htmlFor="date">Date</label>
-					<Calendar
-						onChange={(e) => handleChange("date", e)}
-						value={date}
-						// name="date"
-						// id="date"
-						next2Label={null}
-						prev2Label={null}
-					/>
-				</div>
-				<div className="toggler-group">
-					<div className="input-control toggler">
-						<label htmlFor="completed">
-							Toggle Complete
-							<input
-								name="completed"
-								id="completed"
-								type="checkbox"
-								placeholder="Completed"
-								value={completed.toString()}
-								onChange={(e) =>
-									handleChange("completed", e.target.value)
-								}
-							/>
-						</label>
+				{!isMobile && (
+					<div className="input-control">
+						<TitleInput title={title} handleChange={handleChange} />
+						<ToggleInputs
+							completed={completed}
+							important={important}
+							handleChange={handleChange}
+						/>
 					</div>
+				)}
+				<DescriptionInput
+					description={description}
+					handleChange={handleChange}
+				/>
 
-					<div className="input-control toggler">
-						<label htmlFor="important">
-							Toggle Important
-							<input
-								name="important"
-								id="important"
-								type="checkbox"
-								placeholder="Important"
-								value={important.toString()}
-								onChange={(e) =>
-									handleChange("important", e.target.value)
-								}
-							/>
-						</label>
-					</div>
-				</div>
+				{isMobile && (
+					<ToggleInputs
+						completed={completed}
+						important={important}
+						handleChange={handleChange}
+					/>
+				)}
+
+				<DateInput date={date} handleChange={handleChange} isMobile={isMobile} />
 			</div>
 			<div className="submit-btn">
 				<Button
@@ -211,6 +171,89 @@ function CreateContent({
 				/>
 			</div>
 		</form>
+	);
+}
+
+function TitleInput({ title, handleChange }: any) {
+	return (
+		<div className="input-control">
+			<label htmlFor="title">Title</label>
+			<input
+				name="title"
+				id="title"
+				type="text"
+				placeholder="Title"
+				value={title}
+				onChange={(e) => handleChange("title", e.target.value)}
+			/>
+		</div>
+	);
+}
+function DescriptionInput({ description, handleChange }: any) {
+	return (
+		<div className="input-control">
+			<label htmlFor="description">Description</label>
+			<textarea
+				name="description"
+				id="description"
+				rows={4}
+				placeholder="Description"
+				value={description}
+				onChange={(e) => handleChange("description", e.target.value)}
+			/>
+		</div>
+	);
+}
+function DateInput({ date, handleChange, isMobile }: any) {
+	return (
+		<div className={"input-control " + (isMobile ? "" : "wide")}>
+			<label htmlFor="date">Date</label>
+			<Calendar
+				onChange={(e) => handleChange("date", e)}
+				value={date}
+				// name="date"
+				// id="date"
+				next2Label={null}
+				prev2Label={null}
+			/>
+		</div>
+	);
+}
+function ToggleInputs({ completed, important, handleChange }: any) {
+	return (
+		<div className="toggler-group">
+			<div className="input-control toggler">
+				<label htmlFor="completed">
+					Toggle Complete
+					<input
+						name="completed"
+						id="completed"
+						type="checkbox"
+						placeholder="Completed"
+						value={completed.toString()}
+						onChange={(e) =>
+							handleChange("completed", e.target.value)
+						}
+					/>
+				</label>
+			</div>
+
+			<div className="input-control toggler">
+				<label htmlFor="important">
+					Toggle Important
+					<input
+						name="important"
+						id="important"
+						type="checkbox"
+						placeholder="Important"
+						value={important.toString()}
+						onChange={(e) =>
+							handleChange("important", e.target.value)
+						}
+					/>
+				</label>
+			</div>
+		</div>
 	);
 }
 
