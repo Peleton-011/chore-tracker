@@ -61,8 +61,7 @@ footer {
 
 		.subtitle {
 			.space {
-				
-                opacity: 0;
+				opacity: 0;
 			}
 			font-size: 2rem;
 		}
@@ -75,10 +74,10 @@ footer {
 		> * {
 			width: 10rem;
 		}
-        .divide {
-            margin: 0 1rem;
-            font-size: 1.6rem;
-        }
+		.divide {
+			margin: 0 1rem;
+			font-size: 1.6rem;
+		}
 	}
 
 	height: 100%;
@@ -514,6 +513,7 @@ footer {
 	.create-content-body {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		gap: 1rem;
+        row-gap: 0;
 	}
 
 	color: $default-color-grey1;
@@ -523,6 +523,10 @@ footer {
 		margin: 1rem 0;
 		font-weight: 500;
 		width: 100%;
+
+		&.wide {
+			grid-column: span 2;
+		}
 
 		label {
 			width: 100%;
@@ -545,6 +549,10 @@ footer {
 			background-color: $default-color-grey-dark;
 			color: $default-color-grey2;
 			border-radius: 0.5rem;
+		}
+
+		textarea {
+			height: 75%;
 		}
 	}
 
