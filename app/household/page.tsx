@@ -26,11 +26,12 @@ function page() {
 				name: newHouseholdName,
 			});
 
-			if (response.status === 201) {
+			if (response.status === 201 || response.status === 200) {
 				fetchHouseholds(); // Refresh the households list
 				setNewHouseholdName("");
 			} else {
 				alert(response.data.error);
+				console.error(JSON.stringify(response, null, 2));
 			}
 		} catch (err) {
 			alert("Failed to create household");
