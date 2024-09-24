@@ -25,19 +25,29 @@ export const GlobalUpdateContext = createContext();
 export const GlobalProvider = ({ children }) => {
 	const [error, setError] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const [modal, setModal] = useState(false);
+	const [modal, setModal] = useState({ type: "none" });
 	const [collapsed, setCollapsed] = useState(true);
 
 	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
-	// const router = useRouter();
-// 
-	// useEffect(() => {
-		// console.log(router.pathname);
-	// }, [router.isReady]);
-// 
-	// useEffect(() => {
-		// console.log("changed");
-	// }, [error]);
+
+	const blankModels = {
+		none: {},
+		task: {
+			id: "",
+			title: "",
+			description: "",
+			date: "",
+			isCompleted: false,
+			isImportant: false,
+		},
+		household: {
+			id: "",
+			name: "",
+			members: [],
+			tasks: [],
+			recurringTasks: [],
+		},
+	};
 
 	const fetchHouseholds = async () => {
 		try {
@@ -59,54 +69,34 @@ export const GlobalProvider = ({ children }) => {
 		someday: [],
 	});
 
-	const [editedTask, setEditedTask] = useState({
-		id: "",
-		title: "",
-		description: "",
-		date: "",
-		isCompleted: false,
-		isImportant: false,
-	});
-
-	const openModal = () => {
-		setModal(true);
+	const openModal = (arg) => {
+		setModal({ ...arg, data: arg.data || blankModels[arg.type] });
 	};
 
 	const closeModal = () => {
-		setModal(false);
+		setModal({ type: "none" });
 	};
 
 	const collapseMenu = () => {
 		setCollapsed(!collapsed);
 	};
 
-	const resetEditedTask = () => {
-		setEditedTask({
-			id: "",
-			title: "",
-			description: "",
-			date: "",
-			isCompleted: false,
-			isImportant: false,
-		});
-	};
-
 	const createTask = () => {
-		resetEditedTask();
-		openModal();
+		openModal({ type: "task" });
 	};
 
 	const editTask = (task) => {
-		setEditedTask({
-			id: task.id,
-			title: task.title,
-			description: task.description,
-			date: task.date,
-			isCompleted: task.isCompleted,
-			isImportant: task.isImportant,
+		openModal({
+			type: "task",
+			data: {
+				id: task.id,
+				title: task.title,
+				description: task.description,
+				date: task.date,
+				isCompleted: task.isCompleted,
+				isImportant: task.isImportant,
+			},
 		});
-
-		openModal();
 	};
 
 	const allTasks = async () => {
@@ -163,6 +153,45 @@ export const GlobalProvider = ({ children }) => {
 	const importantTasks = tasks.filter((task) => task.isImportant === true);
 	const incompleteTasks = tasks.filter((task) => task.isCompleted === false);
 
+	const createHousehold = async () => {
+		openModal({ type: "household" });
+	};
+
+	const deleteHousehold = async (id) => {
+		try {
+			const res = await axios.delete(`/api/household/${id}`);
+			toast.success("Household deleted");
+			fetchHouseholds();
+		} catch (error) {
+			console.log(error);
+			toast.error("Something went wrong");
+		}
+	};
+
+	const updateHousehold = async (household) => {
+		try {
+			const res = await axios.put(`/api/household`, household);
+			toast.success("Household updated");
+			fetchHouseholds();
+		} catch (error) {
+			console.log(error);
+			toast.error("Something went wrong");
+		}
+	};
+
+	const editHousehold = (household) => {
+		openModal({
+			type: "household",
+			data: {
+				id: household.id,
+				name: household.name,
+				members: household.members,
+				tasks: household.tasks,
+				recurringTasks: household.recurringTasks,
+			},
+		});
+	};
+
 	useEffect(() => {
 		fetchHouseholds();
 		allTasks();
@@ -186,9 +215,12 @@ export const GlobalProvider = ({ children }) => {
 				closeModal,
 				collapsed,
 				collapseMenu,
-				editedTask,
 				editTask,
 				createTask,
+				createHousehold,
+				deleteHousehold,
+                updateHousehold,
+				editHousehold,
 				households,
 				setHouseholds,
 				fetchHouseholds,
