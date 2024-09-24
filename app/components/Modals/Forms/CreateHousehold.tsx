@@ -8,7 +8,7 @@ import { edit, add, plus } from "@/app/utils/Icons";
 import Calendar from "react-calendar";
 
 function CreateHousehold({
-	task: {
+	household: {
 		id,
 		name: argname,
 		members: argmembers,
@@ -18,7 +18,7 @@ function CreateHousehold({
 	isMobile,
 }: any) {
 	const [name, setName] = useState(argname || "");
-	const [members, setMembers] = useState(argmembers || []);
+	const [members, setMembers] = useState([...argmembers] || []);
 	const [tasks, setTasks] = useState(argtasks || []);
 	const [recurringTasks, setRecurringTasks] = useState(
 		argrecurringTasks || []
@@ -29,7 +29,7 @@ function CreateHousehold({
 	type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 	const isUpdate =
-		!!id || !!argname || !!argmembers || !!argtasks || !!argrecurringTasks;
+		!!id || !!argname || !!argmembers.length || !!argtasks.length || !!argrecurringTasks.length;
 
 	const { theme, fetchHouseholds, closeModal } = useGlobalState();
 
@@ -39,7 +39,7 @@ function CreateHousehold({
 				setName(value);
 				break;
 			case "members":
-				setMembers(value);
+				setMembers([value]);
 				break;
 			case "tasks":
 				setTasks(value);
@@ -79,7 +79,7 @@ function CreateHousehold({
 			} catch (error) {
 				console.log(error);
 				toast.error("Something went wrong");
-				console.log("ERROR UPDATING TASK: ", error);
+				console.log("ERROR UPDATING HOUSEHOLD: ", error);
 			}
 
 			return;
@@ -95,7 +95,7 @@ function CreateHousehold({
 		try {
 			// @ts-ignore
 			// const response = createTask(...task);
-			const response = await axios.post("/api/household", task);
+			const response = await axios.post("/api/household", household);
 
 			console.log(JSON.stringify(response));
 			// @ts-ignore
@@ -145,7 +145,7 @@ function TitleInput({ title, handleChange }: any) {
 				type="text"
 				placeholder="Title"
 				value={title}
-				onChange={(e) => handleChange("title", e.target.value)}
+				onChange={(e) => handleChange("name", e.target.value)}
 			/>
 		</div>
 	);

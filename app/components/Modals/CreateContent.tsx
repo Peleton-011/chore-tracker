@@ -18,7 +18,8 @@ const CreateContent = ({
 			{type === "task" ? (
 				<CreateTask task={content} isMobile={isMobile} />
 			) : type === "household" ? (
-				<CreateHousehold household={content} isMobile={isMobile} />
+				<CreateHousehold household={{...content, members: [...content.members]
+                }} isMobile={isMobile} />
 			) : null}
 		</>
 	);
