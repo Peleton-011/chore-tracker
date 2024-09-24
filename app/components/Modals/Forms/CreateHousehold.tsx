@@ -10,52 +10,43 @@ import Calendar from "react-calendar";
 function CreateHousehold({
 	task: {
 		id,
-		title: argtitle,
-		description: argdescription,
-		date: argdate,
-		completed: argcompleted,
-		important: argimportant,
+		name: argname,
+		members: argmembers,
+		tasks: argtasks,
+		recurringTasks: argrecurringTasks,
 	},
 	isMobile,
 }: any) {
-	const [title, setTitle] = useState(argtitle || "");
-	const [description, setDescription] = useState(argdescription || "");
-	const [date, setDate] = useState(argdate || new Date());
-	const [completed, setCompleted] = useState(argcompleted || false);
-	const [important, setImportant] = useState(argimportant || false);
+	const [name, setName] = useState(argname || "");
+	const [members, setMembers] = useState(argmembers || []);
+	const [tasks, setTasks] = useState(argtasks || []);
+	const [recurringTasks, setRecurringTasks] = useState(
+		argrecurringTasks || []
+	);
 
 	type ValuePiece = Date | null;
 
 	type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 	const isUpdate =
-		!!id ||
-		!!argtitle ||
-		!!argdescription ||
-		!!argdate ||
-		!!argcompleted ||
-		!!argimportant;
+		!!id || !!argname || !!argmembers || !!argtasks || !!argrecurringTasks;
 
-	const { theme, allTasks, closeModal } = useGlobalState();
+	const { theme, fetchHouseholds, closeModal } = useGlobalState();
 
 	const handleChange = (key: string, value: string | Value) => {
 		switch (key) {
-			case "title":
-				setTitle(value);
+			case "name":
+				setName(value);
 				break;
-			case "description":
-				setDescription(value);
+			case "members":
+				setMembers(value);
 				break;
-			case "date":
-				setDate(value);
+			case "tasks":
+				setTasks(value);
 				break;
-			case "completed":
-				setCompleted(!completed);
+			case "recurringTasks":
+				setRecurringTasks(value);
 				break;
-			case "important":
-				setImportant(!important);
-				break;
-
 			default:
 				break;
 		}
@@ -65,26 +56,25 @@ function CreateHousehold({
 		e.preventDefault();
 
 		if (isUpdate) {
-			const task = {
+			const household = {
 				id,
-				title,
-				description,
-				date,
-				completed,
-				important,
+				name,
+				members,
+				tasks,
+				recurringTasks,
 			};
 
 			try {
 				// @ts-ignore
 				// const response = updateTask(...task);
-				const response = await axios.put("/api/tasks", task);
+				const response = await axios.put("/api/household", household);
 				// @ts-ignore
 				if (response.data.error) {
 					// @ts-ignore
 					toast.error(response.data.error);
 				}
-				toast.success("Task updated successfully");
-				allTasks();
+				toast.success("Household updated successfully");
+				fetchHouseholds();
 				closeModal();
 			} catch (error) {
 				console.log(error);
@@ -95,18 +85,17 @@ function CreateHousehold({
 			return;
 		}
 
-		const task = {
-			title,
-			description,
-			date,
-			completed,
-			important,
+		const household = {
+			name,
+			members,
+			tasks,
+			recurringTasks,
 		};
 
 		try {
 			// @ts-ignore
 			// const response = createTask(...task);
-			const response = await axios.post("/api/tasks", task);
+			const response = await axios.post("/api/household", task);
 
 			console.log(JSON.stringify(response));
 			// @ts-ignore
@@ -115,57 +104,25 @@ function CreateHousehold({
 				toast.error(response.data.error);
 			}
 
-			toast.success("Task created successfully");
-			allTasks();
+			toast.success("Household created successfully");
+			fetchHouseholds();
 			closeModal();
 		} catch (error) {
 			console.log(error);
 			toast.error("Something went wrong");
-			console.log("ERROR CREATING TASK: ", error);
+			console.log("ERROR CREATING HOUSEHOLD: ", error);
 		}
 	};
-
 	return (
 		<form onSubmit={handleSubmit} className="create-content-form">
-			<h1>{isUpdate ? "Update a Task" : "Create a Task"}</h1>
+			<h1>{isUpdate ? "Update a Household" : "Create a Household"}</h1>
 			<div className="create-content-body grid">
-				{isMobile && (
-					<TitleInput title={title} handleChange={handleChange} />
-				)}
-
-				{!isMobile && (
-					<div className="input-control">
-						<TitleInput title={title} handleChange={handleChange} />
-						<ToggleInputs
-							completed={completed}
-							important={important}
-							handleChange={handleChange}
-						/>
-					</div>
-				)}
-				<DescriptionInput
-					description={description}
-					handleChange={handleChange}
-				/>
-
-				{isMobile && (
-					<ToggleInputs
-						completed={completed}
-						important={important}
-						handleChange={handleChange}
-					/>
-				)}
-
-				<DateInput
-					date={date}
-					handleChange={handleChange}
-					isMobile={isMobile}
-				/>
+				<TitleInput title={name} handleChange={handleChange} />
 			</div>
 			<div className="submit-btn">
-				<Button
+				<Buttons
 					type="submit"
-					name={isUpdate ? "Update Task" : "Create Task"}
+					name={isUpdate ? "Update Household" : "Create Household"}
 					icon={isUpdate ? edit : add}
 					padding={"0.8rem 2rem"}
 					borderRad={"0.8rem"}
