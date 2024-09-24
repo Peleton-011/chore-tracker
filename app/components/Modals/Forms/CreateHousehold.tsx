@@ -120,7 +120,7 @@ function CreateHousehold({
 				<TitleInput title={name} handleChange={handleChange} />
 			</div>
 			<div className="submit-btn">
-				<Buttons
+				<Button
 					type="submit"
 					name={isUpdate ? "Update Household" : "Create Household"}
 					icon={isUpdate ? edit : add}
