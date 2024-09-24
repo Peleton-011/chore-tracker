@@ -19,7 +19,7 @@ function App({ userId, children }: props) {
 		<div className="app-container">
 			{modal.type !== "none" && <Modal
 				content={
-					<CreateContent content={modal.data} type={modal.type} isMobile={isMobile} userId={userId} />
+					<CreateContent content={modal.data} type={modal.type} isMobile={isMobile} />
 				}
 			/>}
 			{userId && !isMobile && <Sidebar isMobile={isMobile} />}

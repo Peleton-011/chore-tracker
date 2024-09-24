@@ -18,7 +18,7 @@ function CreateHousehold({
 	isMobile,
 }: any) {
 	const [name, setName] = useState(argname || "");
-	const [members, setMembers] = useState([...argmembers] || []);
+	const [members, setMembers] = useState([...argmembers]);
 	const [tasks, setTasks] = useState(argtasks || []);
 	const [recurringTasks, setRecurringTasks] = useState(
 		argrecurringTasks || []
