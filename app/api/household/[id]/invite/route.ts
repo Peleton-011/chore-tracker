@@ -4,9 +4,13 @@ import { Invite, Household } from "@/models/index";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
-	const { householdId } = req.query;
+export async function POST(
+	req: Request,
+	{ params }: { params: { id: string } }
+) {
 
+    const { id: householdId } = params;
+    
 	try {
 		const household = await Household.findById(householdId);
 		if (!household) {
@@ -27,7 +31,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 		});
 		await invite.save();
 
-		const inviteLink = `${req.headers.origin}/invite/${token}`;
+		const inviteLink = `${req.headers.get("origin")}/invite/${token}`;
 
 		return NextResponse.json({ inviteLink, status: 201 });
 	} catch (error) {

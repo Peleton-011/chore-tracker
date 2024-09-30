@@ -192,6 +192,40 @@ export const GlobalProvider = ({ children }) => {
 		});
 	};
 
+	const generateInviteLink = async (householdId) => {
+		try {
+			const response = await axios.post(
+				`/api/household/${householdId}/invite`
+			);
+
+			return response.data.inviteLink;
+		} catch (err) {
+			alert("Failed to generate invite link: " + err);
+		}
+	};
+
+	const joinHousehold = async (token) => {
+		try {
+			console.log(token);
+			const response = await fetch(`/api/invite/${token}`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+			});
+
+			const data = await response.json();
+			if (response.ok) {
+				alert("User added to household");
+				// Optionally redirect to a dashboard or household page
+			} else {
+				alert(data.error);
+			}
+
+			fetchHouseholds();
+		} catch (err) {
+			alert("Failed to join household");
+		}
+	};
+
 	useEffect(() => {
 		fetchHouseholds();
 		allTasks();
@@ -219,11 +253,13 @@ export const GlobalProvider = ({ children }) => {
 				createTask,
 				createHousehold,
 				deleteHousehold,
-                updateHousehold,
+				updateHousehold,
 				editHousehold,
 				households,
 				setHouseholds,
 				fetchHouseholds,
+				generateInviteLink,
+				joinHousehold,
 				error,
 			}}
 		>

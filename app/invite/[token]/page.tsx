@@ -1,74 +1,54 @@
-"use client"; // Ensure that this is a client-side component
-import { useRouter } from "next/router";
+"use client"; // This ensures the component is client-side
+import { auth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
+import { useGlobalState } from "@/app/context/globalProvider";
 
 interface Household {
-  _id: string;
-  name: string;
+	_id: string;
+	name: string;
 }
 
 interface InviteResponse {
-  household: Household;
-  inviteToken: string;
-  error?: string;
+	household: Household;
+	inviteToken: string;
+	error?: string;
 }
 
-export default function InvitePage() {
-  const router = useRouter();
-  const { token } = router.query;
-  const [household, setHousehold] = useState<Household | null>(null);
-  const [error, setError] = useState<string>("");
-  const [userId, setUserId] = useState<string>("");
+// You receive params directly in the component when using the new app directory
+export default function page({ params }: { params: { token: string } }) {
+	const { joinHousehold } = useGlobalState();
+	const { token } = params; // Use params to get the token
+	// const [household, setHousehold] = useState<Household | null>(null);
+	// const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    if (!router.isReady) return; // Ensure router is ready before accessing `router.query`
+	// useEffect(() => {
+	// 	if (token) {
+	//         console.log(typeof token)
+	// 		fetch(`/api/invite/${token}`)
+	// 			.then((res) => res.json())
+	// 			.then((data: InviteResponse) => {
+	// 				if (data.error) {
+	// 					setError(data.error);
+	// 				} else {
+	// 					setHousehold(data.household);
+	// 				}
+	// 			})
+	// 			.catch((err) => setError("Failed to fetch invite details"));
+	// 	}
+	// }, [token]);
 
-    if (token) {
-      fetch(`/api/invite/${token}`)
-        .then((res) => res.json())
-        .then((data: InviteResponse) => {
-          if (data.error) {
-            setError(data.error);
-          } else {
-            setHousehold(data.household);
-          }
-        })
-        .catch((err) => setError("Failed to fetch invite details"));
-    }
-  }, [router.isReady, token]); // Wait for router to be ready before running the effect
+	// if (error) {
+	// 	return <div>{error}</div>;
+	// }
 
-  const joinHousehold = async () => {
-    try {
-      const response = await fetch(`/api/invite/${token}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
-      });
+	// if (!household) {
+	// 	return <div>Loading...</div>;
+	// }
 
-      const data = await response.json();
-      if (response.ok) {
-        alert("User added to household");
-        // Optionally redirect to a dashboard or household page
-      } else {
-        alert(data.error);
-      }
-    } catch (err) {
-      alert("Failed to join household");
-    }
-  };
-
-  if (error) {
-    return <div>{error}</div>;
-  }
-
-  if (!household) {
-    return <div>Loading...</div>;
-  }
-
-  return (
-    <div>
-      <h1>Join Household: {household.name}</h1>
-      <button onClick={joinHousehold}>Join Household</button>
-    </div>
-  );
+	return (
+		<div>
+			{/* <h1>Join Household: {household.name}</h1> */}
+			<button onClick={() => joinHousehold(token)}>Join Household</button>
+		</div>
+	);
 }
