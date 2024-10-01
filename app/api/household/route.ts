@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import mongooseConnection from "@/app/utils/connect";
 import { Household, User } from "@/models/index";
 import { auth } from "@clerk/nextjs";
-import { ObjectId } from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 
 export async function GET(req: NextRequest, res: NextResponse) {
 	try {
@@ -21,12 +21,15 @@ export async function GET(req: NextRequest, res: NextResponse) {
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
-	// return NextResponse.json({ ass: auth() });
-	const { name } = await req.json();
+	const session = await mongoose.startSession(); // Start a new session
+	session.startTransaction(); // Start a transaction
 
 	try {
-		const user = await User.findOne({ userId: auth().userId });
+		const { name } = await req.json();
+		const user = await User.findOne({ userId: auth().userId }).session(session); // Attach session to query
 		if (!user) {
+			await session.abortTransaction(); // Abort transaction if user not found
+			session.endSession(); // End the session
 			return NextResponse.json({ error: "User not found", status: 404 });
 		}
 
@@ -34,22 +37,33 @@ export async function POST(req: NextRequest, res: NextResponse) {
 			name,
 			members: [user._id],
 		});
-		await newHousehold.save();
+
+		await newHousehold.save({ session }); // Save with the transaction session
 
 		user.households.push(newHousehold._id);
-		await user.save();
+		await user.save({ session }); // Save with the transaction session
+
+		await session.commitTransaction(); // Commit the transaction if all goes well
+		session.endSession(); // End the session
 
 		return NextResponse.json({ household: newHousehold, status: 201 });
 	} catch (error) {
 		console.error(error);
+		await session.abortTransaction(); // Abort the transaction in case of an error
+		session.endSession(); // End the session
 		return NextResponse.json({ error: "Server error", status: 500 });
 	}
 }
 
 export async function PUT(req: NextRequest, res: NextResponse) {
+	const session = await mongoose.startSession(); // Start a new session
+	session.startTransaction(); // Start a transaction
+
 	try {
 		const { userId } = auth();
 		if (!userId) {
+			await session.abortTransaction();
+			session.endSession();
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
@@ -57,25 +71,30 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 		const { id, ...updateFields } = updates;
 
 		if (!id) {
+			await session.abortTransaction();
+			session.endSession();
 			return NextResponse.json({
 				error: "Missing household ID",
 				status: 400,
 			});
 		}
 
-		const household = await Household.findById(id);
+		const household = await Household.findById(id).session(session); // Attach session to the query
 
-		console.log(household);
 		if (!household) {
+			await session.abortTransaction();
+			session.endSession();
 			return NextResponse.json({
 				error: "Household not found",
 				status: 404,
 			});
 		}
 
-		const user = await User.findOne({ userId });
+		const user = await User.findOne({ userId }).session(session); // Attach session to the query
 
 		if (!user) {
+			await session.abortTransaction();
+			session.endSession();
 			return NextResponse.json({
 				error: "User not found",
 				status: 404,
@@ -87,22 +106,25 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 				.map((id: ObjectId) => id.toString())
 				.includes(user._id.toString())
 		) {
+			await session.abortTransaction();
+			session.endSession();
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
-
-		console.log(updateFields);
 
 		Object.keys(updateFields).forEach((key) => {
 			household[key] = updateFields[key];
 		});
 
-        console.log
+		await household.save({ session }); // Save the household with the transaction session
 
-		await household.save();
+		await session.commitTransaction(); // Commit the transaction
+		session.endSession(); // End the session
 
 		return NextResponse.json(household);
 	} catch (error) {
-		console.log("ERROR UPDATING HOUSEHOLD: ", error);
+		console.error("ERROR UPDATING HOUSEHOLD: ", error);
+		await session.abortTransaction(); // Abort the transaction in case of error
+		session.endSession(); // End the session
 		return NextResponse.json({
 			error: "Error updating household",
 			status: 500,
