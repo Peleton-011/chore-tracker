@@ -91,18 +91,13 @@ export async function POST(
 			});
 		}
 
-		console.log(household.members);
-		console.log(userId);
-		console.log(household.members.includes(user._id));
 
 		if (!household.members.includes(user._id)) {
 			household.members.push(user._id);
-			console.log(household.members);
 			await household.save();
 		}
 
 		if (!user.households.includes(household._id)) {
-            console.log(user.households);
 			user.households.push(household._id);
 			await user.save();
 		}
