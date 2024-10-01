@@ -20,7 +20,7 @@ export async function POST(
 			});
 		}
 
-		const token = crypto.randomBytes(20).toString("hex");
+		const token = crypto.randomBytes(3).toString("hex");
 		const expiresAt = new Date();
 		expiresAt.setDate(expiresAt.getDate() + 7);
 
