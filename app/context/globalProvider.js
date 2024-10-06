@@ -207,7 +207,7 @@ export const GlobalProvider = ({ children }) => {
 	const joinHousehold = async (token) => {
 		try {
 			console.log(token);
-			const response = await fetch(`/api/invite/${token}`, {
+			const response = await fetch(`/api/invites/${token}`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 			});

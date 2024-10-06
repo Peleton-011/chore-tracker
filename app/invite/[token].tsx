@@ -21,7 +21,7 @@ export default function InvitePage() {
 
 	useEffect(() => {
 		if (token) {
-			fetch(`/api/invite/${token}`)
+			fetch(`/api/invites/${token}`)
 				.then((res) => res.json())
 				.then((data: InviteResponse) => {
 					if (data.error) {
@@ -36,7 +36,7 @@ export default function InvitePage() {
 
 	const joinHousehold = async () => {
 		try {
-			const response = await fetch(`/api/invite/${token}`, {
+			const response = await fetch(`/api/invites/${token}`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ userId }),
