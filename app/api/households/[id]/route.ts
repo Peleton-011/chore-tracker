@@ -1,10 +1,7 @@
 import mongoose, { ObjectId } from "mongoose";
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import models from "@/models/index";
 import { getUser } from "@/app/utils/getUser";
-
-const { Household, User } = models;
+import { Household, User } from "@/models/index";
 
 export async function DELETE(
 	req: Request,
