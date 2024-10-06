@@ -30,7 +30,7 @@ export default function RootLayout({
 				</head>
 				<body>
 					<ContextProvider>
-						<App userId={userId} children={children} />
+						{userId && <App userId={userId} children={children} />}
 					</ContextProvider>
 				</body>
 			</html>
