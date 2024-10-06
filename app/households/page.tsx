@@ -14,21 +14,9 @@ interface Household {
 }
 
 function page() {
-	const { households, editHousehold, deleteHousehold, createHousehold } =
+	const { households, editHousehold, deleteHousehold, createHousehold, generateInviteLink } =
 		useGlobalState();
 	const [error, setError] = useState<string>("");
-
-	const generateInviteLink = async (householdId: string) => {
-		try {
-			const response = await axios.post(
-				`/api/household/${householdId}/invite`
-			);
-
-			alert(`Invite link: ${response.data.inviteLink}`);
-		} catch (err) {
-			alert("Failed to generate invite link: " + err);
-		}
-	};
 
 	return (
 		<div>
@@ -39,7 +27,7 @@ function page() {
 					<li key={household._id}>
 						{household.name}
 						<button
-							onClick={() => generateInviteLink(household._id)}
+							onClick={async () => console.log(await generateInviteLink(household._id))}
 						>
 							Generate Invite Link
 						</button>

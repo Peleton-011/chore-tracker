@@ -1,12 +1,16 @@
 import crypto from "crypto";
 import mongooseConnection from "@/app/utils/connect";
-import { Invite, Household } from "@/models/index";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
+import { Invite, Household } from "@/models/index";
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
-	const { householdId } = req.query;
+export async function POST(
+	req: Request,
+	{ params }: { params: { id: string } }
+) {
 
+    const { id: householdId } = params;
+    
 	try {
 		const household = await Household.findById(householdId);
 		if (!household) {
@@ -16,7 +20,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 			});
 		}
 
-		const token = crypto.randomBytes(20).toString("hex");
+		const token = crypto.randomBytes(3).toString("hex");
 		const expiresAt = new Date();
 		expiresAt.setDate(expiresAt.getDate() + 7);
 
@@ -27,7 +31,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
 		});
 		await invite.save();
 
-		const inviteLink = `${req.headers.origin}/invite/${token}`;
+		const inviteLink = `${req.headers.get("origin")}/invite/${token}`;
 
 		return NextResponse.json({ inviteLink, status: 201 });
 	} catch (error) {

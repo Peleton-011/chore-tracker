@@ -51,7 +51,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const fetchHouseholds = async () => {
 		try {
-			const response = await axios.get(`/api/household`);
+			const response = await axios.get(`/api/households`);
 			console.log(response.data);
 			response.data.households && setHouseholds(response.data.households);
 		} catch (error) {
@@ -159,7 +159,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const deleteHousehold = async (id) => {
 		try {
-			const res = await axios.delete(`/api/household/${id}`);
+			const res = await axios.delete(`/api/households/${id}`);
 			toast.success("Household deleted");
 			fetchHouseholds();
 		} catch (error) {
@@ -170,7 +170,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const updateHousehold = async (household) => {
 		try {
-			const res = await axios.put(`/api/household`, household);
+			const res = await axios.put(`/api/households`, household);
 			toast.success("Household updated");
 			fetchHouseholds();
 		} catch (error) {
@@ -190,6 +190,40 @@ export const GlobalProvider = ({ children }) => {
 				recurringTasks: household.recurringTasks,
 			},
 		});
+	};
+
+	const generateInviteLink = async (householdId) => {
+		try {
+			const response = await axios.post(
+				`/api/households/${householdId}/invites`
+			);
+
+			return response.data.inviteLink;
+		} catch (err) {
+			alert("Failed to generate invite link: " + err);
+		}
+	};
+
+	const joinHousehold = async (token) => {
+		try {
+			console.log(token);
+			const response = await fetch(`/api/invites/${token}`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+			});
+
+			const data = await response.json();
+			if (response.ok) {
+				alert("User added to household");
+				// Optionally redirect to a dashboard or household page
+			} else {
+				alert(data.error);
+			}
+
+			fetchHouseholds();
+		} catch (err) {
+			alert("Failed to join household");
+		}
 	};
 
 	useEffect(() => {
@@ -219,11 +253,13 @@ export const GlobalProvider = ({ children }) => {
 				createTask,
 				createHousehold,
 				deleteHousehold,
-                updateHousehold,
+				updateHousehold,
 				editHousehold,
 				households,
 				setHouseholds,
 				fetchHouseholds,
+				generateInviteLink,
+				joinHousehold,
 				error,
 			}}
 		>

@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "@/models/index";
-import { auth } from "@clerk/nextjs";
+import { getUser } from "@/app/utils/getUser";
+
+export async function GET() {
+	try {
+		const user = await getUser();
+		return NextResponse.json({ user, status: 200 });
+	} catch (error) {
+		console.error(error);
+		return NextResponse.json({ error: "Server error", status: 500 });
+	}
+}
 
 export async function POST(req: NextRequest, res: NextResponse) {
 	const { userId, email, username } = await req.json();
@@ -28,5 +38,4 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		console.error(error);
 		return NextResponse.json({ error: "Server error", status: 500 });
 	}
-	return NextResponse.json({ userId: auth().userId });
 }

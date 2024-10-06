@@ -7,7 +7,7 @@ import CreateContent from "./components/Modals/CreateContent";
 import { useGlobalState } from "@/app/context/globalProvider";
 
 interface props {
-	userId: any;
+	userId: string;
 	children: React.ReactNode;
 }
 
