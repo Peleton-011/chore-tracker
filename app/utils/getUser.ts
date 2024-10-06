@@ -1,10 +1,7 @@
 // utils/getUser.ts
-import models from "@/models/index";
 import mongoose from "mongoose";
 import { auth } from "@clerk/nextjs";
-
-const { User } = models;
-
+import { User } from "@/models/index";
 // Define a custom error for user not found
 class UserNotFoundError extends Error {
 	constructor(message: string) {
