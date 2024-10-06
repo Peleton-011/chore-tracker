@@ -1,11 +1,11 @@
-import mongoose, { Schema, model, InferSchemaType } from "mongoose";
-
+import mongoose from "mongoose";
+const { Schema, model } = mongoose;
 
 import mongooseConnection from "@/app/utils/connect";
 
 mongooseConnection();
 
-const taskSchema = new Schema(
+const TaskSchema = new Schema(
 	{
 		title: { type: String, required: true },
 		description: String,
@@ -19,6 +19,4 @@ const taskSchema = new Schema(
 	}
 );
 
-export type taskType = InferSchemaType<typeof taskSchema>;
-
-export default mongoose.models["Task"] || mongoose.model("Task", taskSchema);
+export default mongoose.models["Task"] || mongoose.model("Task", TaskSchema);
