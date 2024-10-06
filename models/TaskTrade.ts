@@ -1,16 +1,18 @@
-import mongoose from "mongoose";
-const { Schema, model } = mongoose;
+import mongoose, { Schema, model, InferSchemaType } from "mongoose";
+
 
 import mongooseConnection from "@/app/utils/connect";
 
 mongooseConnection();
 
-const TaskTradeSchema = new Schema({
+const taskTradeSchema = new Schema({
 	fromUser: { type: Schema.Types.ObjectId, ref: "User" },
 	toUser: { type: Schema.Types.ObjectId, ref: "User" },
 	task: { type: Schema.Types.ObjectId, ref: "Task" },
 	tradeDate: { type: Date, default: Date.now },
 });
 
+export type taskTradeType = InferSchemaType<typeof taskTradeSchema>;
+
 export default mongoose.models["TaskTrade"] ||
-	mongoose.model("TaskTrade", TaskTradeSchema);
+	mongoose.model("TaskTrade", taskTradeSchema);

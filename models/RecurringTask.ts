@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
-const { Schema, model } = mongoose;
+import mongoose, { Schema, model, InferSchemaType } from "mongoose";
+
 
 import mongooseConnection from "@/app/utils/connect";
 
 mongooseConnection();
 
-const RecurringTaskSchema = new Schema({
+const recurringTaskSchema = new Schema({
 	task: { type: Schema.Types.ObjectId, ref: "Task" },
 	frequency: {
 		type: String,
@@ -16,5 +16,7 @@ const RecurringTaskSchema = new Schema({
 	endDate: { type: Date },
 });
 
+export type recurringTaskType = InferSchemaType<typeof recurringTaskSchema>;
+
 export default mongoose.models["RecurringTask"] ||
-	mongoose.model("RecurringTask", RecurringTaskSchema);
+	mongoose.model("RecurringTask", recurringTaskSchema);
