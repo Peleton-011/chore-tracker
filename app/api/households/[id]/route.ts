@@ -1,7 +1,10 @@
 import mongoose, { ObjectId } from "mongoose";
 import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
-import { Household, User } from "@/models/index";
+import models from "@/models/index";
+import { getUser } from "@/app/utils/getUser";
+
+const { Household, User } = models;
 
 export async function DELETE(
 	req: Request,
@@ -12,11 +15,9 @@ export async function DELETE(
 
 	try {
 		const { id } = params;
-		const { userId } = auth();
+		const user = await getUser();
 
 		let household = await Household.findById(id as string).session(session); // Use session for transaction
-
-		const user = await User.findOne({ userId }).session(session); // Use session for transaction
 
 		if (!user) {
 			await session.abortTransaction(); // Abort if user is not found
@@ -27,7 +28,11 @@ export async function DELETE(
 			});
 		}
 
-		if (!household?.members.map((memberId: ObjectId) => memberId.toString()).includes(user._id.toString())) {
+		if (
+			!household?.members
+				.map((memberId: ObjectId) => memberId.toString())
+				.includes(user._id.toString())
+		) {
 			await session.abortTransaction(); // Abort if unauthorized
 			session.endSession();
 			return new NextResponse("Unauthorized", { status: 401 });
@@ -46,7 +51,9 @@ export async function DELETE(
 		}
 
 		// Remove household from user's households array
-		user.households.pull(household._id);
+		user.households = user.households.filter(
+			(_id: ObjectId) => _id.toString() !== household._id.toString()
+		);
 		await user.save({ session }); // Save using session
 
 		// Commit the transaction

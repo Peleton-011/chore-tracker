@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongooseConnection from "@/app/utils/connect";
 import { Household, User } from "@/models/index";
-import { auth } from "@clerk/nextjs";
 import mongoose, { ObjectId } from "mongoose";
+import { getUser } from "@/app/utils/getUser";
 
 export async function GET(req: NextRequest, res: NextResponse) {
 	try {
-		const user = await User.findOne({ userId: auth().userId }).populate(
-			"households"
-		);
+		const user = await getUser();
 		if (!user) {
 			return NextResponse.json({ error: "User not found", status: 404 });
 		}
@@ -26,7 +24,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 	try {
 		const { name } = await req.json();
-		const user = await User.findOne({ userId: auth().userId }).session(session); // Attach session to query
+        console.log(name)
+		const user = await getUser(); // Attach session to query
 		if (!user) {
 			await session.abortTransaction(); // Abort transaction if user not found
 			session.endSession(); // End the session
@@ -60,12 +59,7 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 	session.startTransaction(); // Start a transaction
 
 	try {
-		const { userId } = auth();
-		if (!userId) {
-			await session.abortTransaction();
-			session.endSession();
-			return NextResponse.json({ error: "Unauthorized", status: 401 });
-		}
+		const user = await getUser();
 
 		const updates = await req.json();
 		const { id, ...updateFields } = updates;
@@ -89,8 +83,6 @@ export async function PUT(req: NextRequest, res: NextResponse) {
 				status: 404,
 			});
 		}
-
-		const user = await User.findOne({ userId }).session(session); // Attach session to the query
 
 		if (!user) {
 			await session.abortTransaction();

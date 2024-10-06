@@ -1,11 +1,11 @@
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Task } from "@/models/index";
+import { getUser } from "@/app/utils/getUser";
 
 export async function POST(req: Request) {
 	try {
-		const { userId } = auth();
-		if (!userId) {
+		const user = await getUser();
+		if (!user) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
 			date,
 			isCompleted: completed,
 			isImportant: important,
-			userId,
+			user: user._id,
 		});
 
 		console.log(task);
@@ -58,13 +58,13 @@ export async function POST(req: Request) {
 
 export async function GET() {
 	try {
-		const { userId } = auth();
+		const user = await getUser();
 
-		if (!userId) {
+		if (!user) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
-		const tasks = await Task.find({ userId });
+		const tasks = await Task.find({ user: user._id });
 
 		return NextResponse.json(tasks);
 	} catch (error) {
@@ -75,8 +75,8 @@ export async function GET() {
 
 export async function PUT(req: Request) {
 	try {
-		const { userId } = auth();
-		if (!userId) {
+		const user = await getUser();
+		if (!user) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
@@ -94,7 +94,7 @@ export async function PUT(req: Request) {
 		}
 
 		// Ensure that the task belongs to the user
-		if (task.userId.toString() !== userId) {
+		if (task.user.toString() !== user._id.toString()) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 

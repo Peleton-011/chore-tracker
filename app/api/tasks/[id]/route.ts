@@ -1,17 +1,16 @@
-import mongoose from "mongoose";
-import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { Task } from "@/models/index"; // Assuming you have a Task model defined
+import { getUser } from "@/app/utils/getUser";
 
 export async function DELETE(
 	req: Request,
 	{ params }: { params: { id: string } }
 ) {
 	try {
-		const { userId } = auth();
-		const { id } = params;
+        const user = await getUser();
+        const { id } = params;
 
-		if (!userId) {
+		if (!user) {
 			return new NextResponse("Unauthorized", { status: 401 });
 		}
 

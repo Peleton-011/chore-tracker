@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import mongooseConnection from "@/app/utils/connect";
-import { Invite, Household } from "@/models/index";
 import { NextApiRequest, NextApiResponse } from "next";
 import { NextResponse } from "next/server";
+import { Invite, Household } from "@/models/index";
 
 export async function POST(
 	req: Request,

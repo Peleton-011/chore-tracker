@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import mongooseConnection from "@/app/utils/connect";
-import { Invite, Household, User } from "@/models/index";
-import { auth } from "@clerk/nextjs";
 import mongoose from "mongoose";
+import { Invite, Household } from "@/models/index";
+import { getUser } from "@/app/utils/getUser";
+
 
 export async function GET(
 	req: NextRequest,
@@ -62,7 +63,7 @@ export async function POST(
 
 	try {
 		const { token } = params;
-		const { userId } = auth();
+		const user = await getUser();
         console.log(token)
 
 		if (!token) {
@@ -92,7 +93,6 @@ export async function POST(
 		}
         
 		const household = await Household.findById(invite.household).session(session);
-        const user = await User.findOne({userId}).session(session);
 		if (!household) {
 			await session.abortTransaction();
 			session.endSession();
