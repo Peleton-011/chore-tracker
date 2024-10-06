@@ -15,9 +15,9 @@ const menu = [
   },
   {
     id: 3,
-    title: "Household",
+    title: "Households",
     icon: users,
-    link: "/household",
+    link: "/households",
   },
   {
     id: 4,

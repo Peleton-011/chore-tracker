@@ -67,7 +67,7 @@ function CreateHousehold({
 			try {
 				// @ts-ignore
 				// const response = updateTask(...task);
-				const response = await axios.put("/api/household", household);
+				const response = await axios.put("/api/households", household);
 				// @ts-ignore
 				if (response.data.error) {
 					// @ts-ignore
@@ -95,7 +95,7 @@ function CreateHousehold({
 		try {
 			// @ts-ignore
 			// const response = createTask(...task);
-			const response = await axios.post("/api/household", household);
+			const response = await axios.post("/api/households", household);
 
 			console.log(JSON.stringify(response));
 			// @ts-ignore

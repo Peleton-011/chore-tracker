@@ -51,7 +51,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const fetchHouseholds = async () => {
 		try {
-			const response = await axios.get(`/api/household`);
+			const response = await axios.get(`/api/households`);
 			console.log(response.data);
 			response.data.households && setHouseholds(response.data.households);
 		} catch (error) {
@@ -159,7 +159,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const deleteHousehold = async (id) => {
 		try {
-			const res = await axios.delete(`/api/household/${id}`);
+			const res = await axios.delete(`/api/households/${id}`);
 			toast.success("Household deleted");
 			fetchHouseholds();
 		} catch (error) {
@@ -170,7 +170,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const updateHousehold = async (household) => {
 		try {
-			const res = await axios.put(`/api/household`, household);
+			const res = await axios.put(`/api/households`, household);
 			toast.success("Household updated");
 			fetchHouseholds();
 		} catch (error) {
@@ -195,7 +195,7 @@ export const GlobalProvider = ({ children }) => {
 	const generateInviteLink = async (householdId) => {
 		try {
 			const response = await axios.post(
-				`/api/household/${householdId}/invite`
+				`/api/households/${householdId}/invites`
 			);
 
 			return response.data.inviteLink;
