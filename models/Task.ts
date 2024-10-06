@@ -12,7 +12,7 @@ const TaskSchema = new Schema(
 		date: { type: Date, required: true },
 		isCompleted: { type: Boolean, default: false },
 		isImportant: { type: Boolean, default: false },
-		userId: { type: String, required: true },
+		user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 	},
 	{
 		timestamps: true, // adds createdAt and updatedAt fields automatically
