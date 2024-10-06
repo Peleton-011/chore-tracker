@@ -6,7 +6,7 @@ import { getUser } from "@/app/utils/getUser";
 
 export async function GET(req: NextRequest, res: NextResponse) {
 	try {
-		const user = await getUser();
+		const user = await (await getUser()).populate("households");
 		if (!user) {
 			return NextResponse.json({ error: "User not found", status: 404 });
 		}
