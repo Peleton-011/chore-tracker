@@ -1,11 +1,18 @@
-import mongoose, { Schema, model, InferSchemaType } from "mongoose";
-
+import mongoose, { Schema, model } from "mongoose";
 
 import mongooseConnection from "@/app/utils/connect";
 
 mongooseConnection();
 
-const inviteSchema = new Schema({
+interface IInvite {
+	token: string;
+	household: Schema.Types.ObjectId;
+	expiresAt: Date;
+}
+
+export interface IInviteDocument extends IInvite, mongoose.Document {}
+
+const inviteSchema = new Schema<IInvite>({
 	token: { type: String, required: true, unique: true },
 	household: {
 		type: Schema.Types.ObjectId,
@@ -14,8 +21,6 @@ const inviteSchema = new Schema({
 	},
 	expiresAt: { type: Date, required: true },
 });
-
-export type inviteType = InferSchemaType<typeof inviteSchema>;
 
 export default mongoose.models["Invite"] ||
 	mongoose.model("Invite", inviteSchema);

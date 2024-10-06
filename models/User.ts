@@ -1,10 +1,20 @@
-import mongoose, { Schema, model, InferSchemaType } from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 
 import mongooseConnection from "@/app/utils/connect";
 
 mongooseConnection();
 
-const userSchema = new Schema({
+interface IUser {
+	username: String;
+	email: String;
+	// password: String,
+	households: Schema.Types.ObjectId[];
+	userId: String;
+}
+
+export interface IUserDocument extends IUser, mongoose.Document {}
+
+const userSchema: Schema<IUserDocument> = new Schema({
 	username: { type: String, required: true },
 	email: { type: String, required: true, unique: true },
 	// password: { type: String, required: true },
@@ -12,6 +22,8 @@ const userSchema = new Schema({
 	userId: { type: String, required: true, unique: true },
 });
 
-export type userType = InferSchemaType<typeof userSchema>;
+const User: Model<IUserDocument> =
+	mongoose.models["User"] ||
+	mongoose.model<IUserDocument>("User", userSchema);
 
-export default mongoose.models["User"] || model("User", userSchema);
+export default User;
