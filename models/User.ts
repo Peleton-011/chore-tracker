@@ -8,7 +8,7 @@ interface IUser {
 	username: String;
 	email: String;
 	// password: String,
-	households: mongoose.Types.ObjectId[];
+	households: Schema.Types.ObjectId[];
 	userId: String;
 }
 
