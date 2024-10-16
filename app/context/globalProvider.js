@@ -226,6 +226,16 @@ export const GlobalProvider = ({ children }) => {
 		}
 	};
 
+    const fetchHouseholdFromToken = async (token) => {
+        try {
+            const response = await fetch(`/api/invites/${token}`);
+            const data = await response.json();
+            return data.household;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
 	useEffect(() => {
 		fetchHouseholds();
 		allTasks();
@@ -260,6 +270,7 @@ export const GlobalProvider = ({ children }) => {
 				fetchHouseholds,
 				generateInviteLink,
 				joinHousehold,
+                fetchHouseholdFromToken,
 				error,
 			}}
 		>
