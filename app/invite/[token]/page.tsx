@@ -3,13 +3,9 @@ import { auth } from "@clerk/nextjs";
 import { use, useEffect, useState } from "react";
 import { useGlobalState } from "@/app/context/globalProvider";
 
-interface Household {
-	_id: string;
-	name: string;
-}
 
 interface InviteResponse {
-	household: Household;
+	household: any;
 	inviteToken: string;
 	error?: string;
 }
@@ -19,7 +15,7 @@ export default function page({ params }: { params: { token: string } }) {
 	const { joinHousehold, fetchHouseholdFromToken } = useGlobalState();
 	const { token } = params; // Use params to get the token
 
-	const [household, setHousehold] = useState<Household>();
+	const [household, setHousehold] = useState();
 
 	//Fetch household from token (async)
 	useEffect(() => {
@@ -39,6 +35,9 @@ export default function page({ params }: { params: { token: string } }) {
 			<h1>
 				You've been invited to join <i><u>{household.name}</u></i>!
 			</h1>
+            {
+                household.description && <p>{household.description}</p>
+            }
 			<button onClick={() => joinHousehold(token)}>Join Household</button>
 		</div>
 	);
