@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useGlobalState } from "@/app/context/globalProvider";
 import axios from "axios";
 import { edit } from "../utils/Icons";
+import { useRouter } from "next/navigation";
 
 interface Household {
 	_id: string;
@@ -14,9 +15,15 @@ interface Household {
 }
 
 function page() {
-	const { households, editHousehold, deleteHousehold, createHousehold, generateInviteLink } =
-		useGlobalState();
+	const {
+		households,
+		editHousehold,
+		deleteHousehold,
+		createHousehold,
+		generateInviteLink,
+	} = useGlobalState();
 	const [error, setError] = useState<string>("");
+	const router = useRouter();
 
 	return (
 		<div>
@@ -27,7 +34,11 @@ function page() {
 					<li key={household._id}>
 						{household.name}
 						<button
-							onClick={async () => console.log(await generateInviteLink(household._id))}
+							onClick={async () =>
+								console.log(
+									await generateInviteLink(household._id)
+								)
+							}
 						>
 							Generate Invite Link
 						</button>
@@ -48,6 +59,7 @@ function page() {
 						<button onClick={() => deleteHousehold(household._id)}>
 							Delete
 						</button>
+						<button onClick={()=> router.push("/households/" + household._id)}>{">"}</button>
 					</li>
 				))}
 			</ul>
