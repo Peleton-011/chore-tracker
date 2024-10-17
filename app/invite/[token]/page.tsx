@@ -13,9 +13,9 @@ interface InviteResponse {
 // You receive params directly in the component when using the new app directory
 export default function page({ params }: { params: { token: string } }) {
 	const { joinHousehold, fetchHouseholdFromToken } = useGlobalState();
-	const { token } = params; // Use params to get the token
+    const { token } = params; // Use params to get the token
 
-	const [household, setHousehold] = useState();
+	const [household, setHousehold] = useState<any>();
 
 	//Fetch household from token (async)
 	useEffect(() => {
