@@ -30,6 +30,8 @@ export const GlobalProvider = ({ children }) => {
 
 	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
 
+    const [user, setUser] = useState({});
+
 	const blankModels = {
 		none: {},
 		task: {
@@ -236,9 +238,19 @@ export const GlobalProvider = ({ children }) => {
         }
     }
 
+    const fetchUser = async () => {
+        try {
+            const response = await axios.get('/api/users');
+            setUser(response.data.user);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
 	useEffect(() => {
 		fetchHouseholds();
 		allTasks();
+        fetchUser();
 	}, []);
 
 	return (
@@ -271,6 +283,7 @@ export const GlobalProvider = ({ children }) => {
 				generateInviteLink,
 				joinHousehold,
                 fetchHouseholdFromToken,
+                user,
 				error,
 			}}
 		>
