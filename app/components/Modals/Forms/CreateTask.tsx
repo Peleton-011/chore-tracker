@@ -36,7 +36,7 @@ function CreateTask({
 		!!argcompleted ||
 		!!argimportant;
 
-	const { theme, allTasks, closeModal } = useGlobalState();
+	const { theme, allTasks, closeModal, householdOpened, setHouseholdOpened } = useGlobalState();
 
 	const handleChange = (key: string, value: string | Value) => {
 		switch (key) {

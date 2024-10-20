@@ -27,7 +27,7 @@ function Tasks({ lists, title }: Props) {
 
 			{lists.map(({ title, tasks }, index) => {
 				return (
-					<>
+					<div key={index}>
 						<h1>{title}</h1>
 
 						<div className="tasks">
@@ -53,7 +53,7 @@ function Tasks({ lists, title }: Props) {
 								)
 							}
 						</div>
-					</>
+					</div>
 				);
 			})}
 

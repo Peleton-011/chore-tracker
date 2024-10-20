@@ -27,10 +27,11 @@ export const GlobalProvider = ({ children }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [modal, setModal] = useState({ type: "none" });
 	const [collapsed, setCollapsed] = useState(true);
+	const [householdOpened, setHouseholdOpened] = useState(null);
 
 	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
 
-    const [user, setUser] = useState({});
+	const [user, setUser] = useState({});
 
 	const blankModels = {
 		none: {},
@@ -228,30 +229,42 @@ export const GlobalProvider = ({ children }) => {
 		}
 	};
 
-    const fetchHouseholdFromToken = async (token) => {
-        try {
-            const response = await fetch(`/api/invites/${token}`);
-            const data = await response.json();
-            return data.household;
-        } catch (err) {
-            console.error(err);
-        }
-    }
+	const fetchHouseholdFromToken = async (token) => {
+		try {
+			const response = await fetch(`/api/invites/${token}`);
+			const data = await response.json();
+			return data.household;
+		} catch (err) {
+			console.error(err);
+		}
+	};
 
-    const fetchUser = async () => {
-        try {
-            const response = await axios.get('/api/users');
-            setUser(response.data.user);
-        } catch (err) {
-            console.error(err);
-        }
-    }
+	const fetchUser = async () => {
+		try {
+			const response = await axios.get("/api/users");
+			setUser(response.data.user);
+		} catch (err) {
+			console.error(err);
+		}
+	};
 
 	useEffect(() => {
 		fetchHouseholds();
 		allTasks();
-        fetchUser();
+		fetchUser();
 	}, []);
+
+	useEffect(() => {
+		const currentHousehold = window.location.href.includes("/households/")
+			? window.location.href.split("/households/")[1]
+			: null;
+
+		console.log(window.location.href);
+		console.log(currentHousehold);
+
+		setHouseholdOpened(currentHousehold);
+	}),
+		[window.location];
 
 	return (
 		<GlobalContext.Provider
@@ -282,8 +295,10 @@ export const GlobalProvider = ({ children }) => {
 				fetchHouseholds,
 				generateInviteLink,
 				joinHousehold,
-                fetchHouseholdFromToken,
-                user,
+				fetchHouseholdFromToken,
+				householdOpened,
+				setHouseholdOpened,
+				user,
 				error,
 			}}
 		>

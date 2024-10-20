@@ -3,10 +3,12 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useGlobalState } from "@/app/context/globalProvider";
 import { edit } from "../../utils/Icons";
+import Tasks from "@/app/components/Tasks/Tasks";
 
 interface Household {
 	_id: string;
 	name: string;
+	description?: string;
 	members: string[];
 	tasks: any[];
 	recurringTasks: any[];
@@ -35,7 +37,9 @@ function page({ params }: { params: { id: string } }) {
 			<h1>{household.name}</h1>
 			{error && <div>{error}</div>}
 			<p>{JSON.stringify(household, null, 2)}</p>
-			<button onClick={() => {}}>Create Household</button>
+			<div>
+				<Tasks lists={[{ title: "Tasks", tasks: household.tasks }]} />
+			</div>
 		</div>
 	);
 }
