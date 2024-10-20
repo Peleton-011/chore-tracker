@@ -1,7 +1,13 @@
-import { format } from 'date-fns';
+import { format } from "date-fns";
 
 const formatDate = (date) => {
-    return format(date, 'EEEE d/M yy');
-}
+	let out;
+	try {
+		out = format(date, "EEEE d/M yy");
+	} catch (error) {
+		out = "Error displaying date";
+	}
+	return out;
+};
 
-export default formatDate
+export default formatDate;

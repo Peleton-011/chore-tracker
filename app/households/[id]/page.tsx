@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useGlobalState } from "@/app/context/globalProvider";
 import { edit } from "../../utils/Icons";
 import Tasks from "@/app/components/Tasks/Tasks";
+import axios from "axios";
 
 interface Household {
 	_id: string;
@@ -15,18 +16,23 @@ interface Household {
 }
 
 function page({ params }: { params: { id: string } }) {
-	const {
-		households: importedHouseholds,
-		editHousehold,
-		deleteHousehold,
-		generateInviteLink,
-	} = useGlobalState();
+	const {} = useGlobalState();
 
 	const [error, setError] = useState<string>("");
 	const { id } = params; // Use params to get the token
-	const households = Array.from(importedHouseholds);
-
-	const household: any = households.filter((hh: any) => hh._id === id)[0];
+	const [household, setHousehold] = useState<any>();
+	//Get household
+	useEffect(() => {
+		async function fetchHousehold(token: string) {
+			try {
+				const { data } = await axios.get("/api/households/" + token);
+				setHousehold(data);
+			} catch (err) {
+				console.error(err);
+			}
+		}
+		fetchHousehold(id);
+	}, []);
 
 	if (!household) {
 		return <div>Loading...</div>;
@@ -36,7 +42,7 @@ function page({ params }: { params: { id: string } }) {
 		<div>
 			<h1>{household.name}</h1>
 			{error && <div>{error}</div>}
-			<p>{JSON.stringify(household, null, 2)}</p>
+			{/* <p>{JSON.stringify(household, null, 2)}</p> */}
 			<div>
 				<Tasks lists={[{ title: "Tasks", tasks: household.tasks }]} />
 			</div>

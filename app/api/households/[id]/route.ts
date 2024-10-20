@@ -68,3 +68,52 @@ export async function DELETE(
 		});
 	}
 }
+
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+	try {
+		const { id } = params; // Household ID
+		const user = await getUser(); // Get the authenticated user
+
+		if (!user) {
+			return NextResponse.json({
+				error: "User not authenticated",
+				status: 401,
+			});
+		}
+
+		// Fetch the household by ID and populate the members and tasks
+		const household = await Household.findById(id)
+			.populate("members") // Populate members, only select name and email fields
+			.populate("tasks") // Populate tasks (assuming tasks are referenced in the household)
+			.exec();
+
+		// Check if the household exists
+		if (!household) {
+			return NextResponse.json({
+				error: "Household not found",
+				status: 404,
+			});
+		}
+
+		// Ensure that the user is part of the household
+		const isMember = household.members.some(
+			(member: any) => member._id.toString() === user._id.toString()
+		);
+
+		if (!isMember) {
+			return NextResponse.json({
+				error: "Unauthorized",
+				status: 403,
+			});
+		}
+
+		// Return the populated household document
+		return NextResponse.json(household);
+	} catch (error: any) {
+		console.log("ERROR FETCHING HOUSEHOLD: ", error.message, error.stack);
+		return NextResponse.json({
+			error: "Error fetching household",
+			status: 500,
+		});
+	}
+}
