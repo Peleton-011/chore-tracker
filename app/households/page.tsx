@@ -20,7 +20,6 @@ function page() {
 		editHousehold,
 		deleteHousehold,
 		createHousehold,
-		generateInviteLink,
 	} = useGlobalState();
 	const [error, setError] = useState<string>("");
 	const router = useRouter();
@@ -33,15 +32,6 @@ function page() {
 				{households.map((household: Household) => (
 					<li key={household._id}>
 						{household.name}
-						<button
-							onClick={async () =>
-								console.log(
-									await generateInviteLink(household._id)
-								)
-							}
-						>
-							Generate Invite Link
-						</button>
 
 						<button
 							className="edit"

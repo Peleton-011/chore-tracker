@@ -197,11 +197,11 @@ export const GlobalProvider = ({ children }) => {
 
 	const generateInviteLink = async (householdId) => {
 		try {
-			const response = await axios.post(
+			const {data} = await axios.post(
 				`/api/households/${householdId}/invites`
 			);
 
-			return response.data.inviteLink;
+			return data.inviteLink;
 		} catch (err) {
 			alert("Failed to generate invite link: " + err);
 		}
@@ -259,8 +259,8 @@ export const GlobalProvider = ({ children }) => {
 			? window.location.href.split("/households/")[1]
 			: null;
 
-		console.log(window.location.href);
-		console.log(currentHousehold);
+		// console.log(window.location.href);
+		// console.log(currentHousehold);
 
 		setHouseholdOpened(currentHousehold);
 	}),
