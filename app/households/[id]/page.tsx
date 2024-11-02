@@ -59,9 +59,11 @@ function page({ params }: { params: { id: string } }) {
 	return (
 		<div>
 			<h1>{household.name}</h1>
+            <hr />
 			{error && <div>{error}</div>}
-			{/* <p>{JSON.stringify(household, null, 2)}</p> */}
+			{/* {household.members.map((m:any) => JSON.stringify(m, null, 2)).join(" | ")} */}
 			<div>
+                <h3>Share Household</h3>
 				<CopyShareButton
 					content={link}
 					buttonText="Get Invite Link"
@@ -73,7 +75,9 @@ function page({ params }: { params: { id: string } }) {
 					buttonActivatedText="Invite Code Copied!"
 				/>
 			</div>
+            <hr />
 			<div>
+                <h3>Household Tasks</h3>
 				<Tasks lists={[{ title: "Tasks", tasks: household.tasks }]} />
 			</div>
 		</div>
