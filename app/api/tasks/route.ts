@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Task } from "@/models/index";
+import { Household, Task } from "@/models/index";
 import { getUser } from "@/app/utils/getUser";
 
 export async function POST(req: Request) {
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
-		const { title, description, date, completed, important } =
+		const { title, description, date, completed, important, householdId } =
 			await req.json();
 
 		if (!title || !description || !date) {
@@ -43,6 +43,33 @@ export async function POST(req: Request) {
 		});
 
 		console.log(task);
+
+		if (householdId) {
+			//Get the household associated to the householdId
+			const household = await Household.findById(householdId);
+			if (!household) {
+				return NextResponse.json({
+					error: "Household not found",
+					status: 404,
+				});
+			}
+
+			// Ensure the user belongs to this household
+			if (!household.members.includes(user._id)) {
+				return NextResponse.json({
+					error: "User is not authorized for this household",
+					status: 403,
+				});
+			}
+
+			// Edit the household's tasks list to include a reference to the task
+			await Household.findByIdAndUpdate(householdId, {
+				$push: { tasks: task._id },
+			});
+
+			console.log(`Task ${task._id} added to household ${householdId}`);
+		}
+
 		return NextResponse.json({
 			task,
 		});

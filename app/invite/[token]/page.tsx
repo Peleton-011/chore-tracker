@@ -1,54 +1,70 @@
 "use client"; // This ensures the component is client-side
 import { auth } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useGlobalState } from "@/app/context/globalProvider";
-
-interface Household {
-	_id: string;
-	name: string;
-}
+import { useRouter } from "next/navigation";
 
 interface InviteResponse {
-	household: Household;
+	household: any;
 	inviteToken: string;
 	error?: string;
 }
 
 // You receive params directly in the component when using the new app directory
 export default function page({ params }: { params: { token: string } }) {
-	const { joinHousehold } = useGlobalState();
+	const { joinHousehold, fetchHouseholdFromToken, user } = useGlobalState();
 	const { token } = params; // Use params to get the token
-	// const [household, setHousehold] = useState<Household | null>(null);
-	// const [error, setError] = useState<string>("");
 
-	// useEffect(() => {
-	// 	if (token) {
-	//         console.log(typeof token)
-	// 		fetch(`/api/invite/${token}`)
-	// 			.then((res) => res.json())
-	// 			.then((data: InviteResponse) => {
-	// 				if (data.error) {
-	// 					setError(data.error);
-	// 				} else {
-	// 					setHousehold(data.household);
-	// 				}
-	// 			})
-	// 			.catch((err) => setError("Failed to fetch invite details"));
-	// 	}
-	// }, [token]);
+	const [household, setHousehold] = useState<any>();
+	const router = useRouter();
 
-	// if (error) {
-	// 	return <div>{error}</div>;
-	// }
+	//Fetch household from token (async)
+	useEffect(() => {
+		const fetchHousehold = async () => {
+			const fetchedHousehold = await fetchHouseholdFromToken(token);
+			setHousehold(fetchedHousehold);
+		};
+		fetchHousehold();
+	}, []);
 
-	// if (!household) {
-	// 	return <div>Loading...</div>;
-	// }
+	if (!household) {
+		return <div>Loading...</div>;
+	}
+
+	if (user.households?.includes(household._id)) {
+		return (
+			<div>
+				<h1>
+					You're already in{" "}
+					<i>
+						<u>{household.name}</u>
+					</i>
+				</h1>
+				<button onClick={() => router.push("/households")}>
+					Go to Households
+				</button>
+			</div>
+		);
+	}
 
 	return (
 		<div>
-			{/* <h1>Join Household: {household.name}</h1> */}
-			<button onClick={() => joinHousehold(token)}>Join Household</button>
+			<h1>
+				You've been invited to join{" "}
+				<i>
+					<u>{household.name}</u>
+				</i>
+				!
+			</h1>
+			{household.description && <p>{household.description}</p>}
+			<button
+				onClick={() => {
+					joinHousehold(token);
+					router.push("/households");
+				}}
+			>
+				Join Household
+			</button>
 		</div>
 	);
 }

@@ -36,7 +36,7 @@ function CreateTask({
 		!!argcompleted ||
 		!!argimportant;
 
-	const { theme, allTasks, closeModal } = useGlobalState();
+	const { theme, allTasks, closeModal, householdOpened } = useGlobalState();
 
 	const handleChange = (key: string, value: string | Value) => {
 		switch (key) {
@@ -106,7 +106,10 @@ function CreateTask({
 		try {
 			// @ts-ignore
 			// const response = createTask(...task);
-			const response = await axios.post("/api/tasks", task);
+			const response = await axios.post("/api/tasks", {
+				...task,
+				householdId: householdOpened,
+			});
 
 			console.log(JSON.stringify(response));
 			// @ts-ignore
@@ -156,7 +159,11 @@ function CreateTask({
 					/>
 				)}
 
-				<DateInput date={date} handleChange={handleChange} isMobile={isMobile} />
+				<DateInput
+					date={date}
+					handleChange={handleChange}
+					isMobile={isMobile}
+				/>
 			</div>
 			<div className="submit-btn">
 				<Button
