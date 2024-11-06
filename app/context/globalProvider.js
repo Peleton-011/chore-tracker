@@ -157,21 +157,21 @@ export const GlobalProvider = ({ children }) => {
 	const incompleteTasks = tasks.filter((task) => task.isCompleted === false);
 
 	const [currentHouseholdTasks, setCurrentHouseholdTasks] = useState([]);
-
+    const fetchCurrentHouseholdTasks = async () => {
+        try {
+            if (!householdOpened) return;
+            const res = await axios.get(
+                `/api/households/${householdOpened}/tasks`
+            );
+            setCurrentHouseholdTasks(res.data);
+            console.log(currentHouseholdTasks);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 	useEffect(() => {
 		//fetch current household tasks from /api/households/[id]/tasks
-		const fetchCurrentHouseholdTasks = async () => {
-			try {
-				if (!householdOpened) return;
-				const res = await axios.get(
-					`/api/households/${householdOpened}/tasks`
-				);
-				setCurrentHouseholdTasks(res.data);
-				console.log(currentHouseholdTasks);
-			} catch (error) {
-				console.log(error);
-			}
-		};
+
 
 		fetchCurrentHouseholdTasks();
 	}, [householdOpened]);
@@ -319,6 +319,7 @@ export const GlobalProvider = ({ children }) => {
 				householdOpened,
 				setHouseholdOpened,
 				currentHouseholdTasks,
+                fetchCurrentHouseholdTasks,
 				user,
 				error,
 			}}
