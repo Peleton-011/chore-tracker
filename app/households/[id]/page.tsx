@@ -17,25 +17,12 @@ interface Household {
 }
 
 function page({ params }: { params: { id: string } }) {
-	const { generateInviteLink } = useGlobalState();
+	const { generateInviteLink, currentHouseholdTasks } = useGlobalState();
 
 	const [error, setError] = useState<string>("");
 	const { id } = params; // Use params to get the token
-	const [household, setHousehold] = useState<any>();
+	const [household, setHousehold] = useState<any>({ tasks: [] });
 	const [link, setLink] = useState("");
-
-	//Get household
-	useEffect(() => {
-		async function fetchHousehold(token: string) {
-			try {
-				const { data } = await axios.get("/api/households/" + token);
-				setHousehold(data);
-			} catch (err) {
-				console.error(err);
-			}
-		}
-		fetchHousehold(id);
-	}, []);
 
 	//Get link
 	useEffect(() => {
@@ -59,11 +46,11 @@ function page({ params }: { params: { id: string } }) {
 	return (
 		<div>
 			<h1>{household.name}</h1>
-            <hr />
+			<hr />
 			{error && <div>{error}</div>}
 			{/* {household.members.map((m:any) => JSON.stringify(m, null, 2)).join(" | ")} */}
 			<div>
-                <h3>Share Household</h3>
+				<h3>Share Household</h3>
 				<CopyShareButton
 					content={link}
 					buttonText="Get Invite Link"
@@ -75,10 +62,17 @@ function page({ params }: { params: { id: string } }) {
 					buttonActivatedText="Invite Code Copied!"
 				/>
 			</div>
-            <hr />
+			<hr />
 			<div>
-                <h3>Household Tasks</h3>
-				<Tasks lists={[{ title: "Tasks", tasks: household.tasks }]} />
+				<h3>Household Tasks</h3>
+				<Tasks
+					lists={[
+						{
+							title: "Tasks",
+							tasks: currentHouseholdTasks || [],
+						},
+					]}
+				/>
 			</div>
 		</div>
 	);

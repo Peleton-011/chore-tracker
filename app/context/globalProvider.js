@@ -156,6 +156,26 @@ export const GlobalProvider = ({ children }) => {
 	const importantTasks = tasks.filter((task) => task.isImportant === true);
 	const incompleteTasks = tasks.filter((task) => task.isCompleted === false);
 
+	const [currentHouseholdTasks, setCurrentHouseholdTasks] = useState([]);
+    const fetchCurrentHouseholdTasks = async () => {
+        try {
+            if (!householdOpened) return;
+            const res = await axios.get(
+                `/api/households/${householdOpened}/tasks`
+            );
+            setCurrentHouseholdTasks(res.data);
+            console.log(currentHouseholdTasks);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+	useEffect(() => {
+		//fetch current household tasks from /api/households/[id]/tasks
+
+
+		fetchCurrentHouseholdTasks();
+	}, [householdOpened]);
+
 	const createHousehold = async () => {
 		openModal({ type: "household" });
 	};
@@ -197,7 +217,7 @@ export const GlobalProvider = ({ children }) => {
 
 	const generateInviteLink = async (householdId) => {
 		try {
-			const {data} = await axios.post(
+			const { data } = await axios.post(
 				`/api/households/${householdId}/invites`
 			);
 
@@ -298,6 +318,8 @@ export const GlobalProvider = ({ children }) => {
 				fetchHouseholdFromToken,
 				householdOpened,
 				setHouseholdOpened,
+				currentHouseholdTasks,
+                fetchCurrentHouseholdTasks,
 				user,
 				error,
 			}}

@@ -36,7 +36,13 @@ function CreateTask({
 		!!argcompleted ||
 		!!argimportant;
 
-	const { theme, allTasks, closeModal, householdOpened } = useGlobalState();
+	const {
+		theme,
+		allTasks,
+		closeModal,
+		householdOpened,
+		fetchCurrentHouseholdTasks,
+	} = useGlobalState();
 
 	const handleChange = (key: string, value: string | Value) => {
 		switch (key) {
@@ -85,6 +91,7 @@ function CreateTask({
 				}
 				toast.success("Task updated successfully");
 				allTasks();
+				fetchCurrentHouseholdTasks();
 				closeModal();
 			} catch (error) {
 				console.log(error);
@@ -112,6 +119,7 @@ function CreateTask({
 			});
 
 			console.log(JSON.stringify(response));
+
 			// @ts-ignore
 			if (response.data.error) {
 				// @ts-ignore
@@ -120,6 +128,7 @@ function CreateTask({
 
 			toast.success("Task created successfully");
 			allTasks();
+			fetchCurrentHouseholdTasks();
 			closeModal();
 		} catch (error) {
 			console.log(error);
