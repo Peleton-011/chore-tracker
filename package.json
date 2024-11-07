@@ -10,6 +10,7 @@
 	},
 	"dependencies": {
 		"@clerk/nextjs": "^4.29.12",
+		"@clerk/themes": "^2.1.41",
 		"@picocss/pico": "^2.0.6",
 		"@types/mongoose": "^5.11.97",
 		"@types/react-calendar": "^4.1.0",
