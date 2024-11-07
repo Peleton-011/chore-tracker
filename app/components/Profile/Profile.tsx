@@ -12,7 +12,7 @@ const Profile = () => {
 	const { firstName, lastName, imageUrl } = user || {
 		firstName: "Ipi",
 		lastName: "Bola",
-		imageUrl: "/../../public/avatar.png",
+		imageUrl: "/../../public/avatar.svg",
 	};
 
 	const { signOut } = useClerk();

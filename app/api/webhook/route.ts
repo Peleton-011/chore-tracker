@@ -58,14 +58,21 @@ export async function POST(req: Request) {
 	console.log(evt.data);
 
 	if (eventType === "user.created") {
-		const { id, email_addresses, username, first_name, last_name } =
-			evt.data;
+		const {
+			id,
+			email_addresses,
+			username,
+			first_name,
+			last_name,
+			image_url,
+		} = evt.data;
 
 		// console.log(email_addresses);
 		const user = new User({
 			userId: id,
 			email: email_addresses[0].email_address,
 			username: username || first_name + " " + last_name,
+			profilePic: image_url || "/avatar.svg",
 		});
 		await user.save();
 		console.log("User saved to database");
