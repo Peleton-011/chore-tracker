@@ -84,12 +84,13 @@ export async function POST(req: Request) {
 			console.log("User deleted from database");
 		}
 	} else if (eventType === "user.updated") {
-		const { id, email_addresses, username, first_name, last_name } =
+		const { id, email_addresses, username, first_name, last_name, image_url } =
 			evt.data;
 		const user = await User.findOne({ userId: id });
 		if (user) {
 			user.email = email_addresses[0];
 			user.username = username || first_name + " " + last_name;
+            user.profilePic = image_url || "/avatar.svg";
 			await user.save();
 			console.log("User updated in database");
 		}
