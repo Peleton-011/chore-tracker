@@ -157,24 +157,34 @@ export const GlobalProvider = ({ children }) => {
 	const incompleteTasks = tasks.filter((task) => task.isCompleted === false);
 
 	const [currentHouseholdTasks, setCurrentHouseholdTasks] = useState([]);
-    const fetchCurrentHouseholdTasks = async () => {
-        try {
-            if (!householdOpened) return;
-            const res = await axios.get(
-                `/api/households/${householdOpened}/tasks`
-            );
-            setCurrentHouseholdTasks(res.data);
-            console.log(currentHouseholdTasks);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+	const fetchCurrentHouseholdTasks = async () => {
+		try {
+			if (!householdOpened) return;
+			const res = await axios.get(
+				`/api/households/${householdOpened}/tasks`
+			);
+			setCurrentHouseholdTasks(res.data);
+			console.log(res.data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
 	useEffect(() => {
 		//fetch current household tasks from /api/households/[id]/tasks
-
-
 		fetchCurrentHouseholdTasks();
+		console.log("household changed");
 	}, [householdOpened]);
+
+
+    const updateHouseholdOpened = () => {
+        const url = window.location.href;
+        const currentHousehold = url.includes("/households/")
+            ? url.split("/households/")[1]
+            : null;
+
+        setHouseholdOpened(currentHousehold);
+    }
 
 	const createHousehold = async () => {
 		openModal({ type: "household" });
@@ -280,11 +290,10 @@ export const GlobalProvider = ({ children }) => {
 			: null;
 
 		// console.log(window.location.href);
-		// console.log(currentHousehold);
+		console.log(currentHousehold);
 
 		setHouseholdOpened(currentHousehold);
-	}),
-		[window.location];
+	}, [window.location.href]);
 
 	return (
 		<GlobalContext.Provider
@@ -318,8 +327,9 @@ export const GlobalProvider = ({ children }) => {
 				fetchHouseholdFromToken,
 				householdOpened,
 				setHouseholdOpened,
+                updateHouseholdOpened,
 				currentHouseholdTasks,
-                fetchCurrentHouseholdTasks,
+				fetchCurrentHouseholdTasks,
 				user,
 				error,
 			}}
