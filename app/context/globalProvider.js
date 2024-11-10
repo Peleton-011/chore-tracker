@@ -63,6 +63,28 @@ export const GlobalProvider = ({ children }) => {
 		}
 	};
 
+	const [currentHouseholdUsers, setCurrentHouseholdUsers] = useState([]);
+
+	useEffect(() => {
+		const fetchCurrentUsers = async () => {
+			try {
+				const response = await axios.get(
+					`/api/households/${householdOpened}/members`
+				);
+				response.data.length && setCurrentHouseholdUsers(response.data);
+				console.log(response.data);
+			} catch (error) {
+				console.error("Failed to fetch members", error);
+				setError(error.message);
+			}
+		};
+		fetchCurrentUsers();
+	}, [householdOpened]);
+
+	useEffect(() => {
+		console.log(currentHouseholdUsers);
+	}, [currentHouseholdUsers]);
+
 	const [tasks, setTasks] = useState([]);
 	const [filteredTasks, setFilteredTasks] = useState({
 		overdue: [],
@@ -176,15 +198,14 @@ export const GlobalProvider = ({ children }) => {
 		console.log("household changed");
 	}, [householdOpened]);
 
+	const updateHouseholdOpened = () => {
+		const url = window.location.href;
+		const currentHousehold = url.includes("/households/")
+			? url.split("/households/")[1]
+			: null;
 
-    const updateHouseholdOpened = () => {
-        const url = window.location.href;
-        const currentHousehold = url.includes("/households/")
-            ? url.split("/households/")[1]
-            : null;
-
-        setHouseholdOpened(currentHousehold);
-    }
+		setHouseholdOpened(currentHousehold);
+	};
 
 	const createHousehold = async () => {
 		openModal({ type: "household" });
@@ -327,7 +348,8 @@ export const GlobalProvider = ({ children }) => {
 				fetchHouseholdFromToken,
 				householdOpened,
 				setHouseholdOpened,
-                updateHouseholdOpened,
+				updateHouseholdOpened,
+				currentHouseholdUsers,
 				currentHouseholdTasks,
 				fetchCurrentHouseholdTasks,
 				user,
