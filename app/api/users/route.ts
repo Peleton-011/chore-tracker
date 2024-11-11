@@ -13,7 +13,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest, res: NextResponse) {
-	const { userId, email, username } = await req.json();
+	const { userId, email, username, profilePic } = await req.json();
 
 	try {
 		const existingUser = await User.findOne({ userId });
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 			});
 		}
 
-		const newUser = new User({ userId, email, username });
+		const newUser = new User({ userId, email, username, profilePic });
 		await newUser.save();
 
 		return NextResponse.json({

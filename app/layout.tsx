@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../styles/globals.scss";
 import ContextProvider from "./providers/ContextProvider";
 import { ClerkProvider, auth } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 import App from "./App";
 
 export const metadata: Metadata = {
@@ -17,7 +18,7 @@ export default function RootLayout({
 	const { userId } = auth();
 
 	return (
-		<ClerkProvider>
+		<ClerkProvider appearance={{ baseTheme: dark }}>
 			<html lang="en">
 				<head>
 					<link

@@ -70,15 +70,15 @@ function CreateTask({
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
+        const task = {
+			title,
+			description,
+			date,
+			completed,
+			important,
+		};
+
 		if (isUpdate) {
-			const task = {
-				id,
-				title,
-				description,
-				date,
-				completed,
-				important,
-			};
 
 			try {
 				// @ts-ignore
@@ -102,20 +102,12 @@ function CreateTask({
 			return;
 		}
 
-		const task = {
-			title,
-			description,
-			date,
-			completed,
-			important,
-		};
-
 		try {
 			// @ts-ignore
 			// const response = createTask(...task);
 			const response = await axios.post("/api/tasks", {
 				...task,
-				householdId: householdOpened,
+				householdId: householdOpened || null,
 			});
 
 			console.log(JSON.stringify(response));
