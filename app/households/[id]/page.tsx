@@ -6,6 +6,7 @@ import { edit } from "../../utils/Icons";
 import Tasks from "@/app/components/Tasks/Tasks";
 import axios from "axios";
 import CopyShareButton from "@/app/components/CopyShareButton/CopyShareButton";
+import UserList from "@/app/components/UserList/UserList";
 
 interface Household {
 	_id: string;
@@ -17,9 +18,14 @@ interface Household {
 }
 
 function page({ params }: { params: { id: string } }) {
-	const { generateInviteLink, currentHouseholdTasks, updateHouseholdOpened } = useGlobalState();
+	const {
+		generateInviteLink,
+		currentHouseholdTasks,
+		updateHouseholdOpened,
+		currentHouseholdUsers,
+	} = useGlobalState();
 
-    updateHouseholdOpened();
+	updateHouseholdOpened();
 	const [error, setError] = useState<string>("");
 	const { id } = params; // Use params to get the token
 	const [household, setHousehold] = useState<any>({ tasks: [] });
@@ -63,6 +69,9 @@ function page({ params }: { params: { id: string } }) {
 					buttonActivatedText="Invite Code Copied!"
 				/>
 			</div>
+			<hr />
+
+			<UserList users={currentHouseholdUsers} />
 			<hr />
 			<div>
 				<h3>Household Tasks</h3>
