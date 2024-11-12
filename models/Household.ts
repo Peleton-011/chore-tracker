@@ -7,6 +7,8 @@ mongooseConnection();
 
 const HouseholdSchema = new Schema({
 	name: { type: String, required: true },
+	description: { type: String },
+	image: { type: String },
 	members: [{ type: Schema.Types.ObjectId, ref: "User" }],
 	tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
 	recurringTasks: [{ type: Schema.Types.ObjectId, ref: "RecurringTask" }],
