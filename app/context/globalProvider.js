@@ -66,6 +66,7 @@ export const GlobalProvider = ({ children }) => {
 	const [currentHouseholdUsers, setCurrentHouseholdUsers] = useState([]);
 
 	useEffect(() => {
+		if (!householdOpened) return;
 		const fetchCurrentUsers = async () => {
 			try {
 				const response = await axios.get(
@@ -194,6 +195,7 @@ export const GlobalProvider = ({ children }) => {
 
 	useEffect(() => {
 		//fetch current household tasks from /api/households/[id]/tasks
+		if (!householdOpened) return;
 		fetchCurrentHouseholdTasks();
 		console.log("household changed");
 	}, [householdOpened]);
@@ -311,6 +313,7 @@ export const GlobalProvider = ({ children }) => {
 			: null;
 
 		// console.log(window.location.href);
+		if (!currentHousehold) return;
 		console.log(currentHousehold);
 
 		setHouseholdOpened(currentHousehold);
