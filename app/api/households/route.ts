@@ -23,8 +23,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 	session.startTransaction(); // Start a transaction
 
 	try {
-		const { name } = await req.json();
-        console.log(name)
+		const { name, description, image } = await req.json();
+		console.log(name);
 		const user = await getUser(); // Attach session to query
 		if (!user) {
 			await session.abortTransaction(); // Abort transaction if user not found
@@ -34,7 +34,9 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 		const newHousehold = new Household({
 			name,
+			description,
 			members: [user._id],
+			image,
 		});
 
 		await newHousehold.save({ session }); // Save with the transaction session
