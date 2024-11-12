@@ -9,8 +9,17 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
-		const { title, description, date, completed, important, householdId } =
-			await req.json();
+		const {
+			title,
+			description,
+			date,
+			completed,
+			important,
+			householdId,
+			isRecurring,
+			intervalUnit,
+			intervalValue,
+		} = await req.json();
 
 		if (!title || !description || !date) {
 			return NextResponse.json({
@@ -40,6 +49,9 @@ export async function POST(req: Request) {
 			isCompleted: completed,
 			isImportant: important,
 			user: user._id,
+			isRecurring,
+			intervalValue,
+			intervalUnit,
 		});
 
 		console.log(task);
