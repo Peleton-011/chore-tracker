@@ -140,11 +140,11 @@ function CreateTask({
 				{!isMobile && (
 					<div className="input-control">
 						<TitleInput title={title} handleChange={handleChange} />
-						<ToggleInputs
+						{/* <ToggleInputs
 							completed={completed}
 							important={important}
 							handleChange={handleChange}
-						/>
+						/> */}
 					</div>
 				)}
 				<DescriptionInput
@@ -153,11 +153,11 @@ function CreateTask({
 				/>
 
 				{isMobile && (
-					<ToggleInputs
-						completed={completed}
-						important={important}
-						handleChange={handleChange}
-					/>
+					// <ToggleInputs
+					// 	completed={completed}
+					// 	important={important}
+					// 	handleChange={handleChange}
+					// />
 				)}
 
 				<DateInput
