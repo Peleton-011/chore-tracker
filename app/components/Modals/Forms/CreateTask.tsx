@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import Button from "../../Button/Button";
 import { edit, add, plus } from "@/app/utils/Icons";
 import Calendar from "react-calendar";
+import formatDate, { formatTime, formatDateTime } from "@/app/utils/formatDate";
 
 function CreateTask({
 	task: {
@@ -70,16 +71,15 @@ function CreateTask({
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-        const task = {
+		const task = {
 			title,
 			description,
 			date,
-			completed,
-			important,
+			completed: completed || false,
+			important: important || false,
 		};
 
 		if (isUpdate) {
-
 			try {
 				// @ts-ignore
 				// const response = updateTask(...task);
@@ -152,19 +152,52 @@ function CreateTask({
 					handleChange={handleChange}
 				/>
 
-				{isMobile && (
+				<button>
+					Date & Time <br />
+					{/* {formatDate(date) + " , " + formatTime(date)} */}
+					{formatDateTime(date)}
+				</button>
+
+				{householdOpened && (
+					<button>
+						Members <br />
+						{
+							/* TODO */ "Anyone" /* Open modal to player list where you can select the members you want*/
+						}
+					</button>
+				)}
+
+				<button>
+					Reminder <br />
+					on due date
+					{/* TODO: Add toggle // ++ 5'before, the day before ...*/}
+				</button>
+
+				{(() => {
+					const reminder = false;
+					if (reminder) {
+						return (
+							<button>
+								Overdue Reminder
+								{/* TODO: Add toggle and options similar to the reminder thingy */}
+							</button>
+						);
+					}
+				})()}
+
+				{/* {isMobile && (
 					// <ToggleInputs
 					// 	completed={completed}
 					// 	important={important}
 					// 	handleChange={handleChange}
 					// />
-				)}
+				)} */}
 
-				<DateInput
+				{/* <DateInput
 					date={date}
 					handleChange={handleChange}
 					isMobile={isMobile}
-				/>
+				/> */}
 			</div>
 			<div className="submit-btn">
 				<Button
