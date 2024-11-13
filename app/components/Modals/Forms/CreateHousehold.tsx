@@ -29,7 +29,11 @@ function CreateHousehold({
 	type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 	const isUpdate =
-		!!id || !!argname || !!argmembers.length || !!argtasks.length || !!argrecurringTasks.length;
+		!!id ||
+		!!argname ||
+		!!argmembers.length ||
+		!!argtasks.length ||
+		!!argrecurringTasks.length;
 
 	const { theme, fetchHouseholds, closeModal } = useGlobalState();
 
@@ -118,6 +122,10 @@ function CreateHousehold({
 			<h1>{isUpdate ? "Update a Household" : "Create a Household"}</h1>
 			<div className="create-content-body grid">
 				<TitleInput title={name} handleChange={handleChange} />
+
+				{<div>Add description</div> /* TODO: Implement */}
+
+				{<button>Add image</button> /* TODO: Implement */}
 			</div>
 			<div className="submit-btn">
 				<Button
