@@ -126,7 +126,7 @@ function CreateHousehold({
 					handleChange={handleChange}
 				/>
 
-				{/* {<button>Add image</button> /* TODO: Implement */} */}
+				{/* {<button>Add image</button> /* TODO: Implement \*\/} */}
 			</div>
 			<div className="submit-btn">
 				<Button
