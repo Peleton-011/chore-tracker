@@ -7,6 +7,7 @@ import Tasks from "@/app/components/Tasks/Tasks";
 import axios from "axios";
 import CopyShareButton from "@/app/components/CopyShareButton/CopyShareButton";
 import UserList from "@/app/components/UserList/UserList";
+import Description from "@/app/components/Description/Desscription";
 
 interface Household {
 	_id: string;
@@ -61,8 +62,25 @@ function page({ params }: { params: { id: string } }) {
 
 	return (
 		<div>
-			<h1>{household.name}</h1>
+			<h1>
+				{" "}
+				{household.image && (
+					<img
+						src={household.image}
+						className="w-12 h-12 rounded-full"
+						alt=""
+					/>
+				)}
+				{household.name}
+			</h1>
 			<hr />
+			{household.description && (
+				<>
+                    <h3>Description</h3>
+					<Description description={household.description} />
+					<hr />
+				</>
+			)}
 			{error && <div>{error}</div>}
 			{/* {household.members.map((m:any) => JSON.stringify(m, null, 2)).join(" | ")} */}
 			<div>
