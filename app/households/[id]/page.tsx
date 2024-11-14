@@ -18,17 +18,12 @@ interface Household {
 }
 
 function page({ params }: { params: { id: string } }) {
-	const {
-		generateInviteLink,
-		currentHouseholdTasks,
-		updateHouseholdOpened,
-		currentHouseholdUsers,
-	} = useGlobalState();
+	const { generateInviteLink, updateHouseholdOpened } = useGlobalState();
 
 	updateHouseholdOpened();
 	const [error, setError] = useState<string>("");
 	const { id } = params; // Use params to get the token
-	const [household, setHousehold] = useState<any>({ tasks: [] });
+	const [household, setHousehold] = useState<any>({ tasks: [], members: [] });
 	const [link, setLink] = useState("");
 
 	//Get link
@@ -44,6 +39,20 @@ function page({ params }: { params: { id: string } }) {
 		};
 
 		generateLink();
+	}, []);
+
+	useEffect(() => {
+		//Fetch household from /api/households/[id]
+		const fetchHousehold = async () => {
+			try {
+				const response = await axios.get(`/api/households/${id}`);
+				setHousehold(response.data);
+			} catch (err) {
+				console.error("Failed to fetch household:", err);
+			}
+		};
+
+		fetchHousehold();
 	}, []);
 
 	if (!household) {
@@ -71,7 +80,7 @@ function page({ params }: { params: { id: string } }) {
 			</div>
 			<hr />
 
-			<UserList users={currentHouseholdUsers} />
+			<UserList users={household.members} />
 			<hr />
 			<div>
 				<h3>Household Tasks</h3>
@@ -79,7 +88,7 @@ function page({ params }: { params: { id: string } }) {
 					lists={[
 						{
 							title: "Tasks",
-							tasks: currentHouseholdTasks || [],
+							tasks: household.tasks || [],
 						},
 					]}
 				/>
