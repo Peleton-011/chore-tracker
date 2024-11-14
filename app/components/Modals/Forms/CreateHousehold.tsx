@@ -13,23 +13,25 @@ function CreateHousehold({
 		name: argname,
 		members: argmembers,
 		tasks: argtasks,
-		recurringTasks: argrecurringTasks,
+		description: argdescription,
 	},
 	isMobile,
 }: any) {
 	const [name, setName] = useState(argname || "");
 	const [members, setMembers] = useState([...argmembers]);
 	const [tasks, setTasks] = useState(argtasks || []);
-	const [recurringTasks, setRecurringTasks] = useState(
-		argrecurringTasks || []
-	);
+	const [description, setDescription] = useState(argdescription || []);
 
 	type ValuePiece = Date | null;
 
 	type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 	const isUpdate =
-		!!id || !!argname || !!argmembers.length || !!argtasks.length || !!argrecurringTasks.length;
+		!!id ||
+		!!argname ||
+		!!argmembers.length ||
+		!!argtasks.length ||
+		!!argdescription;
 
 	const { theme, fetchHouseholds, closeModal } = useGlobalState();
 
@@ -44,8 +46,8 @@ function CreateHousehold({
 			case "tasks":
 				setTasks(value);
 				break;
-			case "recurringTasks":
-				setRecurringTasks(value);
+			case "description":
+				setDescription(value);
 				break;
 			default:
 				break;
@@ -61,7 +63,7 @@ function CreateHousehold({
 				name,
 				members,
 				tasks,
-				recurringTasks,
+				description,
 			};
 
 			try {
@@ -87,9 +89,9 @@ function CreateHousehold({
 
 		const household = {
 			name,
+			description,
 			members,
 			tasks,
-			recurringTasks,
 		};
 
 		try {
@@ -118,6 +120,13 @@ function CreateHousehold({
 			<h1>{isUpdate ? "Update a Household" : "Create a Household"}</h1>
 			<div className="create-content-body grid">
 				<TitleInput title={name} handleChange={handleChange} />
+
+				<DescriptionInput
+					title={description}
+					handleChange={handleChange}
+				/>
+
+				{/* {<button>Add image</button> /* TODO: Implement \*\/} */}
 			</div>
 			<div className="submit-btn">
 				<Button
