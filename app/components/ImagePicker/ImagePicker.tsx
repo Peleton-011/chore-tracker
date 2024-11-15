@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SketchPicker } from "react-color";
+import { BlockPicker } from "react-color";
 
 interface ImagePickerProps {
 	icons: React.ReactNode[]; // Array of SVG icons passed as React elements
@@ -12,6 +12,9 @@ const ImagePicker: React.FC<ImagePickerProps> = ({ icons }) => {
 	const [mainColor, setMainColor] = useState<string>("#9236A4"); // Default main color
 	const [backgroundColor, setBackgroundColor] = useState<string>("#FFFFFF"); // Default background color
 
+	const [showMainPicker, setShowMainPicker] = useState(false); // Toggle for main color picker
+	const [showBgPicker, setShowBgPicker] = useState(false); // Toggle for background color picker
+
 	const predefinedColors = [
 		"#9236A4",
 		"#D9A8F1",
@@ -20,6 +23,20 @@ const ImagePicker: React.FC<ImagePickerProps> = ({ icons }) => {
 		"#B0DFE5",
 		"#333333",
 	];
+
+	const customPickerStyles = {
+		default: {
+			card: {
+				background: "#13171f",
+				boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
+				borderRadius: "8px",
+			},
+			body: {
+				display: "flex",
+				flexDirection: "column",
+			},
+		},
+	};
 
 	return (
 		<div>
@@ -51,10 +68,24 @@ const ImagePicker: React.FC<ImagePickerProps> = ({ icons }) => {
 						onClick={() => setMainColor(color)}
 					/>
 				))}
-				<SketchPicker
-					color={mainColor}
-					onChangeComplete={(color) => setMainColor(color.hex)}
-				/>
+				<div
+					className="color-swatch plus-circle"
+					onClick={() => setShowMainPicker(!showMainPicker)}
+				>
+					+
+				</div>
+				{showMainPicker && (
+					<div className="picker-wrapper">
+						<BlockPicker
+							color={mainColor}
+							colors={predefinedColors}
+							onChangeComplete={(color) => {
+								setMainColor(color.hex);
+								setShowMainPicker(false);
+							}}
+						/>
+					</div>
+				)}
 			</div>
 
 			<h3>Background Color</h3>
@@ -67,10 +98,24 @@ const ImagePicker: React.FC<ImagePickerProps> = ({ icons }) => {
 						onClick={() => setBackgroundColor(color)}
 					/>
 				))}
-				<SketchPicker
-					color={backgroundColor}
-					onChangeComplete={(color) => setBackgroundColor(color.hex)}
-				/>
+				<div
+					className="color-swatch plus-circle"
+					onClick={() => setShowBgPicker(!showBgPicker)}
+				>
+					+
+				</div>
+				{showBgPicker && (
+					<div className="picker-wrapper">
+						<BlockPicker
+							color={backgroundColor}
+							colors={predefinedColors}
+							onChangeComplete={(color) => {
+								setBackgroundColor(color.hex);
+								setShowBgPicker(false);
+							}}
+						/>
+					</div>
+				)}
 			</div>
 
 			{selectedIconIndex !== null && (
