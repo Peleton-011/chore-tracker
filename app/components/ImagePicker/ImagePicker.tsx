@@ -35,7 +35,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({ icons }) => {
 						style={{ backgroundColor }}
 					>
 						{React.cloneElement(icon as React.ReactElement, {
-							fill: mainColor,
+							color: mainColor,
 						})}
 					</div>
 				))}
