@@ -3,15 +3,23 @@ import { BlockPicker } from "react-color";
 
 interface ImagePickerProps {
 	icons: React.ReactNode[]; // Array of SVG icons passed as React elements
+	selectedIconIndex: number | null;
+	setSelectedIconIndex: React.Dispatch<React.SetStateAction<number | null>>;
+	mainColor: string;
+	setMainColor: React.Dispatch<React.SetStateAction<string>>;
+	backgroundColor: string;
+	setBackgroundColor: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ImagePicker: React.FC<ImagePickerProps> = ({ icons }) => {
-	const [selectedIconIndex, setSelectedIconIndex] = useState<number | null>(
-		null
-	);
-	const [mainColor, setMainColor] = useState<string>("#9236A4"); // Default main color
-	const [backgroundColor, setBackgroundColor] = useState<string>("#FFFFFF"); // Default background color
-
+const ImagePicker: React.FC<ImagePickerProps> = ({
+	icons,
+	selectedIconIndex,
+	setSelectedIconIndex,
+	mainColor,
+	setMainColor,
+	backgroundColor,
+	setBackgroundColor,
+}) => {
 	const [showMainPicker, setShowMainPicker] = useState(false); // Toggle for main color picker
 	const [showBgPicker, setShowBgPicker] = useState(false); // Toggle for background color picker
 

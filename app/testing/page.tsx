@@ -14,22 +14,37 @@ const ExamplePage: React.FC = () => {
 
 	const icons = [<HouseIcon />, <SchoolIcon />, <OfficeIcon />];
 
+	const [selectedIconIndex, setSelectedIconIndex] = useState<number | null>(
+		null
+	);
+	const [mainColor, setMainColor] = useState<string>("#D9A8F1"); // Default main color
+	const [backgroundColor, setBackgroundColor] = useState<string>("#9236A4"); // Default background color
+
 	const ContentComponent = ({ closeModal }: { closeModal: () => void }) => (
 		<div>
-			<h2>Modal Content</h2>
-			<p>This is an example of modal content with a close button.</p>
-			<button onClick={closeModal}>Close Modal</button>
+			<ImagePicker
+				icons={icons}
+				selectedIconIndex={selectedIconIndex}
+				setSelectedIconIndex={setSelectedIconIndex}
+				mainColor={mainColor}
+				setMainColor={setMainColor}
+				backgroundColor={backgroundColor}
+				setBackgroundColor={setBackgroundColor}
+			/>
+			<button onClick={closeModal}>Apply changes</button>
 		</div>
 	);
 
 	return (
 		<div>
-			<h1>Example Page</h1>
-			<button onClick={openModal}>Open Modal</button>
+			<h1>Testing Page</h1>
 
 			<h3>Choose an icon</h3>
-			<ImagePicker icons={icons} />
-			<HouseIcon />
+			<button style={{ backgroundColor }} onClick={openModal}>
+				{React.cloneElement(icons[0] as React.ReactElement, {
+					color: mainColor,
+				})}
+			</button>
 			<AutonomousModal
 				isOpen={isModalOpen}
 				onClose={closeModal}
