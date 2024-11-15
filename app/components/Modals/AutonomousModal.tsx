@@ -5,13 +5,15 @@ import ReactDOM from "react-dom";
 interface ModalProps {
 	isOpen: boolean;
 	onClose: () => void;
-	content: (props: { closeModal: () => void }) => ReactNode;
+	content: React.ReactNode;
+	children?: React.ReactNode;
 }
 
 const AutonomousModal: React.FC<ModalProps> = ({
 	isOpen,
 	onClose,
 	content,
+	children,
 }) => {
 	useEffect(() => {
 		// Close modal on 'Escape' key press
@@ -28,7 +30,8 @@ const AutonomousModal: React.FC<ModalProps> = ({
 	return ReactDOM.createPortal(
 		<div className="modal-overlay" onClick={onClose}>
 			<div className="modal-content" onClick={(e) => e.stopPropagation()}>
-				{content({ closeModal: onClose })}
+				{content}
+				{children}
 			</div>
 			<style jsx>{`
 				.modal-overlay {
