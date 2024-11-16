@@ -1,6 +1,6 @@
 // utils/getUser.ts
 import mongoose from "mongoose";
-import { auth } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { User } from "@/models/index";
 // Define a custom error for user not found
 class UserNotFoundError extends Error {
@@ -13,7 +13,7 @@ class UserNotFoundError extends Error {
 // Define the function with proper types
 export const getUser = async () => {
 	try {
-		const userId = auth().userId;
+		const { userId } = await auth();
 
 		// if (!mongoose.Types.ObjectId.isValid(userId)) {
 		// 	throw new Error("Invalid user ID");
