@@ -8,24 +8,13 @@ import HouseIcon from "@/public/icons/HouseIcon";
 import SchoolIcon from "@/public/icons/SchoolIcon";
 import OfficeIcon from "@/public/icons/OfficeIcon";
 
-interface User {
-	_id: string;
-	name: string;
-	avatar: string; // URL or path to the avatar image
-}
-
 const ExamplePage: React.FC = () => {
 	const [isModalOpen, setModalOpen] = useState(false);
 
 	const openModal = () => setModalOpen(true);
 	const closeModal = () => setModalOpen(false);
 
-	const [selectedUsers, setSelectedUsers] = useState<User[] | null>(null);
-
-	const handleUserSelect = (users: User[]) => {
-		// alert(`Selected users: ${users.map((user) => user.name).join(", ")}`);
-		setSelectedUsers(users);
-	};
+	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
 
 	const icons = [<HouseIcon />, <SchoolIcon />, <OfficeIcon />];
 
@@ -79,8 +68,20 @@ const ExamplePage: React.FC = () => {
 				})}
 			</button>
 
-			<h3>Choose a user</h3>
-			<UserSelector users={users} onUserSelect={handleUserSelect} />
+			<button
+				onClick={() => {
+					openModal();
+					setModalContent(
+						<UserSelector
+							users={users}
+							selectedUserIds={selectedUserIds}
+							setSelectedUserIds={setSelectedUserIds}
+						/>
+					);
+				}}
+			>
+				<h3>Choose a user</h3>
+			</button>
 
 			<AutonomousModal
 				isOpen={isModalOpen}
