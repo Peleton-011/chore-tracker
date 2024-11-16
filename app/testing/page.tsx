@@ -9,22 +9,13 @@ import SchoolIcon from "@/public/icons/SchoolIcon";
 import OfficeIcon from "@/public/icons/OfficeIcon";
 
 const ExamplePage: React.FC = () => {
-	const [isModalOpen, setModalOpen] = useState(false);
-
-	const openModal = () => setModalOpen(true);
-	const closeModal = () => setModalOpen(false);
+	const [isImagePickerOpen, setImagePickerOpen] = useState(false);
+	const [isUserSelectorOpen, setUserSelectorOpen] = useState(false);
 
 	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
 
 	const icons = [<HouseIcon />, <SchoolIcon />, <OfficeIcon />];
 
-	/* Make some sample users for testing following this schema: 
-    interface User {
-  _id: string;
-  name: string;
-  avatar: string; // URL or path to the avatar image
-}
-    */
 	const users = [
 		{ _id: "1", name: "Alice", avatar: "avatar.svg" },
 		{ _id: "2", name: "Bob", avatar: "avatar.svg" },
@@ -39,8 +30,6 @@ const ExamplePage: React.FC = () => {
 	const [mainColor, setMainColor] = useState<string>("#D9A8F1"); // Default main color
 	const [backgroundColor, setBackgroundColor] = useState<string>("#9236A4"); // Default background color
 
-	const [ModalContent, setModalContent] = useState<React.ReactNode>(null);
-
 	return (
 		<div>
 			<h1>Testing Page</h1>
@@ -48,47 +37,45 @@ const ExamplePage: React.FC = () => {
 			<h3>Choose an icon</h3>
 			<button
 				style={{ backgroundColor }}
-				onClick={() => {
-					openModal();
-					setModalContent(
-						<ImagePicker
-							icons={icons}
-							selectedIconIndex={selectedIconIndex}
-							setSelectedIconIndex={setSelectedIconIndex}
-							mainColor={mainColor}
-							setMainColor={setMainColor}
-							backgroundColor={backgroundColor}
-							setBackgroundColor={setBackgroundColor}
-						/>
-					);
-				}}
+				onClick={() => setImagePickerOpen(true)}
 			>
 				{React.cloneElement(icons[0] as React.ReactElement, {
 					color: mainColor,
 				})}
 			</button>
 
-			<button
-				onClick={() => {
-					openModal();
-					setModalContent(
-						<UserSelector
-							users={users}
-							selectedUserIds={selectedUserIds}
-							setSelectedUserIds={setSelectedUserIds}
-						/>
-					);
-				}}
-			>
+			<button onClick={() => setUserSelectorOpen(true)}>
 				<h3>Choose a user</h3>
 			</button>
 
+			{/* Image Picker Modal */}
 			<AutonomousModal
-				isOpen={isModalOpen}
-				onClose={closeModal}
-				content={ModalContent}
+				isOpen={isImagePickerOpen}
+				onClose={() => setImagePickerOpen(false)}
 			>
-				<button onClick={closeModal}>Apply changes</button>
+				<ImagePicker
+					icons={icons}
+					selectedIconIndex={selectedIconIndex}
+					setSelectedIconIndex={setSelectedIconIndex}
+					mainColor={mainColor}
+					setMainColor={setMainColor}
+					backgroundColor={backgroundColor}
+					setBackgroundColor={setBackgroundColor}
+				/>
+				<button onClick={() => setImagePickerOpen(false)}>Apply changes</button>
+			</AutonomousModal>
+
+			{/* User Selector Modal */}
+			<AutonomousModal
+				isOpen={isUserSelectorOpen}
+				onClose={() => setUserSelectorOpen(false)}
+			>
+				<UserSelector
+					users={users}
+					selectedUserIds={selectedUserIds}
+					setSelectedUserIds={setSelectedUserIds}
+				/>
+				<button onClick={() => setUserSelectorOpen(false)}>Apply changes</button>
 			</AutonomousModal>
 		</div>
 	);
