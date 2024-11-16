@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import "../styles/globals.scss";
 import ContextProvider from "./providers/ContextProvider";
-import { ClerkProvider, auth } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
 import { dark } from "@clerk/themes";
 import App from "./App";
 
@@ -10,12 +11,12 @@ export const metadata: Metadata = {
 	description: "Get your chores together!",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
-	const { userId } = auth();
+	const { userId } = await auth();
 
 	return (
 		<ClerkProvider appearance={{ baseTheme: dark }}>
