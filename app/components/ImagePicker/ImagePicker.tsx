@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
 
 interface ImagePickerProps {
@@ -12,16 +12,22 @@ interface ImagePickerProps {
 }
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
-	icons = [], // Default to an empty array if not provided
-	selectedIconIndex = null, // Default to `null` if not provided
+	icons = [],
+	selectedIconIndex = null,
 	setSelectedIconIndex,
-	mainColor = "#FFC2E2", // Default main color
+	mainColor = "#FFC2E2",
 	setMainColor,
-	backgroundColor = "#9236A4", // Default background color
+	backgroundColor = "#9236A4",
 	setBackgroundColor,
 }) => {
-	const [showMainPicker, setShowMainPicker] = useState(false); // Toggle for main color picker
-	const [showBgPicker, setShowBgPicker] = useState(false); // Toggle for background color picker
+	const [showMainPicker, setShowMainPicker] = useState(false);
+	const [showBgPicker, setShowBgPicker] = useState(false);
+
+	// Debounce for HexColorPicker to prevent excessive updates
+	const [tempMainColor, setTempMainColor] = useState(mainColor);
+	const [tempBackgroundColor, setTempBackgroundColor] = useState(backgroundColor);
+
+
 
 	const predefinedColors = [
 		"#9236A4",
@@ -39,9 +45,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 				{icons.map((icon, index) => (
 					<div
 						key={index}
-						className={`icon ${
-							index === selectedIconIndex ? "selected" : ""
-						}`}
+						className={`icon ${index === selectedIconIndex ? "selected" : ""}`}
 						onClick={() => setSelectedIconIndex(index)}
 						style={{ backgroundColor }}
 					>
@@ -71,12 +75,10 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 				{showMainPicker && (
 					<div className="picker-wrapper">
 						<HexColorPicker
-							color={mainColor}
-							onChange={setMainColor}
+							color={tempMainColor}
+							onChange={setTempMainColor}
 						/>
-						<button onClick={() => setShowMainPicker(false)}>
-							Close
-						</button>
+						<button onClick={() => setShowMainPicker(false)}>Close</button>
 					</div>
 				)}
 			</div>
@@ -100,12 +102,10 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 				{showBgPicker && (
 					<div className="picker-wrapper">
 						<HexColorPicker
-							color={backgroundColor}
-							onChange={setBackgroundColor}
+							color={tempBackgroundColor}
+							onChange={setTempBackgroundColor}
 						/>
-						<button onClick={() => setShowBgPicker(false)}>
-							Close
-						</button>
+						<button onClick={() => setShowBgPicker(false)}>Close</button>
 					</div>
 				)}
 			</div>
