@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BlockPicker } from "react-color";
+import { HexColorPicker } from "react-colorful";
 
 interface ImagePickerProps {
 	icons: React.ReactNode[]; // Array of SVG icons passed as React elements
@@ -12,12 +12,12 @@ interface ImagePickerProps {
 }
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
-	icons,
-	selectedIconIndex,
+	icons = [], // Default to an empty array if not provided
+	selectedIconIndex = null, // Default to `null` if not provided
 	setSelectedIconIndex,
-	mainColor,
+	mainColor = "#FFC2E2", // Default main color
 	setMainColor,
-	backgroundColor,
+	backgroundColor = "#9236A4", // Default background color
 	setBackgroundColor,
 }) => {
 	const [showMainPicker, setShowMainPicker] = useState(false); // Toggle for main color picker
@@ -31,20 +31,6 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 		"#B0DFE5",
 		"#333333",
 	];
-
-	const customPickerStyles = {
-		default: {
-			card: {
-				background: "#13171f",
-				boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)",
-				borderRadius: "8px",
-			},
-			body: {
-				display: "flex",
-				flexDirection: "column",
-			},
-		},
-	};
 
 	return (
 		<div>
@@ -84,14 +70,13 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 				</div>
 				{showMainPicker && (
 					<div className="picker-wrapper">
-						<BlockPicker
+						<HexColorPicker
 							color={mainColor}
-							colors={predefinedColors}
-							onChangeComplete={(color) => {
-								setMainColor(color.hex);
-								setShowMainPicker(false);
-							}}
+							onChange={setMainColor}
 						/>
+						<button onClick={() => setShowMainPicker(false)}>
+							Close
+						</button>
 					</div>
 				)}
 			</div>
@@ -114,14 +99,13 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 				</div>
 				{showBgPicker && (
 					<div className="picker-wrapper">
-						<BlockPicker
+						<HexColorPicker
 							color={backgroundColor}
-							colors={predefinedColors}
-							onChangeComplete={(color) => {
-								setBackgroundColor(color.hex);
-								setShowBgPicker(false);
-							}}
+							onChange={setBackgroundColor}
 						/>
+						<button onClick={() => setShowBgPicker(false)}>
+							Close
+						</button>
 					</div>
 				)}
 			</div>
