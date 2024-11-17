@@ -117,8 +117,15 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 							key={option.label}
 							onClick={() => handleRecurrenceSelect(option)}
 							className={
-								recurrenceIntervalValue === option.value &&
-								recurrenceIntervalUnit === option.unit
+								(recurrenceIntervalValue === option.value &&
+									recurrenceIntervalUnit === option.unit) ||
+								(option.label === "Custom" &&
+									!recurrenceOptions.some(
+										(o) =>
+											o.value ===
+												recurrenceIntervalValue &&
+											o.unit === recurrenceIntervalUnit
+									))
 									? ""
 									: "outline"
 							}
