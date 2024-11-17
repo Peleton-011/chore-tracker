@@ -15,11 +15,11 @@ interface DateTimeSelectorProps {
 	isRecurring: boolean;
 	setIsRecurring: (isRecurring: boolean) => void;
 
-	customIntervalValue?: number;
-	setCustomIntervalValue: (value?: number) => void;
+	recurrenceIntervalValue?: number;
+	setRecurrenceIntervalValue: (value?: number) => void;
 
-	customIntervalUnit?: string;
-	setCustomIntervalUnit: (unit?: string) => void;
+	recurrenceIntervalUnit?: string;
+	setRecurrenceIntervalUnit: (unit?: string) => void;
 }
 
 const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
@@ -31,10 +31,10 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 	setRecurrenceEndDate,
 	isRecurring,
 	setIsRecurring,
-	customIntervalValue,
-	setCustomIntervalValue,
-	customIntervalUnit,
-	setCustomIntervalUnit,
+	recurrenceIntervalValue,
+	setRecurrenceIntervalValue,
+	recurrenceIntervalUnit,
+	setRecurrenceIntervalUnit,
 }) => {
 	const [isRecurrenceModalOpen, setRecurrenceModalOpen] =
 		React.useState(false);
@@ -56,8 +56,8 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 		if (option.label === "Custom") {
 			setRecurrenceModalOpen(true);
 		} else {
-			setCustomIntervalValue(option.value || undefined);
-			setCustomIntervalUnit(option.unit || undefined);
+			setRecurrenceIntervalValue(option.value || undefined);
+			setRecurrenceIntervalUnit(option.unit || undefined);
 		}
 	};
 
@@ -117,8 +117,8 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 							key={option.label}
 							onClick={() => handleRecurrenceSelect(option)}
 							className={
-								customIntervalValue === option.value &&
-								customIntervalUnit === option.unit
+								recurrenceIntervalValue === option.value &&
+								recurrenceIntervalUnit === option.unit
 									? ""
 									: "outline"
 							}
@@ -142,9 +142,9 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 							<input
 								type="number"
 								min="1"
-								value={customIntervalValue || ""}
+								value={recurrenceIntervalValue || ""}
 								onChange={(e) =>
-									setCustomIntervalValue(
+									setRecurrenceIntervalValue(
 										e.target.value
 											? parseInt(e.target.value, 10)
 											: undefined
@@ -158,9 +158,9 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 						<label>
 							Interval Unit:
 							<select
-								value={customIntervalUnit || ""}
+								value={recurrenceIntervalUnit || ""}
 								onChange={(e) =>
-									setCustomIntervalUnit(e.target.value)
+									setRecurrenceIntervalUnit(e.target.value)
 								}
 								style={{ marginLeft: "0.5rem" }}
 							>
