@@ -124,7 +124,7 @@ const ExamplePage: React.FC = () => {
 					recurrenceIntervalUnit={recurrenceIntervalUnit}
 					setRecurrenceIntervalUnit={setRecurrenceIntervalUnit}
 					recurrenceIntervalValue={recurrenceIntervalValue}
-					setRecurrenceIntervalValue={setRecurrenceIntervalValue0+}
+					setRecurrenceIntervalValue={setRecurrenceIntervalValue}
 				/>
 				<button onClick={() => setDateTimeOpen(false)}>
 					Apply changes
