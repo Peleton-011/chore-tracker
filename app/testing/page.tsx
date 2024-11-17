@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import AutonomousModal from "../components/Modals/AutonomousModal";
 import ImagePicker from "../components/ImagePicker/ImagePicker";
 import UserSelector from "../components/UserSelector/UserSelector";
+import DateTimeSelector from "../components/DateTimeSelector/DateTimeSelector"
 
 import HouseIcon from "@/public/icons/HouseIcon";
 import SchoolIcon from "@/public/icons/SchoolIcon";
@@ -62,7 +63,9 @@ const ExamplePage: React.FC = () => {
 					backgroundColor={backgroundColor}
 					setBackgroundColor={setBackgroundColor}
 				/>
-				<button onClick={() => setImagePickerOpen(false)}>Apply changes</button>
+				<button onClick={() => setImagePickerOpen(false)}>
+					Apply changes
+				</button>
 			</AutonomousModal>
 
 			{/* User Selector Modal */}
@@ -75,8 +78,11 @@ const ExamplePage: React.FC = () => {
 					selectedUserIds={selectedUserIds}
 					setSelectedUserIds={setSelectedUserIds}
 				/>
-				<button onClick={() => setUserSelectorOpen(false)}>Apply changes</button>
+				<button onClick={() => setUserSelectorOpen(false)}>
+					Apply changes
+				</button>
 			</AutonomousModal>
+			<DateTimeSelector />
 		</div>
 	);
 };
