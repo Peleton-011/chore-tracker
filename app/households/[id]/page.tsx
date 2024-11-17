@@ -76,7 +76,7 @@ function page({ params }: { params: { id: string } }) {
 			<hr />
 			{household.description && (
 				<>
-                    <h3>Description</h3>
+					<h3>Description</h3>
 					<Description description={household.description} />
 					<hr />
 				</>
@@ -97,8 +97,7 @@ function page({ params }: { params: { id: string } }) {
 				/>
 			</div>
 			<hr />
-
-			<UserList users={household.members} />
+			{household.members && <UserList users={household.members} />}
 			<hr />
 			<div>
 				<h3>Household Tasks</h3>
