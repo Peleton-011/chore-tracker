@@ -1,5 +1,4 @@
 "use client"; // This ensures the component is client-side
-import { auth } from "@clerk/nextjs";
 import { use, useEffect, useState } from "react";
 import { useGlobalState } from "@/app/context/globalProvider";
 import { useRouter } from "next/navigation";
