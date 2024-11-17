@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import AutonomousModal from "../components/Modals/AutonomousModal";
 import ImagePicker from "../components/ImagePicker/ImagePicker";
 import UserSelector from "../components/UserSelector/UserSelector";
-import DateTimeSelector from "../components/DateTimeSelector/DateTimeSelector"
+import DateTimeSelector from "../components/DateTimeSelector/DateTimeSelector";
 
 import HouseIcon from "@/public/icons/HouseIcon";
 import SchoolIcon from "@/public/icons/SchoolIcon";
 import OfficeIcon from "@/public/icons/OfficeIcon";
+import { addHours, startOfToday } from "date-fns";
 
 const ExamplePage: React.FC = () => {
 	const [isImagePickerOpen, setImagePickerOpen] = useState(false);
@@ -16,6 +17,26 @@ const ExamplePage: React.FC = () => {
 	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
 
 	const icons = [<HouseIcon />, <SchoolIcon />, <OfficeIcon />];
+
+	//DATETIME STUFF
+	const [isDateTimeOpen, setDateTimeOpen] = useState(true);
+
+	const [selectedDate, setSelectedDate] = useState<Date>(startOfToday());
+	const [selectedTime, setSelectedTime] = useState<Date>(
+		new Date(addHours(new Date(), 1).setMinutes(0))
+	);
+	const [recurrenceEndDate, setRecurrenceEndDate] = useState<
+		Date | undefined
+	>(undefined);
+	const [isRecurring, setIsRecurring] = useState<boolean>(false);
+
+	const [recurrenceIntervalValue, setRecurrenceIntervalValue] = useState<
+		number | undefined
+	>(undefined);
+
+	const [recurrenceIntervalUnit, setRecurrenceIntervalUnit] = useState<
+		string | undefined
+	>(undefined);
 
 	const users = [
 		{ _id: "1", name: "Alice", avatar: "avatar.svg" },
@@ -47,6 +68,11 @@ const ExamplePage: React.FC = () => {
 
 			<button onClick={() => setUserSelectorOpen(true)}>
 				<h3>Choose a user</h3>
+			</button>
+
+			{/* Button that opens the DateTimeSelector */}
+			<button onClick={() => setDateTimeOpen(true)}>
+				<h3>Date & Time</h3>
 			</button>
 
 			{/* Image Picker Modal */}
@@ -82,7 +108,28 @@ const ExamplePage: React.FC = () => {
 					Apply changes
 				</button>
 			</AutonomousModal>
-			<DateTimeSelector />
+			<AutonomousModal
+				isOpen={isDateTimeOpen}
+				onClose={() => setDateTimeOpen(false)}
+			>
+				<DateTimeSelector
+					selectedDate={selectedDate}
+					setSelectedDate={setSelectedDate}
+					selectedTime={selectedTime}
+					setSelectedTime={setSelectedTime}
+					recurrenceEndDate={recurrenceEndDate}
+					setRecurrenceEndDate={setRecurrenceEndDate}
+					isRecurring={isRecurring}
+					setIsRecurring={setIsRecurring}
+					recurrenceIntervalUnit={recurrenceIntervalUnit}
+					setRecurrenceIntervalUnit={setRecurrenceIntervalUnit}
+					recurrenceIntervalValue={recurrenceIntervalValue}
+					setRecurrenceIntervalValue={setRecurrenceIntervalValue0+}
+				/>
+				<button onClick={() => setDateTimeOpen(false)}>
+					Apply changes
+				</button>
+			</AutonomousModal>
 		</div>
 	);
 };
