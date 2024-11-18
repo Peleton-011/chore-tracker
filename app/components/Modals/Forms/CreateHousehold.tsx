@@ -6,6 +6,12 @@ import toast from "react-hot-toast";
 import Button from "../../Button/Button";
 import { edit, add, plus } from "@/app/utils/Icons";
 import Calendar from "react-calendar";
+import AutonomousModal from "../../Modals/AutonomousModal";
+import ImagePicker from "../../ImagePicker/ImagePicker";
+
+import HouseIcon from "@/public/icons/HouseIcon";
+import SchoolIcon from "@/public/icons/SchoolIcon";
+import OfficeIcon from "@/public/icons/OfficeIcon";
 
 function CreateHousehold({
 	household: {
@@ -21,6 +27,19 @@ function CreateHousehold({
 	const [members, setMembers] = useState([...argmembers]);
 	const [tasks, setTasks] = useState(argtasks || []);
 	const [description, setDescription] = useState(argdescription || []);
+
+	//ICON STATE
+	const [isImagePickerOpen, setImagePickerOpen] = useState(false);
+
+	const icons = [<HouseIcon />, <SchoolIcon />, <OfficeIcon />];
+
+	const [selectedIconIndex, setSelectedIconIndex] = useState<number | null>(
+		null
+	);
+	const [mainColor, setMainColor] = useState<string>("#D9A8F1"); // Default main color
+	const [backgroundColor, setBackgroundColor] = useState<string>("#9236A4"); // Default background color
+
+	//END ICON STATE
 
 	type ValuePiece = Date | null;
 
@@ -117,7 +136,22 @@ function CreateHousehold({
 	};
 	return (
 		<form onSubmit={handleSubmit} className="create-content-form">
-			<h1>{isUpdate ? "Update a Household" : "Create a Household"}</h1>
+			<div style={{ display: "flex", justifyContent: "space-between" }}>
+				<h1>
+					{isUpdate ? "Update a Household" : "Create a Household"}
+				</h1>
+				<button
+					style={{ backgroundColor }}
+					onClick={(e) => {
+						e.preventDefault();
+						setImagePickerOpen(true);
+					}}
+				>
+					{React.cloneElement(icons[0] as React.ReactElement, {
+						color: mainColor,
+					})}
+				</button>
+			</div>
 			<div className="create-content-body grid">
 				<TitleInput title={name} handleChange={handleChange} />
 
@@ -128,6 +162,26 @@ function CreateHousehold({
 
 				{/* {<button>Add image</button> /* TODO: Implement \*\/} */}
 			</div>
+
+			{/* Image Picker Modal */}
+			<AutonomousModal
+				isOpen={isImagePickerOpen}
+				onClose={() => setImagePickerOpen(false)}
+			>
+				<ImagePicker
+					icons={icons}
+					selectedIconIndex={selectedIconIndex}
+					setSelectedIconIndex={setSelectedIconIndex}
+					mainColor={mainColor}
+					setMainColor={setMainColor}
+					backgroundColor={backgroundColor}
+					setBackgroundColor={setBackgroundColor}
+				/>
+				<button onClick={() => setImagePickerOpen(false)}>
+					Apply changes
+				</button>
+			</AutonomousModal>
+
 			<div className="submit-btn">
 				<Button
 					type="submit"
