@@ -4,9 +4,14 @@ import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import Button from "../../Button/Button";
+import AutonomousModal from "../../Modals/AutonomousModal";
+import UserSelector from "../../UserSelector/UserSelector";
+
 import { edit, add, plus } from "@/app/utils/Icons";
 import Calendar from "react-calendar";
 import formatDate, { formatTime, formatDateTime } from "@/app/utils/formatDate";
+import DateTimeSelector from "../../DateTimeSelector/DateTimeSelector";
+import { addHours, startOfToday } from "date-fns";
 
 function CreateTask({
 	task: {
@@ -24,6 +29,35 @@ function CreateTask({
 	const [date, setDate] = useState(argdate || new Date());
 	const [completed, setCompleted] = useState(argcompleted || false);
 	const [important, setImportant] = useState(argimportant || false);
+
+	const inputs: any = {};
+
+	//USERS STUFF
+	const [isUserSelectorOpen, setUserSelectorOpen] = useState(false);
+
+	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+	//END USERS STUFF
+
+	//DATETIME STUFF
+	const [isDateTimeOpen, setDateTimeOpen] = useState(false);
+
+	const [selectedDate, setSelectedDate] = useState<Date>(startOfToday());
+	const [selectedTime, setSelectedTime] = useState<Date>(
+		new Date(addHours(new Date(), 1).setMinutes(0))
+	);
+	const [recurrenceEndDate, setRecurrenceEndDate] = useState<
+		Date | undefined
+	>(undefined);
+	const [isRecurring, setIsRecurring] = useState<boolean>(false);
+
+	const [recurrenceIntervalValue, setRecurrenceIntervalValue] = useState<
+		number | undefined
+	>(undefined);
+
+	const [recurrenceIntervalUnit, setRecurrenceIntervalUnit] = useState<
+		string | undefined
+	>(undefined);
+	//End of datetime stuff
 
 	type ValuePiece = Date | null;
 
@@ -43,6 +77,7 @@ function CreateTask({
 		closeModal,
 		householdOpened,
 		fetchCurrentHouseholdTasks,
+		currentHouseholdUsers,
 	} = useGlobalState();
 
 	const handleChange = (key: string, value: string | Value) => {
@@ -129,6 +164,77 @@ function CreateTask({
 		}
 	};
 
+	inputs.DateTime = (
+		<>
+			<button
+				className="outline"
+				onClick={(e) => {
+					e.preventDefault();
+					setDateTimeOpen(true);
+				}}
+			>
+				Date & Time <br />
+				{/* {formatDate(date) + " , " + formatTime(date)} */}
+				{formatDateTime(date)}
+			</button>
+			<AutonomousModal
+				isOpen={isDateTimeOpen}
+				onClose={() => setDateTimeOpen(false)}
+			>
+				<DateTimeSelector
+					selectedDate={selectedDate}
+					setSelectedDate={setSelectedDate}
+					selectedTime={selectedTime}
+					setSelectedTime={setSelectedTime}
+					recurrenceEndDate={recurrenceEndDate}
+					setRecurrenceEndDate={setRecurrenceEndDate}
+					isRecurring={isRecurring}
+					setIsRecurring={setIsRecurring}
+					recurrenceIntervalUnit={recurrenceIntervalUnit}
+					setRecurrenceIntervalUnit={setRecurrenceIntervalUnit}
+					recurrenceIntervalValue={recurrenceIntervalValue}
+					setRecurrenceIntervalValue={setRecurrenceIntervalValue}
+				/>
+				<button onClick={() => setDateTimeOpen(false)}>
+					Apply changes
+				</button>
+			</AutonomousModal>
+		</>
+	);
+	inputs.Users = (
+		<>
+			<button
+				className="outline"
+				onClick={(e) => {
+					e.preventDefault();
+					setUserSelectorOpen(true);
+				}}
+			>
+				Choose Members <br />
+			</button>
+			{/* User Selector Modal */}
+			<AutonomousModal
+				isOpen={isUserSelectorOpen}
+				onClose={() => setUserSelectorOpen(false)}
+			>
+				<UserSelector
+					users={currentHouseholdUsers.map((u: any) => {
+						return {
+							_id: u._id,
+							name: u.username,
+							avatar: u.profilePic,
+						};
+					})}
+					selectedUserIds={selectedUserIds}
+					setSelectedUserIds={setSelectedUserIds}
+				/>
+				<button onClick={() => setUserSelectorOpen(false)}>
+					Apply changes
+				</button>
+			</AutonomousModal>
+		</>
+	);
+
 	return (
 		<form onSubmit={handleSubmit} className="create-content-form">
 			<h1>{isUpdate ? "Update a Task" : "Create a Task"}</h1>
@@ -152,20 +258,9 @@ function CreateTask({
 					handleChange={handleChange}
 				/>
 
-				<button>
-					Date & Time <br />
-					{/* {formatDate(date) + " , " + formatTime(date)} */}
-					{formatDateTime(date)}
-				</button>
+				{inputs.DateTime}
 
-				{householdOpened && (
-					<button>
-						Members <br />
-						{
-							/* TODO */ "Anyone" /* Open modal to player list where you can select the members you want*/
-						}
-					</button>
-				)}
+				{householdOpened && inputs.Users}
 
 				<button>
 					Reminder <br />
@@ -199,7 +294,7 @@ function CreateTask({
 					isMobile={isMobile}
 				/> */}
 			</div>
-			<div className="submit-btn">
+			<div className="submit-btn" style={{ marginTop: "2rem" }}>
 				<Button
 					type="submit"
 					name={isUpdate ? "Update Task" : "Create Task"}
@@ -245,21 +340,7 @@ function DescriptionInput({ description, handleChange }: any) {
 		</div>
 	);
 }
-function DateInput({ date, handleChange, isMobile }: any) {
-	return (
-		<div className={"input-control " + (isMobile ? "" : "wide")}>
-			<label htmlFor="date">Date</label>
-			<Calendar
-				onChange={(e) => handleChange("date", e)}
-				value={date}
-				// name="date"
-				// id="date"
-				next2Label={null}
-				prev2Label={null}
-			/>
-		</div>
-	);
-}
+
 function ToggleInputs({ completed, important, handleChange }: any) {
 	return (
 		<div className="toggler-group">
