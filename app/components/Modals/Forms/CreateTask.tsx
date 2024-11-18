@@ -112,6 +112,11 @@ function CreateTask({
 			date,
 			completed: completed || false,
 			important: important || false,
+			isRecurring,
+			intervalValue: recurrenceIntervalValue,
+			intervalUnit: recurrenceIntervalUnit,
+			recurrenceEndDate,
+			selectedUserIds,
 		};
 
 		if (isUpdate) {
