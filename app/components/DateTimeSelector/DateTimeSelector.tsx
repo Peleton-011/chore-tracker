@@ -58,6 +58,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 		} else {
 			setRecurrenceIntervalValue(option.value || undefined);
 			setRecurrenceIntervalUnit(option.unit || undefined);
+			setIsRecurring(true);
 		}
 	};
 
@@ -117,15 +118,18 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 							key={option.label}
 							onClick={() => handleRecurrenceSelect(option)}
 							className={
-								(recurrenceIntervalValue === option.value &&
+								(((recurrenceIntervalValue === option.value &&
 									recurrenceIntervalUnit === option.unit) ||
-								(option.label === "Custom" &&
-									!recurrenceOptions.some(
-										(o) =>
-											o.value ===
-												recurrenceIntervalValue &&
-											o.unit === recurrenceIntervalUnit
-									))
+									(option.label === "Custom" &&
+										!recurrenceOptions.some(
+											(o) =>
+												o.value ===
+													recurrenceIntervalValue &&
+												o.unit ===
+													recurrenceIntervalUnit
+										))) &&
+									isRecurring) ||
+								(option.label === "Once" && !isRecurring)
 									? ""
 									: "outline"
 							}
@@ -188,7 +192,6 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 								type="checkbox"
 								checked={isRecurring}
 								onChange={(e) => {
-									setIsRecurring(e.target.checked);
 									if (!e.target.checked) {
 										setRecurrenceEndDate(undefined); // Clear end date when disabled
 									}
