@@ -234,7 +234,7 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 						reminders={before}
 					/>
 				)}
-				<hr />
+				{before.length && after.length && <hr />}
 				{after.length && (
 					<ReminderListSection title={"After: "} reminders={after} />
 				)}
