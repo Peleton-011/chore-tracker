@@ -21,6 +21,10 @@ function CreateTask({
 		date: argdate,
 		completed: argcompleted,
 		important: argimportant,
+		users: argusers,
+		recurrenceEndDate: argrecurrenceEndDate,
+		recurrenceIntervalValue: argrecurrenceIntervalValue,
+		recurrenceIntervalUnit: argrecurrenceIntervalUnit,
 	},
 	isMobile,
 }: any) {
@@ -58,6 +62,8 @@ function CreateTask({
 		string | undefined
 	>(undefined);
 	//End of datetime stuff
+
+	const [reminders, setReminders] = useState([]);
 
 	type ValuePiece = Date | null;
 
@@ -116,6 +122,8 @@ function CreateTask({
 			intervalValue: recurrenceIntervalValue,
 			intervalUnit: recurrenceIntervalUnit,
 			recurrenceEndDate,
+			reminders,
+			setReminders,
 			selectedUserIds,
 		};
 
@@ -239,6 +247,30 @@ function CreateTask({
 			</AutonomousModal>
 		</>
 	);
+    inputs.Reminders = (
+        <>
+        <button
+            className="outline"
+            onClick={(e) => {
+                e.preventDefault();
+                setUserSelectorOpen(true);
+            }}
+        >
+            Set Reminders <br />
+        </button>
+        {/* User Selector Modal */}
+        <AutonomousModal
+            isOpen={isUserSelectorOpen}
+            onClose={() => setUserSelectorOpen(false)}
+        >
+            <label>Remind me before</label>
+            <input type="number"  />
+            <button onClick={() => setUserSelectorOpen(false)}>
+                Apply changes
+            </button>
+        </AutonomousModal>
+    </>
+    )
 
 	return (
 		<form onSubmit={handleSubmit} className="create-content-form">
@@ -267,23 +299,8 @@ function CreateTask({
 
 				{householdOpened && inputs.Users}
 
-				<button>
-					Reminder <br />
-					on due date
-					{/* TODO: Add toggle // ++ 5'before, the day before ...*/}
-				</button>
+                {inputs.Reminders}
 
-				{(() => {
-					const reminder = false;
-					if (reminder) {
-						return (
-							<button>
-								Overdue Reminder
-								{/* TODO: Add toggle and options similar to the reminder thingy */}
-							</button>
-						);
-					}
-				})()}
 
 				{/* {isMobile && (
 					// <ToggleInputs
