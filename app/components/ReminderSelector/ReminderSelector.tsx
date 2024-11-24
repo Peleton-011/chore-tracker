@@ -255,13 +255,14 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 			<h2>Reminder Selector</h2>
 
 			{/* Add reminders */}
-
-			<ReminderSelectorSection type="before" />
-			<ReminderSelectorSection type="after" />
+			<div style={{ marginLeft: "2rem" }}>
+				<ReminderSelectorSection type="before" />
+				<ReminderSelectorSection type="after" />
+			</div>
 
 			{/* Existing Reminders */}
-			<div>
-				<h3>Existing Reminders</h3>
+			<h3>Existing Reminders</h3>
+			<div style={{ marginLeft: "2rem" }}>
 				<ReminderList reminders={reminders} />
 			</div>
 
@@ -271,7 +272,11 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 				onClose={() => setCustomModalOpen(false)}
 			>
 				<div>
-					<h2>Add Custom Reminder</h2>
+					<h2>
+						Add Reminder{" "}
+						{newReminder.type.slice(0, 1).toUpperCase() +
+							newReminder.type.slice(1)}
+					</h2>
 					{/* Value Selector */}
 					<div style={{ marginBottom: "1rem" }}>
 						<label>
