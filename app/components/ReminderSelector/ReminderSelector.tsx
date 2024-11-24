@@ -185,6 +185,8 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 
 		const { value, unit } = changeUnits(argValue, argUnit);
 
+		// vv TODO: This should run when on mobile vv
+		// if (unit === "minutes") return value + "' " + (type ? " " + type : "");
 		if (value !== 1) return value + " " + unit + (type ? " " + type : "");
 		if (unit === "days" && type) return "The day " + type;
 
@@ -200,8 +202,16 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 			<>
 				<h3>{title}</h3>
 				{reminders.map((reminder: any, index: number) => (
-					<div key={index}>
-						<p>
+					<div
+						key={index}
+						style={{
+							display: "flex",
+							border: "1px",
+							alignItems: "center",
+							gap: "3rem",
+						}}
+					>
+						<p style={{ margin: "0" }}>
 							{getDisplayText(
 								reminder.value,
 								reminder.unit,
@@ -246,16 +256,16 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 		<div>
 			<h2>Reminder Selector</h2>
 
+			{/* Add reminders */}
+
+			<ReminderSelectorSection type="before" />
+			<ReminderSelectorSection type="after" />
+
 			{/* Existing Reminders */}
 			<div>
 				<h3>Existing Reminders</h3>
 				<ReminderList reminders={reminders} />
 			</div>
-
-			{/* Add reminders */}
-
-			<ReminderSelectorSection type="before" />
-			<ReminderSelectorSection type="after" />
 
 			{/* Custom Reminder Modal */}
 			<AutonomousModal
