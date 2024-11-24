@@ -231,21 +231,21 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 	const ReminderList: React.FC<{ reminders: any[] }> = ({ reminders }) => {
 		if (reminders.length === 0) return <p>No reminders added.</p>;
 		const tempReminders = reminders
-			.filter((r) => r.total < 0)
+			
 			.sort((a, b) => a.total - b.total);
 		const before = tempReminders.filter((r) => r.total < 0);
 		const after = tempReminders.filter((r) => r.total > 0);
 
 		return (
 			<>
-				{before && (
+				{before.length && (
 					<ReminderListSection
 						title={"Before: "}
 						reminders={before}
 					/>
 				)}
-				<hr />
-				{after && (
+				{before.length && after.length && <hr />}
+				{after.length && (
 					<ReminderListSection title={"After: "} reminders={after} />
 				)}
 			</>
