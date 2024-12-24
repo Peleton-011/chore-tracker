@@ -4,12 +4,10 @@ import AutonomousModal from "../Modals/AutonomousModal";
 
 interface DateTimeSelectorProps {
 	handleSubmit: (data: { [key: string]: any }) => void;
-	handleClose: () => void;
 }
 
 const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
-	handleSubmit,
-	handleClose,
+	handleSubmit
 }) => {
 	// Virtual form vv
 
@@ -230,7 +228,6 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 						recurrenceIntervalUnit,
 						recurrenceEndDate,
 					});
-					handleClose();
 				}}
 			>
 				Apply changes
