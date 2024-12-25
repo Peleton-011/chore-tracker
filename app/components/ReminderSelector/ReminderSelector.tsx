@@ -133,8 +133,10 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 							onClick={() => {
 								setCustomModalOpen(true),
 									setNewReminder({
-										...newReminder,
+										value: 5,
+										unit: "minutes",
 										type: type,
+										total: 5 * (type === "before" ? -1 : 1),
 									});
 							}}
 						>
@@ -197,13 +199,14 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 	const ReminderListSection: React.FC<{
 		title: string;
 		reminders: any[];
-	}> = ({ title, reminders }) => {
+		baseIndex: number;
+	}> = ({ title, reminders, baseIndex }) => {
 		return (
 			<>
 				<h3>{title}</h3>
 				{reminders.map((reminder: any, index: number) => (
 					<div
-						key={index}
+						key={index + baseIndex}
 						style={{
 							display: "flex",
 							border: "1px",
@@ -215,11 +218,15 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 							{getDisplayText(
 								reminder.value,
 								reminder.unit,
-								"before"
+								reminder.type
 							)}{" "}
 							({reminder.total})
 						</p>
-						<button onClick={() => handleRemoveReminder(index)}>
+						<button
+							onClick={() =>
+								handleRemoveReminder(index + baseIndex)
+							}
+						>
 							Remove
 						</button>
 					</div>
@@ -240,11 +247,16 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 					<ReminderListSection
 						title={"Before: "}
 						reminders={before}
+						baseIndex={0}
 					/>
 				) : null}
 				{before.length && after.length ? <hr /> : null}
 				{after.length ? (
-					<ReminderListSection title={"After: "} reminders={after} />
+					<ReminderListSection
+						title={"After: "}
+						reminders={after}
+						baseIndex={before.length}
+					/>
 				) : null}
 			</>
 		);
