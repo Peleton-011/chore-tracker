@@ -9,17 +9,20 @@ interface Reminder {
 }
 
 interface ReminderSelectorProps {
+	handleSubmit: ({ reminders }: { reminders: Reminder[] }) => void;
 	reminders: Reminder[];
-	setReminders: (reminders: Reminder[]) => void;
 }
 interface ReminderSelectorSectionProps {
 	type: "before" | "after";
 }
 
 const ReminderSelector: React.FC<ReminderSelectorProps> = ({
-	reminders,
-	setReminders,
+	handleSubmit,
+	reminders: initialReminders,
 }) => {
+	const [reminders, setReminders] = useState<Reminder[]>(
+		initialReminders || []
+	);
 	const [newReminder, setNewReminder] = useState<Reminder>({
 		type: "before",
 		value: 5,
@@ -338,6 +341,11 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 					</button>
 				</div>
 			</AutonomousModal>
+
+			{/* Submit Button */}
+			<button onClick={(e) => handleSubmit({ reminders })}>
+				Apply changes
+			</button>
 		</div>
 	);
 };

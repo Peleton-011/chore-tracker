@@ -5,7 +5,7 @@ import ReminderSelector from "../components/ReminderSelector/ReminderSelector";
 import AutonomousModal from "../components/Modals/AutonomousModal";
 
 const ExamplePage: React.FC = () => {
-	const [reminders, setRemindeers] = useState<any[]>([]);
+	const [reminders, setReminders] = useState<any[]>([]);
 	const [isReminderModalOpen, setReminderModalOpen] = useState(false);
 
 	return (
@@ -22,7 +22,12 @@ const ExamplePage: React.FC = () => {
 			>
 				<ReminderSelector
 					reminders={reminders}
-					setReminders={setRemindeers}
+					handleSubmit={(data) => {
+						const { reminders } = data;
+
+						setReminders(reminders);
+						setReminderModalOpen(false);
+					}}
 				/>
 			</AutonomousModal>
 		</div>
