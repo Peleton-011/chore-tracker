@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AutonomousModal from "../Modals/AutonomousModal";
 
-interface Reminder {
+export interface Reminder {
 	type: "before" | "after";
 	value: number;
 	unit: string;

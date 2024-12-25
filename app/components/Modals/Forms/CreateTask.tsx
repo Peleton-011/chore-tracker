@@ -12,6 +12,8 @@ import Calendar from "react-calendar";
 import formatDate, { formatTime, formatDateTime } from "@/app/utils/formatDate";
 import DateTimeSelector from "../../DateTimeSelector/DateTimeSelector";
 import { addHours, startOfToday } from "date-fns";
+import ReminderSelector from "../../ReminderSelector/ReminderSelector";
+import { Reminder } from "@/app/components/ReminderSelector/ReminderSelector";
 
 function CreateTask({
 	task: {
@@ -60,7 +62,10 @@ function CreateTask({
 		useState<string>("days");
 	//End of datetime stuff
 
-	const [reminders, setReminders] = useState([]);
+	//REMINDERS vv
+	const [reminders, setReminders] = useState<Reminder[]>([]);
+	const [isReminderModalOpen, setReminderModalOpen] = useState(false);
+	//REMINDERS ^^
 
 	type ValuePiece = Date | null;
 
@@ -231,21 +236,25 @@ function CreateTask({
 				className="outline"
 				onClick={(e) => {
 					e.preventDefault();
-					setUserSelectorOpen(true);
+					setReminderModalOpen(true);
 				}}
 			>
 				Set Reminders <br />
 			</button>
 			{/* User Selector Modal */}
 			<AutonomousModal
-				isOpen={isUserSelectorOpen}
-				onClose={() => setUserSelectorOpen(false)}
+				isOpen={isReminderModalOpen}
+				onClose={() => setReminderModalOpen(false)}
 			>
-				<label>Remind me before</label>
-				<input type="number" />
-				<button onClick={() => setUserSelectorOpen(false)}>
-					Apply changes
-				</button>
+				<ReminderSelector
+					reminders={reminders}
+					handleSubmit={(data) => {
+						const { reminders } = data;
+
+						setReminders(reminders);
+						setReminderModalOpen(false);
+					}}
+				/>
 			</AutonomousModal>
 		</>
 	);
