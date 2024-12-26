@@ -3,11 +3,18 @@ import { format, startOfToday, addHours } from "date-fns";
 import AutonomousModal from "../Modals/AutonomousModal";
 
 interface DateTimeSelectorProps {
-	handleSubmit: (data: { [key: string]: any }) => void;
+	handleSubmit: (data: {
+		selectedDate: Date;
+		selectedTime: Date;
+		isRecurring: boolean;
+		recurrenceIntervalValue: number;
+		recurrenceIntervalUnit: string;
+		recurrenceEndDate: Date;
+	}) => void;
 }
 
 const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
-	handleSubmit
+	handleSubmit,
 }) => {
 	// Virtual form vv
 
