@@ -45,6 +45,17 @@ const TaskSchema = new Schema(
 		},
 		recurrenceEndDate: Date,
 		nextOccurrence: Date,
+		reminders: [
+			{
+				type: {
+					type: String,
+					enum: ["before", "after"],
+					required: true,
+				},
+				offsetMinutes: { type: Number, required: true },
+				notified: { type: Boolean, default: false },
+			},
+		],
 	},
 	{ timestamps: true }
 );

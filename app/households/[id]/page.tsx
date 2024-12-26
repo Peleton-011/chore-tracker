@@ -8,6 +8,7 @@ import axios from "axios";
 import CopyShareButton from "@/app/components/CopyShareButton/CopyShareButton";
 import UserList from "@/app/components/UserList/UserList";
 import Description from "@/app/components/Description/Desscription";
+import dateTaskUtils from "@/app/utils/dateTaskUtils";
 
 interface Household {
 	_id: string;
@@ -18,14 +19,26 @@ interface Household {
 	recurringTasks: any[];
 }
 
+interface TaskList {
+	title: string;
+	tasks: any[];
+}
+
 function page({ params }: { params: { id: string } }) {
-	const { generateInviteLink, updateHouseholdOpened } = useGlobalState();
+	const { generateInviteLink, updateHouseholdOpened, currentHouseholdTasks } =
+		useGlobalState();
 
 	updateHouseholdOpened();
 	const [error, setError] = useState<string>("");
 	const { id } = params; // Use params to get the token
 	const [household, setHousehold] = useState<any>({ tasks: [], members: [] });
 	const [link, setLink] = useState("");
+	const [taskLists, setTaskLists] = useState<TaskList[]>([]);
+
+	//Filter tasks
+	useEffect(() => {
+		setTaskLists(dateTaskUtils.filterAll(currentHouseholdTasks));
+	}, [household.tasks, currentHouseholdTasks]);
 
 	//Get link
 	useEffect(() => {
@@ -102,12 +115,8 @@ function page({ params }: { params: { id: string } }) {
 			<div>
 				<h3>Household Tasks</h3>
 				<Tasks
-					lists={[
-						{
-							title: "Tasks",
-							tasks: household.tasks || [],
-						},
-					]}
+					lists={taskLists}
+
 				/>
 			</div>
 		</div>

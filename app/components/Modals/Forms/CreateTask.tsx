@@ -12,6 +12,8 @@ import Calendar from "react-calendar";
 import formatDate, { formatTime, formatDateTime } from "@/app/utils/formatDate";
 import DateTimeSelector from "../../DateTimeSelector/DateTimeSelector";
 import { addHours, startOfToday } from "date-fns";
+import ReminderSelector from "../../ReminderSelector/ReminderSelector";
+import { Reminder } from "@/app/components/ReminderSelector/ReminderSelector";
 
 function CreateTask({
 	task: {
@@ -21,12 +23,15 @@ function CreateTask({
 		date: argdate,
 		completed: argcompleted,
 		important: argimportant,
+		users: argusers,
+		recurrenceEndDate: argrecurrenceEndDate,
+		recurrenceIntervalValue: argrecurrenceIntervalValue,
+		recurrenceIntervalUnit: argrecurrenceIntervalUnit,
 	},
 	isMobile,
 }: any) {
 	const [title, setTitle] = useState(argtitle || "");
 	const [description, setDescription] = useState(argdescription || "");
-	const [date, setDate] = useState(argdate || new Date());
 	const [completed, setCompleted] = useState(argcompleted || false);
 	const [important, setImportant] = useState(argimportant || false);
 
@@ -41,23 +46,26 @@ function CreateTask({
 	//DATETIME STUFF
 	const [isDateTimeOpen, setDateTimeOpen] = useState(false);
 
-	const [selectedDate, setSelectedDate] = useState<Date>(startOfToday());
-	const [selectedTime, setSelectedTime] = useState<Date>(
+	const [date, setDate] = useState(argdate || new Date());
+	const [time, setTime] = useState<Date>(
 		new Date(addHours(new Date(), 1).setMinutes(0))
 	);
-	const [recurrenceEndDate, setRecurrenceEndDate] = useState<
-		Date | undefined
-	>(undefined);
+	const [recurrenceEndDate, setRecurrenceEndDate] = useState<Date>(
+		new Date()
+	);
 	const [isRecurring, setIsRecurring] = useState<boolean>(false);
 
-	const [recurrenceIntervalValue, setRecurrenceIntervalValue] = useState<
-		number | undefined
-	>(undefined);
+	const [recurrenceIntervalValue, setRecurrenceIntervalValue] =
+		useState<number>(0);
 
-	const [recurrenceIntervalUnit, setRecurrenceIntervalUnit] = useState<
-		string | undefined
-	>(undefined);
+	const [recurrenceIntervalUnit, setRecurrenceIntervalUnit] =
+		useState<string>("days");
 	//End of datetime stuff
+
+	//REMINDERS vv
+	const [reminders, setReminders] = useState<Reminder[]>([]);
+	const [isReminderModalOpen, setReminderModalOpen] = useState(false);
+	//REMINDERS ^^
 
 	type ValuePiece = Date | null;
 
@@ -80,29 +88,6 @@ function CreateTask({
 		currentHouseholdUsers,
 	} = useGlobalState();
 
-	const handleChange = (key: string, value: string | Value) => {
-		switch (key) {
-			case "title":
-				setTitle(value);
-				break;
-			case "description":
-				setDescription(value);
-				break;
-			case "date":
-				setDate(value);
-				break;
-			case "completed":
-				setCompleted(!completed);
-				break;
-			case "important":
-				setImportant(!important);
-				break;
-
-			default:
-				break;
-		}
-	};
-
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
@@ -116,6 +101,8 @@ function CreateTask({
 			intervalValue: recurrenceIntervalValue,
 			intervalUnit: recurrenceIntervalUnit,
 			recurrenceEndDate,
+			reminders,
+			setReminders,
 			selectedUserIds,
 		};
 
@@ -187,22 +174,26 @@ function CreateTask({
 				onClose={() => setDateTimeOpen(false)}
 			>
 				<DateTimeSelector
-					selectedDate={selectedDate}
-					setSelectedDate={setSelectedDate}
-					selectedTime={selectedTime}
-					setSelectedTime={setSelectedTime}
-					recurrenceEndDate={recurrenceEndDate}
-					setRecurrenceEndDate={setRecurrenceEndDate}
-					isRecurring={isRecurring}
-					setIsRecurring={setIsRecurring}
-					recurrenceIntervalUnit={recurrenceIntervalUnit}
-					setRecurrenceIntervalUnit={setRecurrenceIntervalUnit}
-					recurrenceIntervalValue={recurrenceIntervalValue}
-					setRecurrenceIntervalValue={setRecurrenceIntervalValue}
+					handleSubmit={(data) => {
+						const {
+							selectedDate,
+							selectedTime,
+							isRecurring,
+							recurrenceIntervalValue,
+							recurrenceIntervalUnit,
+							recurrenceEndDate,
+						} = data;
+						setDate(selectedDate);
+						setTime(selectedTime);
+						setIsRecurring(isRecurring);
+						setRecurrenceIntervalValue(recurrenceIntervalValue);
+						setRecurrenceIntervalUnit(recurrenceIntervalUnit);
+						setRecurrenceEndDate(recurrenceEndDate);
+						setDateTimeOpen(false);
+
+						console.log(JSON.stringify(data, null, 2));
+					}}
 				/>
-				<button onClick={() => setDateTimeOpen(false)}>
-					Apply changes
-				</button>
 			</AutonomousModal>
 		</>
 	);
@@ -231,26 +222,113 @@ function CreateTask({
 						};
 					})}
 					selectedUserIds={selectedUserIds}
-					setSelectedUserIds={setSelectedUserIds}
+                    handleSubmit={(data) => {
+                        const { selectedUserIds } = data;
+
+                        setSelectedUserIds(selectedUserIds);
+                        setUserSelectorOpen(false);
+                    }}
 				/>
-				<button onClick={() => setUserSelectorOpen(false)}>
-					Apply changes
-				</button>
 			</AutonomousModal>
 		</>
+	);
+	inputs.Reminders = (
+		<>
+			<button
+				className="outline"
+				onClick={(e) => {
+					e.preventDefault();
+					setReminderModalOpen(true);
+				}}
+			>
+				Set Reminders <br />
+			</button>
+			{/* User Selector Modal */}
+			<AutonomousModal
+				isOpen={isReminderModalOpen}
+				onClose={() => setReminderModalOpen(false)}
+			>
+				<ReminderSelector
+					reminders={reminders}
+					handleSubmit={(data) => {
+						const { reminders } = data;
+
+						setReminders(reminders);
+						setReminderModalOpen(false);
+					}}
+				/>
+			</AutonomousModal>
+		</>
+	);
+	inputs.Title = (
+		<div className="input-control">
+			<label htmlFor="title">Title</label>
+			<input
+				name="title"
+				id="title"
+				type="text"
+				placeholder="Title"
+				value={title}
+				onChange={(e) => setTitle(e.target.value)}
+			/>
+		</div>
+	);
+
+	inputs.DescriptionInput = (
+		<div className="input-control">
+			<label htmlFor="description">Description</label>
+			<textarea
+				name="description"
+				id="description"
+				rows={4}
+				placeholder="Description"
+				value={description}
+				onChange={(e) => setDescription(e.target.value)}
+			/>
+		</div>
+	);
+
+	inputs.ToggleInputs = (
+		<div className="toggler-group">
+			<div className="input-control toggler">
+				<label htmlFor="completed">
+					Toggle Complete
+					<input
+						name="completed"
+						id="completed"
+						type="checkbox"
+						placeholder="Completed"
+						value={completed.toString()}
+						onChange={(e) => setCompleted(e.target.value)}
+					/>
+				</label>
+			</div>
+
+			<div className="input-control toggler">
+				<label htmlFor="important">
+					Toggle Important
+					<input
+						name="important"
+						id="important"
+						type="checkbox"
+						placeholder="Important"
+						value={important.toString()}
+						onChange={(e) => setImportant(e.target.value)}
+					/>
+				</label>
+			</div>
+		</div>
 	);
 
 	return (
 		<form onSubmit={handleSubmit} className="create-content-form">
 			<h1>{isUpdate ? "Update a Task" : "Create a Task"}</h1>
 			<div className="create-content-body grid">
-				{isMobile && (
-					<TitleInput title={title} handleChange={handleChange} />
-				)}
+				{isMobile && inputs.Title}
 
 				{!isMobile && (
 					<div className="input-control">
-						<TitleInput title={title} handleChange={handleChange} />
+						{inputs.Title}
 						{/* <ToggleInputs
 							completed={completed}
 							important={important}
@@ -258,32 +336,14 @@ function CreateTask({
 						/> */}
 					</div>
 				)}
-				<DescriptionInput
-					description={description}
-					handleChange={handleChange}
-				/>
+
+				{inputs.DescriptionInput}
 
 				{inputs.DateTime}
 
 				{householdOpened && inputs.Users}
 
-				<button>
-					Reminder <br />
-					on due date
-					{/* TODO: Add toggle // ++ 5'before, the day before ...*/}
-				</button>
-
-				{(() => {
-					const reminder = false;
-					if (reminder) {
-						return (
-							<button>
-								Overdue Reminder
-								{/* TODO: Add toggle and options similar to the reminder thingy */}
-							</button>
-						);
-					}
-				})()}
+				{inputs.Reminders}
 
 				{/* {isMobile && (
 					// <ToggleInputs
@@ -312,75 +372,6 @@ function CreateTask({
 				/>
 			</div>
 		</form>
-	);
-}
-
-function TitleInput({ title, handleChange }: any) {
-	return (
-		<div className="input-control">
-			<label htmlFor="title">Title</label>
-			<input
-				name="title"
-				id="title"
-				type="text"
-				placeholder="Title"
-				value={title}
-				onChange={(e) => handleChange("title", e.target.value)}
-			/>
-		</div>
-	);
-}
-function DescriptionInput({ description, handleChange }: any) {
-	return (
-		<div className="input-control">
-			<label htmlFor="description">Description</label>
-			<textarea
-				name="description"
-				id="description"
-				rows={4}
-				placeholder="Description"
-				value={description}
-				onChange={(e) => handleChange("description", e.target.value)}
-			/>
-		</div>
-	);
-}
-
-function ToggleInputs({ completed, important, handleChange }: any) {
-	return (
-		<div className="toggler-group">
-			<div className="input-control toggler">
-				<label htmlFor="completed">
-					Toggle Complete
-					<input
-						name="completed"
-						id="completed"
-						type="checkbox"
-						placeholder="Completed"
-						value={completed.toString()}
-						onChange={(e) =>
-							handleChange("completed", e.target.value)
-						}
-					/>
-				</label>
-			</div>
-
-			<div className="input-control toggler">
-				<label htmlFor="important">
-					Toggle Important
-					<input
-						name="important"
-						id="important"
-						type="checkbox"
-						placeholder="Important"
-						value={important.toString()}
-						onChange={(e) =>
-							handleChange("important", e.target.value)
-						}
-					/>
-				</label>
-			</div>
-		</div>
 	);
 }
 

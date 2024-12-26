@@ -1,46 +1,39 @@
-import React from "react";
+import React, { useState } from "react";
 import { format, startOfToday, addHours } from "date-fns";
 import AutonomousModal from "../Modals/AutonomousModal";
 
 interface DateTimeSelectorProps {
-	selectedDate: Date;
-	setSelectedDate: (date: Date) => void;
-
-	selectedTime: Date;
-	setSelectedTime: (time: Date) => void;
-
-	recurrenceEndDate?: Date;
-	setRecurrenceEndDate: (date?: Date) => void;
-
-	isRecurring: boolean;
-	setIsRecurring: (isRecurring: boolean) => void;
-
-	recurrenceIntervalValue?: number;
-	setRecurrenceIntervalValue: (value?: number) => void;
-
-	recurrenceIntervalUnit?: string;
-	setRecurrenceIntervalUnit: (unit?: string) => void;
+	handleSubmit: (data: {
+		selectedDate: Date;
+		selectedTime: Date;
+		isRecurring: boolean;
+		recurrenceIntervalValue: number;
+		recurrenceIntervalUnit: string;
+		recurrenceEndDate: Date;
+	}) => void;
 }
 
 const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
-	selectedDate,
-	setSelectedDate,
-	selectedTime,
-	setSelectedTime,
-	recurrenceEndDate,
-	setRecurrenceEndDate,
-	isRecurring,
-	setIsRecurring,
-	recurrenceIntervalValue,
-	setRecurrenceIntervalValue,
-	recurrenceIntervalUnit,
-	setRecurrenceIntervalUnit,
+	handleSubmit,
 }) => {
+	// Virtual form vv
+
+	const [selectedDate, setSelectedDate] = useState(new Date());
+	const [selectedTime, setSelectedTime] = useState(new Date());
+	const [isRecurring, setIsRecurring] = useState(false);
+	const [doesRecurrenceEnd, setDoesRecurrenceEnd] = useState(true);
+	const [recurrenceEndDate, setRecurrenceEndDate] = useState(new Date());
+	const [recurrenceIntervalValue, setRecurrenceIntervalValue] = useState(0);
+	const [recurrenceIntervalUnit, setRecurrenceIntervalUnit] =
+		useState("days");
+
+	// Virtual form ^^
+
 	const [isRecurrenceModalOpen, setRecurrenceModalOpen] =
 		React.useState(false);
 
 	const recurrenceOptions = [
-		{ label: "Once", value: null, unit: null },
+		{ label: "Once", value: 0, unit: "days" },
 		{ label: "Daily", value: 1, unit: "days" },
 		{ label: "Weekly", value: 1, unit: "weeks" },
 		{ label: "Monthly", value: 1, unit: "months" },
@@ -56,91 +49,70 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 		if (option.label === "Custom") {
 			setRecurrenceModalOpen(true);
 		} else {
-			setRecurrenceIntervalValue(option.value || undefined);
-			setRecurrenceIntervalUnit(option.unit || undefined);
+			setRecurrenceIntervalValue(option.value || 0);
+			setRecurrenceIntervalUnit(option.unit || "days");
 			setIsRecurring(true);
 		}
 	};
 
-	return (
-		<div>
-			<h1>Date & Time</h1>
-
-			{/* Starting Section */}
-			<div>
-				<h3>Starting</h3>
-				<div
-					style={{
-						display: "flex",
-						gap: "1rem",
-						alignItems: "center",
-					}}
-				>
-					{/* Date Selector */}
-					<input
-						type="date"
-						value={format(selectedDate, "yyyy-MM-dd")}
-						onChange={(e) =>
-							setSelectedDate(new Date(e.target.value))
+	const inputs = {
+		Date: (
+			<input
+				type="date"
+				value={format(selectedDate, "yyyy-MM-dd")}
+				onChange={(e) => setSelectedDate(new Date(e.target.value))}
+			/>
+		),
+		Time: (
+			<input
+				type="time"
+				value={format(selectedTime, "HH:mm")}
+				onChange={(e) => {
+					const [hours, minutes] = e.target.value.split(":");
+					const updatedTime = new Date(selectedDate);
+					updatedTime.setHours(
+						parseInt(hours, 10),
+						parseInt(minutes, 10)
+					);
+					setSelectedTime(updatedTime);
+				}}
+			/>
+		),
+		Recurrence: (
+			<div
+				style={{
+					display: "flex",
+					overflowX: "auto",
+					gap: "1rem",
+					padding: "1rem 0",
+				}}
+			>
+				{recurrenceOptions.map((option) => (
+					<button
+						key={option.label}
+						onClick={() => handleRecurrenceSelect(option)}
+						className={
+							(((recurrenceIntervalValue === option.value &&
+								recurrenceIntervalUnit === option.unit) ||
+								(option.label === "Custom" &&
+									!recurrenceOptions.some(
+										(o) =>
+											o.value ===
+												recurrenceIntervalValue &&
+											o.unit === recurrenceIntervalUnit
+									))) &&
+								isRecurring) ||
+							(option.label === "Once" && !isRecurring)
+								? ""
+								: "outline"
 						}
-					/>
-
-					{/* Time Selector */}
-					<input
-						type="time"
-						value={format(selectedTime, "HH:mm")}
-						onChange={(e) => {
-							const [hours, minutes] = e.target.value.split(":");
-							const updatedTime = new Date(selectedDate);
-							updatedTime.setHours(
-								parseInt(hours, 10),
-								parseInt(minutes, 10)
-							);
-							setSelectedTime(updatedTime);
-						}}
-					/>
-				</div>
+					>
+						{option.label}
+					</button>
+				))}
 			</div>
-
-			{/* Occurring Section */}
-			<div>
-				<h3>Occurring</h3>
-				<div
-					style={{
-						display: "flex",
-						overflowX: "auto",
-						gap: "1rem",
-						padding: "1rem 0",
-					}}
-				>
-					{recurrenceOptions.map((option) => (
-						<button
-							key={option.label}
-							onClick={() => handleRecurrenceSelect(option)}
-							className={
-								(((recurrenceIntervalValue === option.value &&
-									recurrenceIntervalUnit === option.unit) ||
-									(option.label === "Custom" &&
-										!recurrenceOptions.some(
-											(o) =>
-												o.value ===
-													recurrenceIntervalValue &&
-												o.unit ===
-													recurrenceIntervalUnit
-										))) &&
-									isRecurring) ||
-								(option.label === "Once" && !isRecurring)
-									? ""
-									: "outline"
-							}
-						>
-							{option.label}
-						</button>
-					))}
-				</div>
-			</div>
-
-			{/* Custom Recurrence Modal */}
+		),
+		CustomRecurrenceModal: (
 			<AutonomousModal
 				isOpen={isRecurrenceModalOpen}
 				onClose={() => setRecurrenceModalOpen(false)}
@@ -158,7 +130,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 									setRecurrenceIntervalValue(
 										e.target.value
 											? parseInt(e.target.value, 10)
-											: undefined
+											: 0
 									)
 								}
 								style={{ marginLeft: "0.5rem" }}
@@ -190,11 +162,12 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 						<label>
 							<input
 								type="checkbox"
-								checked={isRecurring}
+								checked={doesRecurrenceEnd}
 								onChange={(e) => {
 									if (!e.target.checked) {
-										setRecurrenceEndDate(undefined); // Clear end date when disabled
+										setRecurrenceEndDate(new Date()); // Clear end date when disabled
 									}
+									setDoesRecurrenceEnd(e.target.checked);
 								}}
 							/>
 							Recurrence End Date
@@ -209,14 +182,63 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 							onChange={(e) =>
 								setRecurrenceEndDate(new Date(e.target.value))
 							}
-							disabled={!isRecurring}
+							disabled={doesRecurrenceEnd}
 						/>
 					</div>
-					<button onClick={() => setRecurrenceModalOpen(false)}>
+					<button
+						onClick={() => {
+							setRecurrenceModalOpen(false);
+						}}
+					>
 						Save
 					</button>
 				</div>
 			</AutonomousModal>
+		),
+	};
+
+	return (
+		<div>
+			<h1>Date & Time</h1>
+
+			{/* Starting Section */}
+			<div>
+				<h3>Starting</h3>
+				<div
+					style={{
+						display: "flex",
+						gap: "1rem",
+						alignItems: "center",
+					}}
+				>
+					{/* Date Selector */ inputs.Date}
+
+					{/* Time Selector */ inputs.Time}
+				</div>
+			</div>
+
+			{/* Occurring Section */}
+			<div>
+				<h3>Occurring</h3>
+				{inputs.Recurrence}
+			</div>
+
+			{/* Custom Recurrence Modal */ inputs.CustomRecurrenceModal}
+
+			<button
+				onClick={() => {
+					handleSubmit({
+						selectedDate,
+						selectedTime,
+						isRecurring,
+						recurrenceIntervalValue,
+						recurrenceIntervalUnit,
+						recurrenceEndDate,
+					});
+				}}
+			>
+				Apply changes
+			</button>
 		</div>
 	);
 };
