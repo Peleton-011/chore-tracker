@@ -222,11 +222,13 @@ function CreateTask({
 						};
 					})}
 					selectedUserIds={selectedUserIds}
-					setSelectedUserIds={setSelectedUserIds}
+                    handleSubmit={(data) => {
+                        const { selectedUserIds } = data;
+
+                        setSelectedUserIds(selectedUserIds);
+                        setUserSelectorOpen(false);
+                    }}
 				/>
-				<button onClick={() => setUserSelectorOpen(false)}>
-					Apply changes
-				</button>
 			</AutonomousModal>
 		</>
 	);
