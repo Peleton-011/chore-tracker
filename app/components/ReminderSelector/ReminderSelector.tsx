@@ -223,7 +223,7 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 								reminder.unit,
 								reminder.type
 							)}{" "}
-							({reminder.total})
+							({reminder.offsetMinutes})
 						</p>
 						<button
 							onClick={() =>
@@ -240,9 +240,9 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 
 	const ReminderList: React.FC<{ reminders: any[] }> = ({ reminders }) => {
 		if (reminders.length === 0) return <p>No reminders added.</p>;
-		const tempReminders = reminders.sort((a, b) => a.total - b.total);
-		const before = tempReminders.filter((r) => r.total < 0);
-		const after = tempReminders.filter((r) => r.total > 0);
+		const tempReminders = reminders.sort((a, b) => a.offsetMinutes - b.offsetMinutes);
+		const before = tempReminders.filter((r) => r.offsetMinutes < 0);
+		const after = tempReminders.filter((r) => r.offsetMinutes > 0);
 
 		return (
 			<>
