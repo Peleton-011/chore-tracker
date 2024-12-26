@@ -8,7 +8,7 @@ import {
 	endOfWeek,
 	endOfMonth,
 	startOfToday,
-    endOfToday,
+	endOfToday,
 	startOfDay,
 } from "date-fns";
 
@@ -61,5 +61,20 @@ export default {
 		const endOfThisMonth = endOfMonth(today);
 
 		return tasks.filter(({ date }) => isAfter(date, endOfThisMonth));
+	},
+
+	filterAll: function (tasks) {
+		const overdue = this.overdue(tasks);
+		const today = this.today(tasks);
+		const laterThisWeek = this.laterThisWeek(tasks);
+		const laterThisMonth = this.laterThisMonth(tasks);
+		const someday = this.someday(tasks);
+		return [
+			{ title: "overdue", tasks: overdue },
+			{ title: "Today", tasks: today },
+			{ title: "Later this week", tasks: laterThisWeek },
+			{ title: "Later this month", tasks: laterThisMonth },
+			{ title: "Someday", tasks: someday },
+		];
 	},
 };
