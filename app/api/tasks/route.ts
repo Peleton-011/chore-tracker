@@ -19,7 +19,9 @@ export async function POST(req: Request) {
 			isRecurring,
 			intervalUnit,
 			intervalValue,
-		} = await req.json();
+            recurrenceEndDate,
+            reminders
+        } = await req.json();
 
 		if (!title || !description || !date) {
 			return NextResponse.json({
@@ -52,6 +54,8 @@ export async function POST(req: Request) {
 			isRecurring,
 			intervalValue,
 			intervalUnit,
+            recurrenceEndDate,    
+            reminders
 		});
 
 		console.log(task);

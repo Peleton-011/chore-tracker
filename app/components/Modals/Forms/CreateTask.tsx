@@ -102,7 +102,6 @@ function CreateTask({
 			intervalUnit: recurrenceIntervalUnit,
 			recurrenceEndDate,
 			reminders,
-			setReminders,
 			selectedUserIds,
 		};
 
