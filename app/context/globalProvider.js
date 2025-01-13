@@ -33,6 +33,9 @@ export const GlobalProvider = ({ children }) => {
 
 	const [user, setUser] = useState({});
 
+	const [taskTrades, setTaskTrades] = useState([]);
+	const [taskTradesFromUser, setTaskTradesFromUser] = useState([]);
+
 	const blankModels = {
 		none: {},
 		task: {
@@ -319,6 +322,33 @@ export const GlobalProvider = ({ children }) => {
 		setHouseholdOpened(currentHousehold);
 	}, [window.location.href]);
 
+	// Fetch task trades based on "toUser" prop
+	const fetchTaskTrades = async (toUser = user._id) => {
+		try {
+			const response = await axios.get(`/api/trades?toUser=${toUser}`);
+			setTaskTrades(response.data.trades);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	// Fetch task trades based on "fromUser" prop
+	const fetchTaskTradesFromUser = async (fromUser = user._id) => {
+		try {
+			const response = await axios.get(
+				`/api/trades?fromUser=${fromUser}`
+			);
+			setTaskTradesFromUser(response.data.trades);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		fetchTaskTrades(user._id);
+		fetchTaskTradesFromUser(user._id);
+	}, [user]);
+
 	return (
 		<GlobalContext.Provider
 			value={{
@@ -357,6 +387,10 @@ export const GlobalProvider = ({ children }) => {
 				fetchCurrentHouseholdTasks,
 				user,
 				error,
+				taskTrades,
+				taskTradesFromUser,
+				fetchTaskTrades,
+				fetchTaskTradesFromUser,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
