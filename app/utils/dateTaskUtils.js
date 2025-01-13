@@ -70,7 +70,7 @@ export default {
 		const laterThisMonth = this.laterThisMonth(tasks);
 		const someday = this.someday(tasks);
 		return [
-			{ title: "overdue", tasks: overdue },
+			{ title: "Overdue", tasks: overdue },
 			{ title: "Today", tasks: today },
 			{ title: "Later this week", tasks: laterThisWeek },
 			{ title: "Later this month", tasks: laterThisMonth },
