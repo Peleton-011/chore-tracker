@@ -12,8 +12,8 @@ import Calendar from "react-calendar";
 import formatDate, { formatTime, formatDateTime } from "@/app/utils/formatDate";
 import DateTimeSelector from "../../DateTimeSelector/DateTimeSelector";
 import { addHours, startOfToday } from "date-fns";
-import ReminderSelector from "../../ReminderSelector/ReminderSelector";
-import { Reminder } from "@/app/components/ReminderSelector/ReminderSelector";
+// import ReminderSelector from "../../ReminderSelector/ReminderSelector";
+// import { Reminder } from "@/app/components/ReminderSelector/ReminderSelector";
 
 function CreateTask({
 	task: {
@@ -63,8 +63,8 @@ function CreateTask({
 	//End of datetime stuff
 
 	//REMINDERS vv
-	const [reminders, setReminders] = useState<Reminder[]>([]);
-	const [isReminderModalOpen, setReminderModalOpen] = useState(false);
+	// const [reminders, setReminders] = useState<Reminder[]>([]);
+	// const [isReminderModalOpen, setReminderModalOpen] = useState(false);
 	//REMINDERS ^^
 
 	type ValuePiece = Date | null;
@@ -101,8 +101,8 @@ function CreateTask({
 			intervalValue: recurrenceIntervalValue,
 			intervalUnit: recurrenceIntervalUnit,
 			recurrenceEndDate,
-			reminders,
-			setReminders,
+			// reminders,
+			// setReminders,
 			selectedUserIds,
 		};
 
@@ -232,7 +232,7 @@ function CreateTask({
 			</AutonomousModal>
 		</>
 	);
-	inputs.Reminders = (
+	/*inputs.Reminders = (
 		<>
 			<button
 				className="outline"
@@ -243,7 +243,7 @@ function CreateTask({
 			>
 				Set Reminders <br />
 			</button>
-			{/* User Selector Modal */}
+			{/* User Selector Modal *a/}
 			<AutonomousModal
 				isOpen={isReminderModalOpen}
 				onClose={() => setReminderModalOpen(false)}
@@ -259,7 +259,7 @@ function CreateTask({
 				/>
 			</AutonomousModal>
 		</>
-	);
+	);*/
 	inputs.Title = (
 		<div className="input-control">
 			<label htmlFor="title">Title</label>
@@ -343,7 +343,7 @@ function CreateTask({
 
 				{householdOpened && inputs.Users}
 
-				{inputs.Reminders}
+				{/*inputs.Reminders*/}
 
 				{/* {isMobile && (
 					// <ToggleInputs
