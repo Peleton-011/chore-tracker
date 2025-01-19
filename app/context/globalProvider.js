@@ -369,11 +369,11 @@ export const GlobalProvider = ({ children }) => {
 		fetchTaskTradesFromUser(user._id);
 	}, [user]);
 
-	const solicitTaskTrade = async (toUser) => {
+	const solicitTaskTrade = async (taskId, toUserId) => {
 		try {
 			const response = await axios.post(`/api/trades`, {
-				fromUser: user._id,
-				toUser,
+				taskId,
+				toUserId,
 			});
 			console.log(response);
 		} catch (error) {

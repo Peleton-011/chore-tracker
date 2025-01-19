@@ -50,6 +50,7 @@ const TaskTradeSelector = ({
 				const futureTasks = recurringTasks.flatMap((task: Task) =>
 					generateFutureOccurrences(task)
 				);
+				console.log(futureTasks);
 
 				setTasks([...allTasks, ...futureTasks]);
 			} catch (error) {
@@ -62,7 +63,16 @@ const TaskTradeSelector = ({
 	function generateFutureOccurrences(task: Task) {
 		const occurrences = [];
 		let nextDate = new Date(task.date);
-		while (nextDate <= new Date(task.recurrenceEndDate)) {
+
+		// Set the stop date to 3 months from now or the end date of the recurring task, whichever is earlier
+		let stopDate = new Date();
+		stopDate.setMonth(stopDate.getMonth() + 3);
+		stopDate =
+			task.recurrenceEndDate < stopDate
+				? task.recurrenceEndDate
+				: stopDate;
+
+		while (nextDate <= stopDate) {
 			nextDate = new Date(nextDate);
 			if (task.intervalUnit === "days") {
 				nextDate.setDate(nextDate.getDate() + task.intervalValue);
