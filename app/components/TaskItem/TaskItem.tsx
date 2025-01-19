@@ -40,7 +40,9 @@ function TaskItem({
 }: Props) {
 	const { deleteTask, updateTask, solicitTaskTrade, currentHousehold } =
 		useGlobalState();
-	const [selectedTradeTask, setSelectedTradeTask] = useState<string | null>(null);
+	const [selectedTradeTask, setSelectedTradeTask] = useState<string | null>(
+		null
+	);
 	return (
 		<div className="task-item container">
 			<h1>
@@ -63,10 +65,12 @@ function TaskItem({
 				>
 					{isCompleted ? "Completed" : "Incomplete"}
 				</button>
+				(currentHousehold &&
 				<TaskTradeSelector
 					householdId={currentHousehold._id}
 					onSelect={(taskId) => setSelectedTradeTask(taskId)}
 				/>
+				)
 				<button
 					className="edit"
 					onClick={() =>
