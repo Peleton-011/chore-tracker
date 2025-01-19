@@ -27,7 +27,7 @@ export const GlobalProvider = ({ children }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [modal, setModal] = useState({ type: "none" });
 	const [collapsed, setCollapsed] = useState(true);
-	const [householdOpened, setHouseholdOpened] = useState(null);
+	const [currentHouseholdId, setCurrentHouseholdId] = useState(null);
 
 	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
 
@@ -69,11 +69,11 @@ export const GlobalProvider = ({ children }) => {
 	const [currentHouseholdUsers, setCurrentHouseholdUsers] = useState([]);
 
 	useEffect(() => {
-		if (!householdOpened) return;
+		if (!currentHouseholdId) return;
 		const fetchCurrentUsers = async () => {
 			try {
 				const response = await axios.get(
-					`/api/households/${householdOpened}/members`
+					`/api/households/${currentHouseholdId}/members`
 				);
 				response.data.length && setCurrentHouseholdUsers(response.data);
 				console.log(response.data);
@@ -83,7 +83,7 @@ export const GlobalProvider = ({ children }) => {
 			}
 		};
 		fetchCurrentUsers();
-	}, [householdOpened]);
+	}, [currentHouseholdId]);
 
 	useEffect(() => {
 		console.log(currentHouseholdUsers);
@@ -185,9 +185,9 @@ export const GlobalProvider = ({ children }) => {
 	const [currentHouseholdTasks, setCurrentHouseholdTasks] = useState([]);
 	const fetchCurrentHouseholdTasks = async () => {
 		try {
-			if (!householdOpened) return;
+			if (!currentHouseholdId) return;
 			const res = await axios.get(
-				`/api/households/${householdOpened}/tasks`
+				`/api/households/${currentHouseholdId}/tasks`
 			);
 			setCurrentHouseholdTasks(res.data);
 			console.log(res.data);
@@ -198,18 +198,18 @@ export const GlobalProvider = ({ children }) => {
 
 	useEffect(() => {
 		//fetch current household tasks from /api/households/[id]/tasks
-		if (!householdOpened) return;
+		if (!currentHouseholdId) return;
 		fetchCurrentHouseholdTasks();
 		console.log("household changed");
-	}, [householdOpened]);
+	}, [currentHouseholdId]);
 
-	const updateHouseholdOpened = () => {
+	const updateCurrentHouseholdId = () => {
 		const url = window.location.href;
 		const currentHousehold = url.includes("/households/")
 			? url.split("/households/")[1]
 			: null;
 
-		setHouseholdOpened(currentHousehold);
+		setCurrentHouseholdId(currentHousehold);
 	};
 
 	const createHousehold = async () => {
@@ -319,7 +319,7 @@ export const GlobalProvider = ({ children }) => {
 		if (!currentHousehold) return;
 		console.log(currentHousehold);
 
-		setHouseholdOpened(currentHousehold);
+		setCurrentHouseholdId(currentHousehold);
 	}, [window.location.href]);
 
 	// Fetch task trades based on "toUser" prop
@@ -348,6 +348,29 @@ export const GlobalProvider = ({ children }) => {
 		fetchTaskTrades(user._id);
 		fetchTaskTradesFromUser(user._id);
 	}, [user]);
+
+	const solicitTaskTrade = async (toUser) => {
+		try {
+			const response = await axios.post(`/api/trades`, {
+				fromUser: user._id,
+				toUser,
+			});
+			console.log(response);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const respondToTaskTrade = async (tradeId, isAccepted) => {
+		try {
+			const response = await axios.put(`/api/trades/${tradeId}`, {
+				isAccepted,
+			});
+			console.log(response);
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
 		<GlobalContext.Provider
@@ -379,9 +402,9 @@ export const GlobalProvider = ({ children }) => {
 				generateInviteLink,
 				joinHousehold,
 				fetchHouseholdFromToken,
-				householdOpened,
-				setHouseholdOpened,
-				updateHouseholdOpened,
+				currentHouseholdId,
+				setCurrentHouseholdId,
+				updateCurrentHouseholdId,
 				currentHouseholdUsers,
 				currentHouseholdTasks,
 				fetchCurrentHouseholdTasks,
@@ -391,6 +414,8 @@ export const GlobalProvider = ({ children }) => {
 				taskTradesFromUser,
 				fetchTaskTrades,
 				fetchTaskTradesFromUser,
+				solicitTaskTrade,
+				respondToTaskTrade,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
