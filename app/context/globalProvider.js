@@ -28,6 +28,7 @@ export const GlobalProvider = ({ children }) => {
 	const [modal, setModal] = useState({ type: "none" });
 	const [collapsed, setCollapsed] = useState(true);
 	const [currentHouseholdId, setCurrentHouseholdId] = useState(null);
+	const [currentHousehold, setCurrentHousehold] = useState(null);
 
 	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
 
@@ -67,6 +68,25 @@ export const GlobalProvider = ({ children }) => {
 	};
 
 	const [currentHouseholdUsers, setCurrentHouseholdUsers] = useState([]);
+
+	useEffect(() => {
+		if (!currentHouseholdId) {
+			setCurrentHousehold(null);
+			return;
+		}
+		const fetchCurrentHousehold = async () => {
+			try {
+				const response = await axios.get(
+					`/api/households/${currentHouseholdId}`
+				);
+				response.data && setCurrentHousehold(response.data);
+			} catch (error) {
+				console.error("Failed to fetch current household", error);
+				setError(error.message);
+			}
+		};
+		fetchCurrentHousehold();
+	}, [currentHouseholdId]);
 
 	useEffect(() => {
 		if (!currentHouseholdId) return;
@@ -416,6 +436,7 @@ export const GlobalProvider = ({ children }) => {
 				fetchTaskTradesFromUser,
 				solicitTaskTrade,
 				respondToTaskTrade,
+				currentHousehold,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
