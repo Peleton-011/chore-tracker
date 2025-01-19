@@ -69,7 +69,10 @@ export async function DELETE(
 	}
 }
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+	req: Request,
+	{ params }: { params: { id: string } }
+) {
 	try {
 		const { id } = params; // Household ID
 		const user = await getUser(); // Get the authenticated user
@@ -83,8 +86,11 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
 		// Fetch the household by ID and populate the members and tasks
 		const household = await Household.findById(id)
-			.populate("members") // Populate members, only select name and email fields
-			.populate("tasks") // Populate tasks (assuming tasks are referenced in the household)
+			.populate("members", "name") // Populate members (select name and email)
+			.populate("tasks") // Populate tasks
+			.populate("expenses") // If applicable
+			.populate("shoppingList") // If applicable
+			// .lean() // Convert Mongoose document to plain JS object for better performance
 			.exec();
 
 		// Check if the household exists
