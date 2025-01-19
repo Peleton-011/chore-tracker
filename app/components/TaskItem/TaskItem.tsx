@@ -65,12 +65,12 @@ function TaskItem({
 				>
 					{isCompleted ? "Completed" : "Incomplete"}
 				</button>
-				(currentHousehold &&
-				<TaskTradeSelector
-					householdId={currentHousehold._id}
-					onSelect={(taskId) => setSelectedTradeTask(taskId)}
-				/>
-				)
+				{currentHousehold && (
+					<TaskTradeSelector
+						householdId={currentHousehold._id}
+						onSelect={(taskId) => setSelectedTradeTask(taskId)}
+					/>
+				)}
 				<button
 					className="edit"
 					onClick={() =>
