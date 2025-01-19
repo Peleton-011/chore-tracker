@@ -83,7 +83,7 @@ function CreateTask({
 		theme,
 		allTasks,
 		closeModal,
-		householdOpened,
+		currentHouseholdId,
 		fetchCurrentHouseholdTasks,
 		currentHouseholdUsers,
 	} = useGlobalState();
@@ -134,7 +134,7 @@ function CreateTask({
 			// const response = createTask(...task);
 			const response = await axios.post("/api/tasks", {
 				...task,
-				householdId: householdOpened || null,
+				householdId: currentHouseholdId || null,
 			});
 
 			console.log(JSON.stringify(response));
@@ -341,7 +341,7 @@ function CreateTask({
 
 				{inputs.DateTime}
 
-				{householdOpened && inputs.Users}
+				{currentHouseholdId && inputs.Users}
 
 				{/*inputs.Reminders*/}
 

@@ -25,10 +25,10 @@ interface TaskList {
 }
 
 function page({ params }: { params: { id: string } }) {
-	const { generateInviteLink, updateHouseholdOpened, currentHouseholdTasks } =
+	const { generateInviteLink, updateCurrentHouseholdId, currentHouseholdTasks } =
 		useGlobalState();
 
-	updateHouseholdOpened();
+	updateCurrentHouseholdId();
 	const [error, setError] = useState<string>("");
 	const { id } = params; // Use params to get the token
 	const [household, setHousehold] = useState<any>({ tasks: [], members: [] });
