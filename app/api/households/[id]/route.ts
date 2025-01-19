@@ -88,8 +88,8 @@ export async function GET(
 		const household = await Household.findById(id)
 			.populate("members", "name") // Populate members (select name and email)
 			.populate("tasks") // Populate tasks
-			.populate("expenses") // If applicable
-			.populate("shoppingList") // If applicable
+			// .populate("expenses") // If applicable
+			// .populate("shoppingList") // If applicable
 			// .lean() // Convert Mongoose document to plain JS object for better performance
 			.exec();
 
