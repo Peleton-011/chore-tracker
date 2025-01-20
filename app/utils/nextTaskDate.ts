@@ -22,3 +22,5 @@ function calculateNextDate(
 			throw new Error("Invalid interval unit");
 	}
 }
+
+export { calculateNextDate };
