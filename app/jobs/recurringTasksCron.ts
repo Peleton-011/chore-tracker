@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import RecurringTaskDefinition from '@/models/RecurringTaskDefinition';
 
-cron.schedule('* * * * *', async () => { // Runs daily at midnight
+cron.schedule('0 0 * * *', async () => { // Runs daily at midnight
   console.log('Running placeholder task generation...');
   const definitions = await RecurringTaskDefinition.find();
 
