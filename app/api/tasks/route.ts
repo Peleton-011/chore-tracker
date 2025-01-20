@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
-import { Household, Task } from "@/models/index";
+import { Household, Task, RecurringTaskDefinition } from "@/models/index";
 import { getUser } from "@/app/utils/getUser";
+import mongoose from "mongoose";
 
 export async function POST(req: Request) {
+	const session = await mongoose.startSession(); // Start a new session
+	session.startTransaction(); // Start a transaction
 	try {
 		const user = await getUser();
 		if (!user) {
@@ -19,6 +22,9 @@ export async function POST(req: Request) {
 			isRecurring,
 			intervalUnit,
 			intervalValue,
+			isPlaceholder,
+			reminders,
+			recurrenceEndDate,
 		} = await req.json();
 
 		if (!title || !description || !date) {
@@ -49,9 +55,8 @@ export async function POST(req: Request) {
 			isCompleted: completed,
 			isImportant: important,
 			user: user._id,
-			isRecurring,
-			intervalValue,
-			intervalUnit,
+			isPlaceholder,
+			reminders,
 		});
 
 		console.log(task);
@@ -82,11 +87,40 @@ export async function POST(req: Request) {
 			console.log(`Task ${task._id} added to household ${householdId}`);
 		}
 
+		if (isRecurring) {
+			const recurringTaskDefinition =
+				await RecurringTaskDefinition.create({
+					task: task._id,
+					intervalUnit,
+					intervalValue,
+					isPlaceholder,
+					reminders,
+					title,
+					description,
+					owner: user._id,
+					startDate: date,
+					endDate: recurrenceEndDate,
+					allowFutureTrades: true,
+					household: householdId,
+				});
+
+			task.recurringTaskDefinition = recurringTaskDefinition._id;
+
+			await recurringTaskDefinition.save({ session });
+		}
+
+		await task.save({ session });
+
+		await session.commitTransaction(); // Commit the transaction if all goes well
+		session.endSession(); // End the session
+
 		return NextResponse.json({
 			task,
 		});
 	} catch (error) {
 		console.log("ERROR CREATING TASK", error);
+		await session.abortTransaction(); // Abort transaction if user not found
+		session.endSession();
 
 		return NextResponse.json({
 			error: "Something went wrong",
