@@ -59,8 +59,6 @@ export async function POST(req: Request) {
 			reminders,
 		});
 
-		console.log(task);
-
 		if (householdId) {
 			//Get the household associated to the householdId
 			const household = await Household.findById(householdId);
@@ -85,7 +83,9 @@ export async function POST(req: Request) {
 			});
 
 			// Add the householdId to the household property of the task
-			task.household = householdId;
+			await Task.findByIdAndUpdate(task._id, {
+				$set: { household: householdId },
+			});
 
 			console.log(`Task ${task._id} added to household ${householdId}`);
 		}
@@ -107,7 +107,10 @@ export async function POST(req: Request) {
 					household: householdId,
 				});
 
-			task.recurringTaskDefinition = recurringTaskDefinition._id;
+			// Add the householdId to the household property of the task
+			await Task.findByIdAndUpdate(task._id, {
+				$set: { recurringTaskDefinition: recurringTaskDefinition._id },
+			});
 
 			await recurringTaskDefinition.save({ session });
 		}
