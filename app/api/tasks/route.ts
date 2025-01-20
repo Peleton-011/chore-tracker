@@ -84,6 +84,9 @@ export async function POST(req: Request) {
 				$push: { tasks: task._id },
 			});
 
+			// Add the householdId to the household property of the task
+			task.household = householdId;
+
 			console.log(`Task ${task._id} added to household ${householdId}`);
 		}
 
@@ -137,7 +140,9 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
-		const tasks = await Task.find({ user: user._id }).populate("recurringTaskDefinition");
+		const tasks = await Task.find({ user: user._id }).populate(
+			"recurringTaskDefinition"
+		);
 
 		return NextResponse.json(tasks);
 	} catch (error) {

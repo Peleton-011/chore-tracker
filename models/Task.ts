@@ -13,9 +13,13 @@ const TaskSchema = new Schema(
 		isCompleted: { type: Boolean, default: false },
 		isImportant: { type: Boolean, default: false },
 		user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
+		household: { type: mongoose.Types.ObjectId, ref: "Household" },
 
-        recurringTaskDefinition: { type: mongoose.Schema.Types.ObjectId, ref: 'RecurringTaskDefinition' },
-        isPlaceholder: { type: Boolean, default: false },
+		recurringTaskDefinition: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "RecurringTaskDefinition",
+		},
+		isPlaceholder: { type: Boolean, default: false },
 		reminders: [
 			{
 				type: {
