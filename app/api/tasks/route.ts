@@ -137,7 +137,7 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
-		const tasks = await Task.find({ user: user._id });
+		const tasks = await Task.find({ user: user._id }).populate("recurringTaskDefinition");
 
 		return NextResponse.json(tasks);
 	} catch (error) {
