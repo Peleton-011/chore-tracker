@@ -107,12 +107,25 @@ export async function POST(req: Request) {
 					household: householdId,
 				});
 
-			// Add the householdId to the household property of the task
+			// Add the recurringTaskDefinitionId to the corresponding property of the task
 			await Task.findByIdAndUpdate(task._id, {
 				$set: { recurringTaskDefinition: recurringTaskDefinition._id },
 			});
 
 			await recurringTaskDefinition.save({ session });
+
+			// Call /api/tasks/generatePlaceholders
+			try {
+				fetch("/api/tasks/generatePlaceholders", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ _id: task._id }),
+				});
+			} catch (err) {
+				console.error("Failed to generate placeholders:", err);
+			}
 		}
 
 		await task.save({ session });
