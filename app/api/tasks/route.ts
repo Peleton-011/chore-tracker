@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Household, Task, RecurringTaskDefinition } from "@/models/index";
 import { getUser } from "@/app/utils/getUser";
 import mongoose from "mongoose";
+import axios from "axios";
 
 export async function POST(req: Request) {
 	const session = await mongoose.startSession(); // Start a new session
@@ -116,13 +117,9 @@ export async function POST(req: Request) {
 
 			// Call /api/tasks/generatePlaceholders
 			try {
-				fetch("/api/tasks/generatePlaceholders", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ _id: task._id }),
-				});
+				await axios.post(
+					`http://localhost:3000/api/tasks/placeholders/${recurringTaskDefinition._id}`
+				);
 			} catch (err) {
 				console.error("Failed to generate placeholders:", err);
 			}
