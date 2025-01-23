@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Household, Task, RecurringTaskDefinition } from "@/models/index";
 import { getUser } from "@/app/utils/getUser";
 import mongoose from "mongoose";
+import { calculateNextDate } from "@/app/utils/nextTaskDate";
 import axios from "axios";
 
 export async function POST(req: Request) {
@@ -121,7 +122,9 @@ export async function POST(req: Request) {
 					`http://localhost:3000/api/tasks/placeholders/${recurringTaskDefinition._id}`
 				);
 			} catch (err) {
-				console.error("Failed to generate placeholders:", err);
+				return NextResponse.json({
+					error: "Failed to generate placeholders",
+				});
 			}
 		}
 
@@ -164,6 +167,7 @@ export async function GET() {
 	}
 }
 
+// Update a task and handle recurring task logic
 export async function PUT(req: Request) {
 	try {
 		const user = await getUser();
@@ -172,7 +176,7 @@ export async function PUT(req: Request) {
 		}
 
 		const updates = await req.json();
-		const { id, ...updateFields } = updates;
+		const { id, isCompleted, ...updateFields } = updates;
 
 		if (!id) {
 			return NextResponse.json({ error: "Missing task ID", status: 400 });
@@ -189,6 +193,57 @@ export async function PUT(req: Request) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
+		// Update the task's completion status
+		if (isCompleted !== undefined) {
+			task.isCompleted = isCompleted;
+
+			if (isCompleted && task.recurringTaskDefinition) {
+				// Find the associated recurring task definition
+				const definition = await RecurringTaskDefinition.findById(
+					task.recurringTaskDefinition
+				);
+
+				if (!definition) {
+					return NextResponse.json({
+						error: "Recurring task definition not found",
+						status: 404,
+					});
+				}
+				// Calculate the next date for the recurring task
+				const nextDate = calculateNextDate(
+					task.date,
+					definition.intervalValue,
+					definition.intervalUnit
+				);
+
+				// Find the next placeholder task for this recurring definition
+				const nextTask = await Task.findOne({
+					recurringTaskDefinition: definition._id,
+					date: nextDate,
+					isPlaceholder: true,
+				});
+
+				// If a placeholder exists, set it to not be a placeholder
+				if (nextTask) {
+					nextTask.isPlaceholder = false;
+					await nextTask.save();
+				} else {
+					// If no placeholder exists, create one
+					try {
+						await axios.post(
+							`http://localhost:3000/api/tasks/placeholders/${definition._id}`
+						);
+					} catch (err) {
+						return NextResponse.json({
+							error: "Failed to generate placeholders",
+							status: 500,
+						});
+					}
+				}
+			}
+		}
+
+		// Update other fields
 		Object.keys(updateFields).forEach((key) => {
 			task[key] = updateFields[key];
 		});
@@ -197,7 +252,7 @@ export async function PUT(req: Request) {
 
 		return NextResponse.json(task);
 	} catch (error) {
-		console.log("ERROR UPDATING TASK: ", error);
+		console.error("Error updating task:", error);
 		return NextResponse.json({ error: "Error updating task", status: 500 });
 	}
 }
