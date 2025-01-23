@@ -1,8 +1,9 @@
 "use client";
 import { useGlobalState } from "@/app/context/globalProvider";
 import { edit, trash, exclamation } from "@/app/utils/Icons";
-import React from "react";
+import React, { useState } from "react";
 import formatDate from "@/app/utils/formatDate";
+import TaskTradeSelector from "../TaskTradeSelector/TaskTradeSelector";
 
 interface Props {
 	title: string;
@@ -37,7 +38,11 @@ function TaskItem({
 	id,
 	editTask,
 }: Props) {
-	const { deleteTask, updateTask } = useGlobalState();
+	const { deleteTask, updateTask, solicitTaskTrade, currentHousehold } =
+		useGlobalState();
+	const [selectedTradeTask, setSelectedTradeTask] = useState<string | null>(
+		null
+	);
 	return (
 		<div className="task-item container">
 			<h1>
@@ -60,6 +65,12 @@ function TaskItem({
 				>
 					{isCompleted ? "Completed" : "Incomplete"}
 				</button>
+				{currentHousehold && (
+					<TaskTradeSelector
+						householdId={currentHousehold._id}
+						onSelect={(taskId) => setSelectedTradeTask(taskId)}
+					/>
+				)}
 				<button
 					className="edit"
 					onClick={() =>

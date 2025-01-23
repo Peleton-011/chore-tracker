@@ -12,8 +12,8 @@ import Calendar from "react-calendar";
 import formatDate, { formatTime, formatDateTime } from "@/app/utils/formatDate";
 import DateTimeSelector from "../../DateTimeSelector/DateTimeSelector";
 import { addHours, startOfToday } from "date-fns";
-import ReminderSelector from "../../ReminderSelector/ReminderSelector";
-import { Reminder } from "@/app/components/ReminderSelector/ReminderSelector";
+// import ReminderSelector from "../../ReminderSelector/ReminderSelector";
+// import { Reminder } from "@/app/components/ReminderSelector/ReminderSelector";
 
 function CreateTask({
 	task: {
@@ -50,8 +50,8 @@ function CreateTask({
 	const [time, setTime] = useState<Date>(
 		new Date(addHours(new Date(), 1).setMinutes(0))
 	);
-	const [recurrenceEndDate, setRecurrenceEndDate] = useState<Date>(
-		new Date()
+	const [recurrenceEndDate, setRecurrenceEndDate] = useState<Date | null>(
+		null
 	);
 	const [isRecurring, setIsRecurring] = useState<boolean>(false);
 
@@ -63,8 +63,8 @@ function CreateTask({
 	//End of datetime stuff
 
 	//REMINDERS vv
-	const [reminders, setReminders] = useState<Reminder[]>([]);
-	const [isReminderModalOpen, setReminderModalOpen] = useState(false);
+	// const [reminders, setReminders] = useState<Reminder[]>([]);
+	// const [isReminderModalOpen, setReminderModalOpen] = useState(false);
 	//REMINDERS ^^
 
 	type ValuePiece = Date | null;
@@ -83,7 +83,7 @@ function CreateTask({
 		theme,
 		allTasks,
 		closeModal,
-		householdOpened,
+		currentHouseholdId,
 		fetchCurrentHouseholdTasks,
 		currentHouseholdUsers,
 	} = useGlobalState();
@@ -101,7 +101,8 @@ function CreateTask({
 			intervalValue: recurrenceIntervalValue,
 			intervalUnit: recurrenceIntervalUnit,
 			recurrenceEndDate,
-			reminders,
+			// reminders,
+			// setReminders,
 			selectedUserIds,
 		};
 
@@ -133,7 +134,7 @@ function CreateTask({
 			// const response = createTask(...task);
 			const response = await axios.post("/api/tasks", {
 				...task,
-				householdId: householdOpened || null,
+				householdId: currentHouseholdId || null,
 			});
 
 			console.log(JSON.stringify(response));
@@ -221,17 +222,17 @@ function CreateTask({
 						};
 					})}
 					selectedUserIds={selectedUserIds}
-                    handleSubmit={(data) => {
-                        const { selectedUserIds } = data;
+					handleSubmit={(data) => {
+						const { selectedUserIds } = data;
 
-                        setSelectedUserIds(selectedUserIds);
-                        setUserSelectorOpen(false);
-                    }}
+						setSelectedUserIds(selectedUserIds);
+						setUserSelectorOpen(false);
+					}}
 				/>
 			</AutonomousModal>
 		</>
 	);
-	inputs.Reminders = (
+	/*inputs.Reminders = (
 		<>
 			<button
 				className="outline"
@@ -242,7 +243,7 @@ function CreateTask({
 			>
 				Set Reminders <br />
 			</button>
-			{/* User Selector Modal */}
+			{/* User Selector Modal *a/}
 			<AutonomousModal
 				isOpen={isReminderModalOpen}
 				onClose={() => setReminderModalOpen(false)}
@@ -258,7 +259,7 @@ function CreateTask({
 				/>
 			</AutonomousModal>
 		</>
-	);
+	);*/
 	inputs.Title = (
 		<div className="input-control">
 			<label htmlFor="title">Title</label>
@@ -340,9 +341,9 @@ function CreateTask({
 
 				{inputs.DateTime}
 
-				{householdOpened && inputs.Users}
+				{currentHouseholdId && inputs.Users}
 
-				{inputs.Reminders}
+				{/*inputs.Reminders*/}
 
 				{/* {isMobile && (
 					// <ToggleInputs

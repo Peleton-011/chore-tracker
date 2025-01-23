@@ -9,7 +9,7 @@ interface DateTimeSelectorProps {
 		isRecurring: boolean;
 		recurrenceIntervalValue: number;
 		recurrenceIntervalUnit: string;
-		recurrenceEndDate: Date;
+		recurrenceEndDate: Date | null;
 	}) => void;
 }
 
@@ -22,7 +22,9 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 	const [selectedTime, setSelectedTime] = useState(new Date());
 	const [isRecurring, setIsRecurring] = useState(false);
 	const [doesRecurrenceEnd, setDoesRecurrenceEnd] = useState(true);
-	const [recurrenceEndDate, setRecurrenceEndDate] = useState(new Date());
+	const [recurrenceEndDate, setRecurrenceEndDate] = useState<Date | null>(
+		null
+	);
 	const [recurrenceIntervalValue, setRecurrenceIntervalValue] = useState(0);
 	const [recurrenceIntervalUnit, setRecurrenceIntervalUnit] =
 		useState("days");
@@ -165,7 +167,7 @@ const DateTimeSelector: React.FC<DateTimeSelectorProps> = ({
 								checked={doesRecurrenceEnd}
 								onChange={(e) => {
 									if (!e.target.checked) {
-										setRecurrenceEndDate(new Date()); // Clear end date when disabled
+										setRecurrenceEndDate(null); // Clear end date when disabled
 									}
 									setDoesRecurrenceEnd(e.target.checked);
 								}}

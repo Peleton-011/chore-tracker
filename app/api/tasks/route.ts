@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
-import { Household, Task } from "@/models/index";
+import { Household, Task, RecurringTaskDefinition } from "@/models/index";
 import { getUser } from "@/app/utils/getUser";
+import mongoose from "mongoose";
+import { calculateNextDate } from "@/app/utils/nextTaskDate";
+import axios from "axios";
 
 export async function POST(req: Request) {
+	const session = await mongoose.startSession(); // Start a new session
+	session.startTransaction(); // Start a transaction
 	try {
 		const user = await getUser();
 		if (!user) {
@@ -19,9 +24,10 @@ export async function POST(req: Request) {
 			isRecurring,
 			intervalUnit,
 			intervalValue,
-            recurrenceEndDate,
-            reminders
-        } = await req.json();
+			isPlaceholder,
+			reminders,
+			recurrenceEndDate,
+		} = await req.json();
 
 		if (!title || !description || !date) {
 			return NextResponse.json({
@@ -51,14 +57,9 @@ export async function POST(req: Request) {
 			isCompleted: completed,
 			isImportant: important,
 			user: user._id,
-			isRecurring,
-			intervalValue,
-			intervalUnit,
-            recurrenceEndDate,    
-            reminders
+			isPlaceholder,
+			reminders,
 		});
-
-		console.log(task);
 
 		if (householdId) {
 			//Get the household associated to the householdId
@@ -83,14 +84,62 @@ export async function POST(req: Request) {
 				$push: { tasks: task._id },
 			});
 
+			// Add the householdId to the household property of the task
+			await Task.findByIdAndUpdate(task._id, {
+				$set: { household: householdId },
+			});
+
 			console.log(`Task ${task._id} added to household ${householdId}`);
 		}
+
+		if (isRecurring) {
+			const recurringTaskDefinition =
+				await RecurringTaskDefinition.create({
+					task: task._id,
+					intervalUnit,
+					intervalValue,
+					isPlaceholder,
+					reminders,
+					title,
+					description,
+					owner: user._id,
+					startDate: date,
+					endDate: recurrenceEndDate,
+					allowFutureTrades: true,
+					household: householdId,
+				});
+
+			// Add the recurringTaskDefinitionId to the corresponding property of the task
+			await Task.findByIdAndUpdate(task._id, {
+				$set: { recurringTaskDefinition: recurringTaskDefinition._id },
+			});
+
+			await recurringTaskDefinition.save({ session });
+
+			// Call /api/tasks/generatePlaceholders
+			try {
+				await axios.post(
+					`http://localhost:3000/api/tasks/placeholders/${recurringTaskDefinition._id}`
+				);
+			} catch (err) {
+				return NextResponse.json({
+					error: "Failed to generate placeholders",
+				});
+			}
+		}
+
+		await task.save({ session });
+
+		await session.commitTransaction(); // Commit the transaction if all goes well
+		session.endSession(); // End the session
 
 		return NextResponse.json({
 			task,
 		});
 	} catch (error) {
 		console.log("ERROR CREATING TASK", error);
+		await session.abortTransaction(); // Abort transaction if user not found
+		session.endSession();
 
 		return NextResponse.json({
 			error: "Something went wrong",
@@ -107,7 +156,9 @@ export async function GET() {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
-		const tasks = await Task.find({ user: user._id });
+		const tasks = await Task.find({ user: user._id }).populate(
+			"recurringTaskDefinition"
+		);
 
 		return NextResponse.json(tasks);
 	} catch (error) {
@@ -116,6 +167,7 @@ export async function GET() {
 	}
 }
 
+// Update a task and handle recurring task logic
 export async function PUT(req: Request) {
 	try {
 		const user = await getUser();
@@ -124,7 +176,7 @@ export async function PUT(req: Request) {
 		}
 
 		const updates = await req.json();
-		const { id, ...updateFields } = updates;
+		const { id, isCompleted, ...updateFields } = updates;
 
 		if (!id) {
 			return NextResponse.json({ error: "Missing task ID", status: 400 });
@@ -141,6 +193,57 @@ export async function PUT(req: Request) {
 			return NextResponse.json({ error: "Unauthorized", status: 401 });
 		}
 
+		// Update the task's completion status
+		if (isCompleted !== undefined) {
+			task.isCompleted = isCompleted;
+
+			if (isCompleted && task.recurringTaskDefinition) {
+				// Find the associated recurring task definition
+				const definition = await RecurringTaskDefinition.findById(
+					task.recurringTaskDefinition
+				);
+
+				if (!definition) {
+					return NextResponse.json({
+						error: "Recurring task definition not found",
+						status: 404,
+					});
+				}
+				// Calculate the next date for the recurring task
+				const nextDate = calculateNextDate(
+					task.date,
+					definition.intervalValue,
+					definition.intervalUnit
+				);
+
+				// Find the next placeholder task for this recurring definition
+				const nextTask = await Task.findOne({
+					recurringTaskDefinition: definition._id,
+					date: nextDate,
+					isPlaceholder: true,
+				});
+
+				// If a placeholder exists, set it to not be a placeholder
+				if (nextTask) {
+					nextTask.isPlaceholder = false;
+					await nextTask.save();
+				} else {
+					// If no placeholder exists, create one
+					try {
+						await axios.post(
+							`http://localhost:3000/api/tasks/placeholders/${definition._id}`
+						);
+					} catch (err) {
+						return NextResponse.json({
+							error: "Failed to generate placeholders",
+							status: 500,
+						});
+					}
+				}
+			}
+		}
+
+		// Update other fields
 		Object.keys(updateFields).forEach((key) => {
 			task[key] = updateFields[key];
 		});
@@ -149,7 +252,7 @@ export async function PUT(req: Request) {
 
 		return NextResponse.json(task);
 	} catch (error) {
-		console.log("ERROR UPDATING TASK: ", error);
+		console.error("Error updating task:", error);
 		return NextResponse.json({ error: "Error updating task", status: 500 });
 	}
 }
