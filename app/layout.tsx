@@ -5,7 +5,6 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { auth } from "@clerk/nextjs/server";
 import { dark } from "@clerk/themes";
 import App from "./App";
-import "./jobs/recurringTasksCron";
 
 export const metadata: Metadata = {
 	title: "HouseHold Hero",
