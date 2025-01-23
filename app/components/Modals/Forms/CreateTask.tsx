@@ -50,8 +50,8 @@ function CreateTask({
 	const [time, setTime] = useState<Date>(
 		new Date(addHours(new Date(), 1).setMinutes(0))
 	);
-	const [recurrenceEndDate, setRecurrenceEndDate] = useState<Date>(
-		new Date()
+	const [recurrenceEndDate, setRecurrenceEndDate] = useState<Date | null>(
+		null
 	);
 	const [isRecurring, setIsRecurring] = useState<boolean>(false);
 
@@ -222,12 +222,12 @@ function CreateTask({
 						};
 					})}
 					selectedUserIds={selectedUserIds}
-                    handleSubmit={(data) => {
-                        const { selectedUserIds } = data;
+					handleSubmit={(data) => {
+						const { selectedUserIds } = data;
 
-                        setSelectedUserIds(selectedUserIds);
-                        setUserSelectorOpen(false);
-                    }}
+						setSelectedUserIds(selectedUserIds);
+						setUserSelectorOpen(false);
+					}}
 				/>
 			</AutonomousModal>
 		</>
