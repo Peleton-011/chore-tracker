@@ -286,10 +286,7 @@ export const GlobalProvider = ({ children }) => {
 	const joinHousehold = async (token) => {
 		try {
 			console.log(token);
-			const response = await fetch(`/api/invites/${token}`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-			});
+			const response = await axios.post(`/api/invites/${token}`);
 
 			const data = await response.json();
 			if (response.ok) {
@@ -345,7 +342,7 @@ export const GlobalProvider = ({ children }) => {
 	// Fetch task trades based on "toUser" prop
 	const fetchTaskTrades = async (toUser = user._id) => {
 		try {
-			const response = await axios.get(`/api/trades?toUser=${toUser}`);
+			const response = await axios.get(`/api/trades/toUser/${toUser}`);
 			setTaskTrades(response.data.trades);
 		} catch (error) {
 			console.log(error);
@@ -356,7 +353,7 @@ export const GlobalProvider = ({ children }) => {
 	const fetchTaskTradesFromUser = async (fromUser = user._id) => {
 		try {
 			const response = await axios.get(
-				`/api/trades?fromUser=${fromUser}`
+				`/api/trades/fromUser/${fromUser}`
 			);
 			setTaskTradesFromUser(response.data.trades);
 		} catch (error) {
@@ -365,6 +362,7 @@ export const GlobalProvider = ({ children }) => {
 	};
 
 	useEffect(() => {
+		if (!user || !user._id) return;
 		fetchTaskTrades(user._id);
 		fetchTaskTradesFromUser(user._id);
 	}, [user]);
@@ -391,6 +389,22 @@ export const GlobalProvider = ({ children }) => {
 			console.log(error);
 		}
 	};
+
+	useEffect(() => {
+		const setup = async () => {
+			try {
+				const response1 = await axios.delete("/api/tasks/old");
+				const response2 = await axios.post("/api/tasks/placeholders");
+
+				console.log(response1);
+				console.log(response2);
+			} catch (error) {
+				console.log(error);
+				setError(error.message);
+			}
+		};
+		setup();
+	}, []);
 
 	return (
 		<GlobalContext.Provider
