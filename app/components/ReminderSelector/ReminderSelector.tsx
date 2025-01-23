@@ -5,7 +5,7 @@ export interface Reminder {
 	type: "before" | "after";
 	value: number;
 	unit: string;
-	total: number;
+	offsetMinutes: number;
 }
 
 interface ReminderSelectorProps {
@@ -27,7 +27,7 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 		type: "before",
 		value: 5,
 		unit: "minutes",
-		total: -5,
+		offsetMinutes: -5,
 	});
 	const [isCustomModalOpen, setCustomModalOpen] = useState(false);
 
@@ -45,7 +45,7 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 			reminder.type
 		);
 		const isDuplicate = reminders.some(
-			(r) => r.total === calculatedMinutes
+			(r) => r.offsetMinutes === calculatedMinutes
 		);
 		if (isDuplicate) {
 			alert("This reminder already exists.");
@@ -58,7 +58,7 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 	const handleSaveCustomReminder = () => {
 		handleAddReminder({
 			...newReminder,
-			total: calculateMinutes(
+			offsetMinutes: calculateMinutes(
 				newReminder.value,
 				newReminder.unit,
 				newReminder.type
@@ -116,7 +116,7 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 										type,
 										value: option.value,
 										unit: option.unit,
-										total: calculateMinutes(
+										offsetMinutes: calculateMinutes(
 											option.value,
 											option.unit,
 											type
@@ -139,7 +139,7 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 										value: 5,
 										unit: "minutes",
 										type: type,
-										total: 5 * (type === "before" ? -1 : 1),
+										offsetMinutes: 5 * (type === "before" ? -1 : 1),
 									});
 							}}
 						>
@@ -223,7 +223,7 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 								reminder.unit,
 								reminder.type
 							)}{" "}
-							({reminder.total})
+							({reminder.offsetMinutes})
 						</p>
 						<button
 							onClick={() =>
@@ -240,9 +240,9 @@ const ReminderSelector: React.FC<ReminderSelectorProps> = ({
 
 	const ReminderList: React.FC<{ reminders: any[] }> = ({ reminders }) => {
 		if (reminders.length === 0) return <p>No reminders added.</p>;
-		const tempReminders = reminders.sort((a, b) => a.total - b.total);
-		const before = tempReminders.filter((r) => r.total < 0);
-		const after = tempReminders.filter((r) => r.total > 0);
+		const tempReminders = reminders.sort((a, b) => a.offsetMinutes - b.offsetMinutes);
+		const before = tempReminders.filter((r) => r.offsetMinutes < 0);
+		const after = tempReminders.filter((r) => r.offsetMinutes > 0);
 
 		return (
 			<>
