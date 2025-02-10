@@ -1,63 +1,88 @@
-## Chore Tracker - Next.js & React App
+# Household Hero
 
-This is a chore tracker application built with Next.js and React. It allows you to create, assign, and track chores for your household or any group.
+## Overview
+Household Hero is an advanced task management platform designed for households and individuals. It provides an efficient and intuitive way to manage chores, assign tasks, and streamline household coordination. Built with speed, maintainability, and an emphasis on user experience, Household Hero ensures that managing daily responsibilities becomes effortless.
 
-### Features
+## Features
+- **Task Management**: Create, assign, and track household tasks effortlessly.
+- **Task Trading (Upcoming)**: Exchange tasks among household members to distribute responsibilities effectively.
+- **Intuitive UI**: A sleek, modern, and responsive design for a seamless user experience.
+- **Multi-Device Support**: Optimized for desktops, tablets, and mobile devices.
+- **Reminders & Notifications**: Get notified about upcoming tasks and changes.
+- **Calendar Integration**: View and manage tasks with an interactive calendar.
+- **Secure Authentication**: Built-in authentication and user management for household members.
+- **Fast & Maintainable Code**: Developed using modern frameworks with an emphasis on speed and efficiency.
 
-* Create and assign chores with due dates and descriptions.
-* Mark chores as completed to track progress.
-* View a list of all chores, including completed and upcoming ones.
-* Filter chores by assignee or status (completed/incomplete).
+## Tech Stack
+- **Frontend**: Next.js (React framework), TypeScript, SCSS
+- **Backend**: Node.js, Next.js API routes, MongoDB
+- **Database**: MongoDB with Mongoose ORM
+- **Styling**: SCSS & Tailwind CSS for a sleek and customizable UI
+- **Authentication**: Clerk authentication for secure user management
+- **State Management**: React Context API
 
-### Getting Started
+## Installation & Setup
+To run Household Hero locally, follow these steps:
 
-#### Using the test deployment
+### Prerequisites
+Ensure you have the following installed:
+- [Node.js](https://nodejs.org/) (Latest LTS version recommended)
+- [MongoDB](https://www.mongodb.com/) (Locally or via cloud services like MongoDB Atlas)
 
-To run the test deployment, go to the following URL:
-
-
+### Clone the Repository
+```sh
+git clone https://github.com/yourusername/household-hero.git
+cd household-hero
 ```
-https://household-hero.vercel.app/
+
+### Install Dependencies
+```sh
+npm install
 ```
 
-You can just play around with it. If the user cap is reached, you can also build it yourself
+### Configure Environment Variables
+Create a `.env.local` file in the root directory and set the necessary environment variables:
+```sh
+MONGODB_URI=your_mongodb_connection_string
+NEXT_PUBLIC_CLERK_FRONTEND_API=your_clerk_frontend_api
+CLERK_WEBHOOK_SECRET=your_webhook_secret
+```
 
-#### Building your own deployment
+### Run the Development Server
+```sh
+npm run dev
+```
+The application will be available at [http://localhost:3000](http://localhost:3000).
 
-1. **Clone the repository:**
+## Usage
+### Creating a Household
+1. Click "Create Household" in the dashboard.
+2. Set a household name, description, and select an icon.
+3. Invite members via a generated shareable link.
 
-   ```bash
-   git clone https://github.com/Peleton-011/chore-tracker.git
-   ```
+### Managing Tasks
+1. Navigate to a household's task list.
+2. Add new tasks with due dates and priority levels.
+3. Assign tasks to specific members or leave them open for claiming.
+4. Track task progress via status indicators.
 
-2. **Install dependencies:**
+### Task Trading (Upcoming)
+- Users will soon be able to exchange tasks with other household members, making management more flexible and cooperative.
 
-   ```bash
-   cd chore-tracker
-   npm install
-   ```
+### Notifications & Reminders
+- Users receive real-time notifications for assigned tasks and reminders for upcoming deadlines.
 
-3. **Run the development server:**
+## Contribution
+We welcome contributions! To contribute:
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature-branch`).
+3. Commit your changes (`git commit -m "Add new feature"`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Open a Pull Request.
 
-   ```bash
-   npm run dev
-   ```
+## License
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-   This will start the development server on `http://localhost:3000` by default.
+## Contact
+For any inquiries or feedback, reach out to [your contact email or GitHub profile].
 
-### Usage
-
-The application provides a user interface for managing chores. You can create new chores, assign them to users, and mark them as completed. Filters allow you to focus on specific chores based on assignee or completion status.
-
-### Technologies Used
-
-* Next.js: A React framework for server-side rendering and static site generation.
-* React: A JavaScript library for building user interfaces.
-
-### Contributing
-
-We welcome contributions to this project! Please feel free to fork the repository, make changes, and submit a pull request.
-
-### License
-
-This project currently has no license as it is not meant to be licensed under any circumstances.
