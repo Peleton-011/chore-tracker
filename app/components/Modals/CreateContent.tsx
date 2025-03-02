@@ -1,6 +1,6 @@
 import React from "react";
-import CreateTask from "./Forms/CreateTask";
-import CreateHousehold from "./Forms/CreateHousehold";
+import CreateTask from "../Forms/CreateTask";
+import CreateHousehold from "../Forms/CreateHousehold";
 
 const CreateContent = ({
 	content,

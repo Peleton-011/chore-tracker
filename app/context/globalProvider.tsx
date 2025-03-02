@@ -7,61 +7,51 @@ import toast from "react-hot-toast";
 
 import dateTaskUtils from "../utils/dateTaskUtils";
 
-// interface Household {
-//     _id: string;
-//     name: string;
-// }
+interface Task {
+    name: string;
+    description: string;
+    date: string;
+    householdId: string;
+    userId: string;
+}
 
-// interface GlobalContextProps {
-//     userId: string;
-//     households: Household[];
-//     fetchHouseholds: () => void;
-//     setUserId: (id: string) => void;
-// }
+interface Household {
+    _id: string;
+    name: string;
+    description?: string;
+    members: string[];
+    tasks: Task[];
+    recurringTasks: Task[];
+}
 
-export const GlobalContext = createContext();
-export const GlobalUpdateContext = createContext();
+interface User {
+    _id: string;
+    // add other properties as needed
+  }
 
-export const GlobalProvider = ({ children }) => {
-	const [error, setError] = useState(null);
+export const GlobalContext = createContext({});
+export const GlobalUpdateContext = createContext({});
+
+export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
+	const [error, setError] = useState<Error | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const [modal, setModal] = useState({ type: "none" });
-	const [collapsed, setCollapsed] = useState(true);
-	const [currentHouseholdId, setCurrentHouseholdId] = useState(null);
-	const [currentHousehold, setCurrentHousehold] = useState(null);
+	const [taskModal, setTaskModal] = useState(false);
+	const [currentHouseholdId, setCurrentHouseholdId] = useState("");
+	const [currentHousehold, setCurrentHousehold] = useState<Household | null>(null);
 
 	const [households, setHouseholds] = useState(/*<Household[]>*/ []);
 
-	const [user, setUser] = useState({});
+	const [user, setUser] = useState<User | null>(null);
 
 	const [taskTrades, setTaskTrades] = useState([]);
 	const [taskTradesFromUser, setTaskTradesFromUser] = useState([]);
-
-	const blankModels = {
-		none: {},
-		task: {
-			id: "",
-			title: "",
-			description: "",
-			date: "",
-			isCompleted: false,
-			isImportant: false,
-		},
-		household: {
-			id: "",
-			name: "",
-			members: [],
-			tasks: [],
-			recurringTasks: [],
-		},
-	};
 
 	const fetchHouseholds = async () => {
 		try {
 			const response = await axios.get(`/api/households`);
 			console.log(response.data);
 			response.data.households && setHouseholds(response.data.households);
-		} catch (error) {
+		} catch (error: any) {
 			console.error("Failed to fetch households", error);
 			setError(error.message);
 		}
@@ -80,7 +70,7 @@ export const GlobalProvider = ({ children }) => {
 					`/api/households/${currentHouseholdId}`
 				);
 				response.data && setCurrentHousehold(response.data);
-			} catch (error) {
+			} catch (error: any) {
 				console.error("Failed to fetch current household", error);
 				setError(error.message);
 			}
@@ -97,7 +87,7 @@ export const GlobalProvider = ({ children }) => {
 				);
 				response.data.length && setCurrentHouseholdUsers(response.data);
 				console.log(response.data);
-			} catch (error) {
+			} catch (error: any) {
 				console.error("Failed to fetch members", error);
 				setError(error.message);
 			}
@@ -118,42 +108,13 @@ export const GlobalProvider = ({ children }) => {
 		someday: [],
 	});
 
-	const openModal = (arg) => {
-		setModal({ ...arg, data: arg.data || blankModels[arg.type] });
-	};
-
-	const closeModal = () => {
-		setModal({ type: "none" });
-	};
-
-	const collapseMenu = () => {
-		setCollapsed(!collapsed);
-	};
-
-	const createTask = () => {
-		openModal({ type: "task" });
-	};
-
-	const editTask = (task) => {
-		openModal({
-			type: "task",
-			data: {
-				id: task.id,
-				title: task.title,
-				description: task.description,
-				date: task.date,
-				isCompleted: task.isCompleted,
-				isImportant: task.isImportant,
-			},
-		});
-	};
 
 	const allTasks = async () => {
 		setIsLoading(true);
 		try {
 			const res = await axios.get("/api/tasks");
-			const orderedTasks = res.data.sort((a, b) => {
-				return new Date(a.date) - new Date(b.date);
+			const orderedTasks = res.data.sort((a: Task, b: Task) => {
+				return Number(new Date(a.date)) - Number(new Date(b.date));
 			});
 			setTasks(orderedTasks);
 
@@ -167,13 +128,13 @@ export const GlobalProvider = ({ children }) => {
 
 			setIsLoading(false);
 			console.log(res.data);
-		} catch (error) {
+		} catch (error: any) {
 			console.log(error);
 			setError(error.message);
 		}
 	};
 
-	const deleteTask = async (id) => {
+	const deleteTask = async (id: string) => {
 		try {
 			const res = await axios.delete(`/api/tasks/${id}`);
 			toast.success("Task deleted");
@@ -184,23 +145,6 @@ export const GlobalProvider = ({ children }) => {
 			toast.error("Something went wrong");
 		}
 	};
-
-	const updateTask = async (task) => {
-		try {
-			const res = await axios.put(`/api/tasks`, task);
-
-			toast.success("Task updated");
-
-			allTasks();
-		} catch (error) {
-			console.log(error);
-			toast.error("Something went wrong");
-		}
-	};
-
-	const completedTasks = tasks.filter((task) => task.isCompleted === true);
-	const importantTasks = tasks.filter((task) => task.isImportant === true);
-	const incompleteTasks = tasks.filter((task) => task.isCompleted === false);
 
 	const [currentHouseholdTasks, setCurrentHouseholdTasks] = useState([]);
 	const fetchCurrentHouseholdTasks = async () => {
@@ -229,14 +173,10 @@ export const GlobalProvider = ({ children }) => {
 			? url.split("/households/")[1]
 			: null;
 
-		setCurrentHouseholdId(currentHousehold);
+            currentHousehold && setCurrentHouseholdId(currentHousehold);
 	};
 
-	const createHousehold = async () => {
-		openModal({ type: "household" });
-	};
-
-	const deleteHousehold = async (id) => {
+	const deleteHousehold = async (id: string) => {
 		try {
 			const res = await axios.delete(`/api/households/${id}`);
 			toast.success("Household deleted");
@@ -247,7 +187,7 @@ export const GlobalProvider = ({ children }) => {
 		}
 	};
 
-	const updateHousehold = async (household) => {
+	const updateHousehold = async (household: string) => {
 		try {
 			const res = await axios.put(`/api/households`, household);
 			toast.success("Household updated");
@@ -258,20 +198,7 @@ export const GlobalProvider = ({ children }) => {
 		}
 	};
 
-	const editHousehold = (household) => {
-		openModal({
-			type: "household",
-			data: {
-				id: household.id,
-				name: household.name,
-				members: household.members,
-				tasks: household.tasks,
-				recurringTasks: household.recurringTasks,
-			},
-		});
-	};
-
-	const generateInviteLink = async (householdId) => {
+	const generateInviteLink = async (householdId: string) => {
 		try {
 			const { data } = await axios.post(
 				`/api/households/${householdId}/invites`
@@ -283,13 +210,13 @@ export const GlobalProvider = ({ children }) => {
 		}
 	};
 
-	const joinHousehold = async (token) => {
+	const joinHousehold = async (token: string) => {
 		try {
 			console.log(token);
 			const response = await axios.post(`/api/invites/${token}`);
 
-			const data = await response.json();
-			if (response.ok) {
+			const data = await response.data;
+			if (response.status === 200) {
 				alert("User added to household");
 				// Optionally redirect to a dashboard or household page
 			} else {
@@ -302,7 +229,7 @@ export const GlobalProvider = ({ children }) => {
 		}
 	};
 
-	const fetchHouseholdFromToken = async (token) => {
+	const fetchHouseholdFromToken = async (token: string) => {
 		try {
 			const response = await fetch(`/api/invites/${token}`);
 			const data = await response.json();
@@ -340,7 +267,7 @@ export const GlobalProvider = ({ children }) => {
 	}, [window.location.href]);
 
 	// Fetch task trades based on "toUser" prop
-	const fetchTaskTrades = async (toUser = user._id) => {
+	const fetchTaskTrades = async (toUser = user?._id) => {
 		try {
 			const response = await axios.get(`/api/trades/toUser/${toUser}`);
 			setTaskTrades(response.data.trades);
@@ -350,7 +277,7 @@ export const GlobalProvider = ({ children }) => {
 	};
 
 	// Fetch task trades based on "fromUser" prop
-	const fetchTaskTradesFromUser = async (fromUser = user._id) => {
+	const fetchTaskTradesFromUser = async (fromUser = user?._id) => {
 		try {
 			const response = await axios.get(
 				`/api/trades/fromUser/${fromUser}`
@@ -367,7 +294,7 @@ export const GlobalProvider = ({ children }) => {
 		fetchTaskTradesFromUser(user._id);
 	}, [user]);
 
-	const solicitTaskTrade = async (taskId, toUserId) => {
+	const solicitTaskTrade = async (taskId: string, toUserId: string) => {
 		try {
 			const response = await axios.post(`/api/trades`, {
 				taskId,
@@ -379,7 +306,7 @@ export const GlobalProvider = ({ children }) => {
 		}
 	};
 
-	const respondToTaskTrade = async (tradeId, isAccepted) => {
+	const respondToTaskTrade = async (tradeId: string, isAccepted: boolean) => {
 		try {
 			const response = await axios.put(`/api/trades/${tradeId}`, {
 				isAccepted,
@@ -398,7 +325,7 @@ export const GlobalProvider = ({ children }) => {
 
 				console.log(response1);
 				console.log(response2);
-			} catch (error) {
+			} catch (error: any) {
 				console.log(error);
 				setError(error.message);
 			}
@@ -414,22 +341,8 @@ export const GlobalProvider = ({ children }) => {
 				filteredTasks,
 				deleteTask,
 				isLoading,
-				completedTasks,
-				importantTasks,
-				incompleteTasks,
-				updateTask,
-				allTasks,
-				modal,
-				openModal,
-				closeModal,
-				collapsed,
-				collapseMenu,
-				editTask,
-				createTask,
-				createHousehold,
-				deleteHousehold,
+				modal: taskModal,
 				updateHousehold,
-				editHousehold,
 				households,
 				setHouseholds,
 				fetchHouseholds,
@@ -454,7 +367,7 @@ export const GlobalProvider = ({ children }) => {
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
-				{children}
+                {children}
 			</GlobalUpdateContext.Provider>
 		</GlobalContext.Provider>
 	);
