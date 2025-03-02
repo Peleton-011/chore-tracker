@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useGlobalState } from "@/app/context/globalProvider";
 import { edit } from "../../utils/Icons";
 import Tasks from "@/app/components/Tasks/Tasks";
@@ -10,53 +9,38 @@ import UserList from "@/app/components/UserList/UserList";
 import Description from "@/app/components/Description/Desscription";
 import dateTaskUtils from "@/app/utils/dateTaskUtils";
 
-interface Household {
-	_id: string;
-	name: string;
-	description?: string;
-	members: string[];
-	tasks: any[];
-	recurringTasks: any[];
-}
+import { TaskList, Household, Task } from "@/models/types";
 
-interface TaskList {
-	title: string;
-	tasks: any[];
-}
+import {
+	fetchHouseholdTasks,
+	generateInviteLink,
+} from "@/app/utils/households";
+import toast from "react-hot-toast";
 
 function page({ params }: { params: { id: string } }) {
-	const { generateInviteLink, updateCurrentHouseholdId, currentHouseholdTasks } =
-		useGlobalState();
-
-	updateCurrentHouseholdId();
 	const [error, setError] = useState<string>("");
 	const { id } = params; // Use params to get the token
 	const [household, setHousehold] = useState<any>({ tasks: [], members: [] });
 	const [link, setLink] = useState("");
 	const [taskLists, setTaskLists] = useState<TaskList[]>([]);
 
-	//Filter tasks
+	// Fetch & filter tasks
 	useEffect(() => {
-		setTaskLists(dateTaskUtils.filterAll(currentHouseholdTasks));
-	}, [household.tasks, currentHouseholdTasks]);
-
-	//Get link
-	useEffect(() => {
-		const generateLink = async () => {
+		const fetch = async () => {
 			try {
-				const inviteLink = await generateInviteLink(id);
-				setLink(inviteLink);
-				console.log(inviteLink);
-			} catch (err) {
-				console.error("Failed to generate invite link:", err);
+				const response = await fetchHouseholdTasks(id);
+                setTaskLists(dateTaskUtils.filterAll(response));
+			} catch (error: any) {
+				toast.error(
+					"Something went wrong fetching tasks: " + error.message
+				);
 			}
 		};
+        fetch()
+	}, [household.tasks]);
 
-		generateLink();
-	}, []);
-
+	// Fetch household from /api/households/[id]
 	useEffect(() => {
-		//Fetch household from /api/households/[id]
 		const fetchHousehold = async () => {
 			try {
 				const response = await axios.get(`/api/households/${id}`);
@@ -69,6 +53,20 @@ function page({ params }: { params: { id: string } }) {
 		fetchHousehold();
 	}, []);
 
+	const handleGenerateLink = async () => {
+		try {
+			const inviteLink = await generateInviteLink(id);
+			setLink(inviteLink);
+			console.log(inviteLink);
+
+			// Copy the link to the clipboard automatically
+			await navigator.clipboard.writeText(inviteLink);
+			alert("Invite link copied to clipboard!"); // You can use a more custom UI for this
+		} catch (err) {
+			console.error("Failed to generate invite link:", err);
+		}
+	};
+
 	if (!household) {
 		return <div>Loading...</div>;
 	}
@@ -76,7 +74,6 @@ function page({ params }: { params: { id: string } }) {
 	return (
 		<div>
 			<h1>
-				{" "}
 				{household.image && (
 					<img
 						src={household.image}
@@ -95,14 +92,11 @@ function page({ params }: { params: { id: string } }) {
 				</>
 			)}
 			{error && <div>{error}</div>}
-			{/* {household.members.map((m:any) => JSON.stringify(m, null, 2)).join(" | ")} */}
+
 			<div>
 				<h3>Share Household</h3>
-				<CopyShareButton
-					content={link}
-					buttonText="Get Invite Link"
-					buttonActivatedText="Invite Link Copied!"
-				/>
+				{/* Trigger link generation only when button is clicked */}
+				<button onClick={handleGenerateLink}>Get Invite Link</button>
 				<CopyShareButton
 					content={link.split("/")[link.split("/").length - 1]}
 					buttonText="Get Invite Code"
@@ -114,10 +108,7 @@ function page({ params }: { params: { id: string } }) {
 			<hr />
 			<div>
 				<h3>Household Tasks</h3>
-				<Tasks
-					lists={taskLists}
-
-				/>
+				<Tasks lists={taskLists} />
 			</div>
 		</div>
 	);
