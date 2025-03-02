@@ -64,6 +64,9 @@ export default {
 	},
 
 	filterAll: function (tasks) {
+        if (!tasks) {
+            return [];
+        }
 		const overdue = this.overdue(tasks);
 		const today = this.today(tasks);
 		const laterThisWeek = this.laterThisWeek(tasks);
