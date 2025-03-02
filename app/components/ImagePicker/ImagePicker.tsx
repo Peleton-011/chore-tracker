@@ -3,31 +3,21 @@ import { HexColorPicker } from "react-colorful";
 
 interface ImagePickerProps {
 	icons: React.ReactNode[]; // Array of SVG icons passed as React elements
-	selectedIconIndex: number | null;
-	setSelectedIconIndex: React.Dispatch<React.SetStateAction<number | null>>;
-	mainColor: string;
-	setMainColor: React.Dispatch<React.SetStateAction<string>>;
-	backgroundColor: string;
-	setBackgroundColor: React.Dispatch<React.SetStateAction<string>>;
+    iconState: {
+        selectedIconIndex: number ;
+        mainColor: string;
+        backgroundColor: string;
+    };
+    updateIconState: (key: string, value: any) => void;
 }
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
 	icons = [],
-	selectedIconIndex = null,
-	setSelectedIconIndex,
-	mainColor = "#FFC2E2",
-	setMainColor,
-	backgroundColor = "#9236A4",
-	setBackgroundColor,
+    iconState,
+    updateIconState
 }) => {
 	const [showMainPicker, setShowMainPicker] = useState(false);
 	const [showBgPicker, setShowBgPicker] = useState(false);
-
-	// Debounce for HexColorPicker to prevent excessive updates
-	const [tempMainColor, setTempMainColor] = useState(mainColor);
-	const [tempBackgroundColor, setTempBackgroundColor] = useState(backgroundColor);
-
-
 
 	const predefinedColors = [
 		"#9236A4",
@@ -45,12 +35,12 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 				{icons.map((icon, index) => (
 					<div
 						key={index}
-						className={`icon ${index === selectedIconIndex ? "selected" : ""}`}
-						onClick={() => setSelectedIconIndex(index)}
-						style={{ backgroundColor }}
+						className={`icon ${index === iconState.selectedIconIndex ? "selected" : ""}`}
+						onClick={() => updateIconState("selectedIconIndex", index)}
+						style={{ backgroundColor: iconState.backgroundColor }}
 					>
 						{React.cloneElement(icon as React.ReactElement, {
-							color: mainColor,
+							color: iconState.mainColor,
 						})}
 					</div>
 				))}
@@ -63,7 +53,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 						key={color}
 						className="color-swatch"
 						style={{ backgroundColor: color }}
-						onClick={() => setMainColor(color)}
+						onClick={() => updateIconState("mainColor", color)}
 					/>
 				))}
 				<div
@@ -75,8 +65,8 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 				{showMainPicker && (
 					<div className="picker-wrapper">
 						<HexColorPicker
-							color={tempMainColor}
-							onChange={setTempMainColor}
+							color={iconState.mainColor}
+							onChange={(color) => updateIconState("mainColor", color)}
 						/>
 						<button onClick={() => setShowMainPicker(false)}>Close</button>
 					</div>
@@ -90,7 +80,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 						key={color}
 						className="color-swatch"
 						style={{ backgroundColor: color }}
-						onClick={() => setBackgroundColor(color)}
+						onClick={() => updateIconState("backgroundColor", color)} 
 					/>
 				))}
 				<div
@@ -102,21 +92,21 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 				{showBgPicker && (
 					<div className="picker-wrapper">
 						<HexColorPicker
-							color={tempBackgroundColor}
-							onChange={setTempBackgroundColor}
+							color={iconState.backgroundColor}
+							onChange={(color) => updateIconState("backgroundColor", color)}
 						/>
 						<button onClick={() => setShowBgPicker(false)}>Close</button>
 					</div>
 				)}
 			</div>
 
-			{selectedIconIndex !== null && (
+			{iconState.selectedIconIndex >= 0 && (
 				<div className="preview">
 					<h3>Preview</h3>
-					<div className="icon-preview" style={{ backgroundColor }}>
+					<div className="icon-preview" style={{ backgroundColor: iconState.backgroundColor }}>
 						{React.cloneElement(
-							icons[selectedIconIndex] as React.ReactElement,
-							{ color: mainColor }
+							icons[iconState.selectedIconIndex] as React.ReactElement,
+							{ color: iconState.mainColor }
 						)}
 					</div>
 				</div>
