@@ -3,14 +3,14 @@ import { useGlobalState } from "@/app/context/globalProvider";
 import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import Button from "../../Button/Button";
-import AutonomousModal from "../../Modals/AutonomousModal";
-import UserSelector from "../../UserSelector/UserSelector";
+import Button from "../Button/Button";
+import AutonomousModal from "../Modals/AutonomousModal";
+import UserSelector from "../UserSelector/UserSelector";
 
 import { edit, add, plus } from "@/app/utils/Icons";
 import Calendar from "react-calendar";
 import formatDate, { formatTime, formatDateTime } from "@/app/utils/formatDate";
-import DateTimeSelector from "../../DateTimeSelector/DateTimeSelector";
+import DateTimeSelector from "../DateTimeSelector/DateTimeSelector";
 import { addHours, startOfToday } from "date-fns";
 // import ReminderSelector from "../../ReminderSelector/ReminderSelector";
 // import { Reminder } from "@/app/components/ReminderSelector/ReminderSelector";
