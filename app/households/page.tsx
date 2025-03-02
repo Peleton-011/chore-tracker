@@ -5,24 +5,45 @@ import { useGlobalState } from "@/app/context/globalProvider";
 import axios from "axios";
 import { edit } from "../utils/Icons";
 import { useRouter } from "next/navigation";
-
-interface Household {
-	_id: string;
-	name: string;
-	members: string[];
-	tasks: any[];
-	recurringTasks: any[];
-}
+import AutonomousModal from "../components/Modals/AutonomousModal";
+import CreateHousehold from "../components/Forms/CreateHousehold";
+import {
+	fetchHouseholds,
+	deleteHousehold,
+	createHousehold,
+} from "../utils/households";
+import { Household } from "../../models/types";
+import toast from "react-hot-toast";
 
 function page() {
-	const {
-		households,
-		editHousehold,
-		deleteHousehold,
-		createHousehold,
-	} = useGlobalState();
 	const [error, setError] = useState<string>("");
 	const router = useRouter();
+
+	const [households, setHouseholds] = useState<Household[]>([]);
+	const [editingHousehold, setEditingHousehold] = useState<Household | null>(
+		null
+	);
+	const [isHouseholdModalOpen, setHouseholdModalOpen] = useState(false);
+
+	const openModal = () => {
+		setHouseholdModalOpen(true);
+	};
+
+	const editHousehold = (household: Household) => {
+		setEditingHousehold(household);
+		setHouseholdModalOpen(true);
+	};
+
+	useEffect(() => {
+		const fetch = async () => {
+			try {
+				setHouseholds(await fetchHouseholds());
+			} catch (error: any) {
+				toast.error("Something went wrong: " + error.message);
+			}
+		};
+		fetch();
+	}, []);
 
 	return (
 		<div>
@@ -39,7 +60,6 @@ function page() {
 								console.log(households);
 								editHousehold({
 									...household,
-									id: household._id,
 								});
 							}}
 						>
@@ -49,11 +69,30 @@ function page() {
 						<button onClick={() => deleteHousehold(household._id)}>
 							Delete
 						</button>
-						<button onClick={()=> router.push("/households/" + household._id)}>{">"}</button>
+						<button
+							onClick={() =>
+								router.push("/households/" + household._id)
+							}
+						>
+							{">"}
+						</button>
 					</li>
 				))}
 			</ul>
-			<button onClick={createHousehold}>Create Household</button>
+			<button onClick={openModal}>Create Household</button>
+
+			<AutonomousModal
+				isOpen={isHouseholdModalOpen}
+				onClose={() => setHouseholdModalOpen(false)}
+			>
+				<CreateHousehold
+					household={editingHousehold || null}
+					closeModal={() => {
+						setHouseholdModalOpen(false);
+						fetchHouseholds();
+					}}
+				></CreateHousehold>
+			</AutonomousModal>
 		</div>
 	);
 }
