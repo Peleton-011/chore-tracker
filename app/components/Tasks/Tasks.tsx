@@ -16,8 +16,7 @@ interface Props {
 }
 
 function Tasks({ lists, title }: Props) {
-	const { createTask, editTask } =
-		useGlobalState();
+	const { setTaskModal, setEditingTask } = useGlobalState();
 
 	lists = lists.filter((list) => list.tasks.length > 0);
 	// console.log("TASKS: ", tasks)
@@ -37,7 +36,7 @@ function Tasks({ lists, title }: Props) {
 										key={task._id}
 										id={task._id}
 										{...task}
-										editTask={editTask}
+										editTask={setEditingTask}
 									/>
 								))}
 
@@ -46,7 +45,7 @@ function Tasks({ lists, title }: Props) {
 								index === lists.length - 1 && (
 									<button
 										className="create-task"
-										onClick={createTask}
+										onClick={() => setTaskModal(true)}
 									>
 										{plus} Add New Task
 									</button>
@@ -58,7 +57,7 @@ function Tasks({ lists, title }: Props) {
 			})}
 
 			{lists.every((list) => list.tasks.length === 0) && (
-				<button onClick={createTask} className="no-tasks">
+				<button onClick={() => setTaskModal(true)} className="no-tasks">
 					<h3>No Tasks Found :c</h3>
 					<div>Click here and add a new task to get started</div>
 				</button>

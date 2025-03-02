@@ -1,10 +1,12 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "./components/Sidebar/Sidebar";
 import useDeviceType from "./hooks/useDeviceType";
-import Modal from "./components/Modals/Modal";
-import CreateContent from "./components/Modals/CreateContent";
-import { useGlobalState } from "@/app/context/globalProvider";
+import AutonomousModal from "./components/Modals/AutonomousModal";
+import CreateTask from "./components/Forms/CreateTask";
+import { fetchTasks } from "./utils/tasks";
+import { Task } from "@/models/types";
+import { useGlobalState } from "./context/globalProvider";
 
 interface props {
 	userId: any;
@@ -12,11 +14,11 @@ interface props {
 }
 
 function App({ userId, children }: props) {
+	const {taskModal, setTaskModal, editingTask, setEditingTask} = useGlobalState();
 	const isMobile = useDeviceType();
 
 	return (
 		<div className="app-container">
-
 			{userId && !isMobile && <Sidebar isMobile={isMobile} />}
 			<main>{children}</main>
 			{userId && isMobile ? (
@@ -34,6 +36,19 @@ function App({ userId, children }: props) {
 					</span>
 				</footer>
 			)}
+
+			<AutonomousModal
+				isOpen={taskModal}
+				onClose={() => setTaskModal(false)}
+			>
+				<CreateTask
+					task={editingTask || null}
+					closeModal={() => {
+						setTaskModal(false);
+						fetchTasks();
+					}}
+				></CreateTask>
+			</AutonomousModal>
 		</div>
 	);
 }

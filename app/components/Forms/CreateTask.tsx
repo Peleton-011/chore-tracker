@@ -1,374 +1,183 @@
 "use client";
-import { useGlobalState } from "@/app/context/globalProvider";
+
 import axios from "axios";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import Button from "../Button/Button";
 import AutonomousModal from "../Modals/AutonomousModal";
-import UserSelector from "../UserSelector/UserSelector";
-
-import { edit, add, plus } from "@/app/utils/Icons";
-import Calendar from "react-calendar";
-import formatDate, { formatTime, formatDateTime } from "@/app/utils/formatDate";
+import formatDateTime from "@/app/utils/formatDate";
 import DateTimeSelector from "../DateTimeSelector/DateTimeSelector";
-import { addHours, startOfToday } from "date-fns";
-// import ReminderSelector from "../../ReminderSelector/ReminderSelector";
-// import { Reminder } from "@/app/components/ReminderSelector/ReminderSelector";
 
-function CreateTask({
-	task: {
-		id,
-		title: argtitle,
-		description: argdescription,
-		date: argdate,
-		completed: argcompleted,
-		important: argimportant,
-		users: argusers,
-		recurrenceEndDate: argrecurrenceEndDate,
-		recurrenceIntervalValue: argrecurrenceIntervalValue,
-		recurrenceIntervalUnit: argrecurrenceIntervalUnit,
-	},
-	isMobile,
-}: any) {
-	const [title, setTitle] = useState(argtitle || "");
-	const [description, setDescription] = useState(argdescription || "");
-	const [completed, setCompleted] = useState(argcompleted || false);
-	const [important, setImportant] = useState(argimportant || false);
+import { edit, add } from "@/app/utils/Icons";
+import { Household, Task } from "@/models/types";
 
-	const inputs: any = {};
+interface CreateTaskProps {
+	task: Task | null;
+	closeModal: () => void;
+	household?: Household;
+}
 
-	//USERS STUFF
-	const [isUserSelectorOpen, setUserSelectorOpen] = useState(false);
-
-	const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
-	//END USERS STUFF
-
-	//DATETIME STUFF
-	const [isDateTimeOpen, setDateTimeOpen] = useState(false);
-
-	const [date, setDate] = useState(argdate || new Date());
-	const [time, setTime] = useState<Date>(
-		new Date(addHours(new Date(), 1).setMinutes(0))
-	);
-	const [recurrenceEndDate, setRecurrenceEndDate] = useState<Date | null>(
-		null
-	);
-	const [isRecurring, setIsRecurring] = useState<boolean>(false);
-
-	const [recurrenceIntervalValue, setRecurrenceIntervalValue] =
-		useState<number>(0);
-
-	const [recurrenceIntervalUnit, setRecurrenceIntervalUnit] =
-		useState<string>("days");
-	//End of datetime stuff
-
-	//REMINDERS vv
-	// const [reminders, setReminders] = useState<Reminder[]>([]);
-	// const [isReminderModalOpen, setReminderModalOpen] = useState(false);
-	//REMINDERS ^^
-
-	type ValuePiece = Date | null;
-
-	type Value = ValuePiece | [ValuePiece, ValuePiece];
-
-	const isUpdate =
-		!!id ||
-		!!argtitle ||
-		!!argdescription ||
-		!!argdate ||
-		!!argcompleted ||
-		!!argimportant;
-
+function CreateTask({ task, closeModal, household }: CreateTaskProps) {
 	const {
-		theme,
-		allTasks,
-		closeModal,
-		currentHouseholdId,
-		fetchCurrentHouseholdTasks,
-		currentHouseholdUsers,
-	} = useGlobalState();
+		_id,
+		title: argTitle = "",
+		description: argDescription = "",
+		date: argDate = new Date(),
+		isCompleted: argIsCompleted = false,
+		isImportant: argIsImportant = false,
+		user: argUser = "",
+		household: argHousehold = "",
+		recurringTaskDefinition: argRecurringTask = "",
+		isPlaceholder: argIsPlaceholder = false,
+		reminders: argReminders = [],
+	} = task || {};
+
+	const [taskState, setTaskState] = useState<Task>({
+		_id: _id || "", // Ensure we always have an ID
+		title: argTitle,
+		description: argDescription,
+		date: argDate,
+		isCompleted: argIsCompleted,
+		isImportant: argIsImportant,
+		user: argUser,
+		household: argHousehold,
+		recurringTaskDefinition: argRecurringTask,
+		isPlaceholder: argIsPlaceholder,
+		reminders: argReminders.length
+			? argReminders
+			: [{ type: "before", offsetMinutes: 30, notified: false }],
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	});
+
+	const [modals, setModals] = useState({
+		isUserSelectorOpen: false,
+		isDateTimeOpen: false,
+	});
+
+	const updateTaskState = (key: keyof Task, value: any) => {
+		setTaskState((prev) => ({ ...prev, [key]: value }));
+	};
+
+	const updateModalState = (key: keyof typeof modals, value: boolean) => {
+		setModals((prev) => ({ ...prev, [key]: value }));
+	};
+
+	const isUpdate = !!_id;
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-
-		const task = {
-			title,
-			description,
-			date,
-			completed: completed || false,
-			important: important || false,
-			isRecurring,
-			intervalValue: recurrenceIntervalValue,
-			intervalUnit: recurrenceIntervalUnit,
-			recurrenceEndDate,
-			// reminders,
-			// setReminders,
-			selectedUserIds,
-		};
-
-		if (isUpdate) {
-			try {
-				// @ts-ignore
-				// const response = updateTask(...task);
-				const response = await axios.put("/api/tasks", task);
-				// @ts-ignore
-				if (response.data.error) {
-					// @ts-ignore
-					toast.error(response.data.error);
-				}
-				toast.success("Task updated successfully");
-				allTasks();
-				fetchCurrentHouseholdTasks();
-				closeModal();
-			} catch (error) {
-				console.log(error);
-				toast.error("Something went wrong");
-				console.log("ERROR UPDATING TASK: ", error);
-			}
-
-			return;
-		}
-
 		try {
-			// @ts-ignore
-			// const response = createTask(...task);
-			const response = await axios.post("/api/tasks", {
-				...task,
-				householdId: currentHouseholdId || null,
-			});
+			const response = isUpdate
+				? await axios.put("/api/tasks", taskState)
+				: await axios.post("/api/tasks", {
+						...taskState,
+						household: household?._id,
+				  });
 
-			console.log(JSON.stringify(response));
-
-			// @ts-ignore
 			if (response.data.error) {
-				// @ts-ignore
 				toast.error(response.data.error);
+			} else {
+				toast.success(
+					isUpdate
+						? "Task updated successfully"
+						: "Task created successfully"
+				);
+				closeModal();
 			}
-
-			toast.success("Task created successfully");
-			allTasks();
-			fetchCurrentHouseholdTasks();
-			closeModal();
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			toast.error("Something went wrong");
-			console.log("ERROR CREATING TASK: ", error);
 		}
 	};
 
-	inputs.DateTime = (
-		<>
-			<button
-				className="outline"
-				onClick={(e) => {
-					e.preventDefault();
-					setDateTimeOpen(true);
-				}}
-			>
-				Date & Time <br />
-				{/* {formatDate(date) + " , " + formatTime(date)} */}
-				{formatDateTime(date)}
-			</button>
-			<AutonomousModal
-				isOpen={isDateTimeOpen}
-				onClose={() => setDateTimeOpen(false)}
-			>
-				<DateTimeSelector
-					handleSubmit={(data) => {
-						const {
-							selectedDate,
-							selectedTime,
-							isRecurring,
-							recurrenceIntervalValue,
-							recurrenceIntervalUnit,
-							recurrenceEndDate,
-						} = data;
-						setDate(selectedDate);
-						setTime(selectedTime);
-						setIsRecurring(isRecurring);
-						setRecurrenceIntervalValue(recurrenceIntervalValue);
-						setRecurrenceIntervalUnit(recurrenceIntervalUnit);
-						setRecurrenceEndDate(recurrenceEndDate);
-						setDateTimeOpen(false);
-
-						console.log(JSON.stringify(data, null, 2));
-					}}
-				/>
-			</AutonomousModal>
-		</>
-	);
-	inputs.Users = (
-		<>
-			<button
-				className="outline"
-				onClick={(e) => {
-					e.preventDefault();
-					setUserSelectorOpen(true);
-				}}
-			>
-				Choose Members <br />
-			</button>
-			{/* User Selector Modal */}
-			<AutonomousModal
-				isOpen={isUserSelectorOpen}
-				onClose={() => setUserSelectorOpen(false)}
-			>
-				<UserSelector
-					users={currentHouseholdUsers.map((u: any) => {
-						return {
-							_id: u._id,
-							name: u.username,
-							avatar: u.profilePic,
-						};
-					})}
-					selectedUserIds={selectedUserIds}
-					handleSubmit={(data) => {
-						const { selectedUserIds } = data;
-
-						setSelectedUserIds(selectedUserIds);
-						setUserSelectorOpen(false);
-					}}
-				/>
-			</AutonomousModal>
-		</>
-	);
-	/*inputs.Reminders = (
-		<>
-			<button
-				className="outline"
-				onClick={(e) => {
-					e.preventDefault();
-					setReminderModalOpen(true);
-				}}
-			>
-				Set Reminders <br />
-			</button>
-			{/* User Selector Modal *a/}
-			<AutonomousModal
-				isOpen={isReminderModalOpen}
-				onClose={() => setReminderModalOpen(false)}
-			>
-				<ReminderSelector
-					reminders={reminders}
-					handleSubmit={(data) => {
-						const { reminders } = data;
-
-						setReminders(reminders);
-						setReminderModalOpen(false);
-					}}
-				/>
-			</AutonomousModal>
-		</>
-	);*/
-	inputs.Title = (
-		<div className="input-control">
-			<label htmlFor="title">Title</label>
-			<input
-				name="title"
-				id="title"
-				type="text"
-				placeholder="Title"
-				value={title}
-				onChange={(e) => setTitle(e.target.value)}
-			/>
-		</div>
-	);
-
-	inputs.DescriptionInput = (
-		<div className="input-control">
-			<label htmlFor="description">Description</label>
-			<textarea
-				name="description"
-				id="description"
-				rows={4}
-				placeholder="Description"
-				value={description}
-				onChange={(e) => setDescription(e.target.value)}
-			/>
-		</div>
-	);
-
-	inputs.ToggleInputs = (
-		<div className="toggler-group">
-			<div className="input-control toggler">
-				<label htmlFor="completed">
-					Toggle Complete
-					<input
-						name="completed"
-						id="completed"
-						type="checkbox"
-						placeholder="Completed"
-						value={completed.toString()}
-						onChange={(e) => setCompleted(e.target.value)}
-					/>
-				</label>
-			</div>
-
-			<div className="input-control toggler">
-				<label htmlFor="important">
-					Toggle Important
-					<input
-						name="important"
-						id="important"
-						type="checkbox"
-						placeholder="Important"
-						value={important.toString()}
-						onChange={(e) => setImportant(e.target.value)}
-					/>
-				</label>
-			</div>
-		</div>
-	);
-
 	return (
 		<form onSubmit={handleSubmit} className="create-content-form">
-			<h1>{isUpdate ? "Update a Task" : "Create a Task"}</h1>
+			<h1>{isUpdate ? "Update Task" : "Create Task"}</h1>
+
 			<div className="create-content-body grid">
-				{isMobile && inputs.Title}
+				<div className="input-control">
+					<label htmlFor="title">Title</label>
+					<input
+						id="title"
+						type="text"
+						placeholder="Title"
+						value={taskState.title}
+						onChange={(e) =>
+							updateTaskState("title", e.target.value)
+						}
+					/>
+				</div>
 
-				{!isMobile && (
-					<div className="input-control">
-						{inputs.Title}
-						{/* <ToggleInputs
-							completed={completed}
-							important={important}
-							handleChange={handleChange}
-						/> */}
-					</div>
-				)}
+				<div className="input-control">
+					<label htmlFor="description">Description</label>
+					<textarea
+						id="description"
+						rows={4}
+						placeholder="Description"
+						value={taskState.description}
+						onChange={(e) =>
+							updateTaskState("description", e.target.value)
+						}
+					/>
+				</div>
 
-				{inputs.DescriptionInput}
+				<button
+					className="outline"
+					onClick={(e) => {
+						e.preventDefault();
+						updateModalState("isDateTimeOpen", true);
+					}}
+				>
+					Date & Time <br />
+					{formatDateTime(taskState.date)}
+				</button>
+				<AutonomousModal
+					isOpen={modals.isDateTimeOpen}
+					onClose={() => updateModalState("isDateTimeOpen", false)}
+				>
+					<DateTimeSelector
+						handleSubmit={(data) => {
+							updateTaskState("date", data.selectedDate);
+							updateModalState("isDateTimeOpen", false);
+						}}
+					/>
+				</AutonomousModal>
 
-				{inputs.DateTime}
-
-				{currentHouseholdId && inputs.Users}
-
-				{/*inputs.Reminders*/}
-
-				{/* {isMobile && (
-					// <ToggleInputs
-					// 	completed={completed}
-					// 	important={important}
-					// 	handleChange={handleChange}
-					// />
-				)} */}
-
-				{/* <DateInput
-					date={date}
-					handleChange={handleChange}
-					isMobile={isMobile}
-				/> */}
+				<div className="toggler-group">
+					<label>
+						Completed
+						<input
+							type="checkbox"
+							checked={taskState.isCompleted}
+							onChange={(e) =>
+								updateTaskState("isCompleted", e.target.checked)
+							}
+						/>
+					</label>
+					<label>
+						Important
+						<input
+							type="checkbox"
+							checked={taskState.isImportant}
+							onChange={(e) =>
+								updateTaskState("isImportant", e.target.checked)
+							}
+						/>
+					</label>
+				</div>
 			</div>
+
 			<div className="submit-btn" style={{ marginTop: "2rem" }}>
 				<Button
 					type="submit"
 					name={isUpdate ? "Update Task" : "Create Task"}
 					icon={isUpdate ? edit : add}
-					padding={"0.8rem 2rem"}
-					borderRad={"0.8rem"}
-					fw={"500"}
-					fs={"1.2rem"}
-					background={"rgb(0, 163, 255)"}
+					padding="0.8rem 2rem"
+					borderRad="0.8rem"
+					fw="500"
+					fs="1.2rem"
+					background="rgb(0, 163, 255)"
 				/>
 			</div>
 		</form>
