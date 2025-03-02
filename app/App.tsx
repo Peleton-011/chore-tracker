@@ -12,16 +12,11 @@ interface props {
 }
 
 function App({ userId, children }: props) {
-	const { modal } = useGlobalState();
 	const isMobile = useDeviceType();
 
 	return (
 		<div className="app-container">
-			{modal.type !== "none" && <Modal
-				content={
-					<CreateContent content={modal.data} type={modal.type} isMobile={isMobile} />
-				}
-			/>}
+
 			{userId && !isMobile && <Sidebar isMobile={isMobile} />}
 			<main>{children}</main>
 			{userId && isMobile ? (
