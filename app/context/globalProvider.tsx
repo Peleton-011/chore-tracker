@@ -49,7 +49,7 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 	const fetchHouseholds = async () => {
 		try {
 			const response = await axios.get(`/api/households`);
-			console.log(response.data);
+			// console.log(response.data);
 			response.data.households && setHouseholds(response.data.households);
 		} catch (error: any) {
 			console.error("Failed to fetch households", error);

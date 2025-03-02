@@ -5,8 +5,7 @@ export const fetchHouseholds = async () => {
 	try {
 		const response = await axios.get(`/api/households`);
 		// console.log(response.data);
-		const data = await response.data.households;
-        return data;
+		return response.data.households
 	} catch (error: any) {
 		console.error("Failed to fetch households", error);
 		throw new Error(error.message);
@@ -25,3 +24,27 @@ export const deleteHousehold = async (id: string) => {
 };
 
 export const createHousehold = () => {};
+
+export const generateInviteLink = async (householdId: string) => {
+	try {
+		const { data } = await axios.post(
+			`/api/households/${householdId}/invites`
+		);
+
+		return data.inviteLink;
+	} catch (err) {
+		alert("Failed to generate invite link: " + err);
+	}
+};
+
+export const fetchHouseholdTasks = async (householdId: string) => {
+	try {
+		const {data } = await axios.get(
+			`/api/households/${householdId}/tasks`
+		);
+		console.log( data);
+        return data
+	} catch (error) {
+		console.log(error);
+	}
+};
