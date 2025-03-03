@@ -48,6 +48,7 @@ export interface TaskList {
 
 export interface User {
 	_id: string;
+    households: string[];
 	// add other properties as needed
 }
 

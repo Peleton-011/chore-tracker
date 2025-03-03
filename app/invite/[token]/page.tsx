@@ -30,7 +30,7 @@ export default function page({ params }: { params: { token: string } }) {
 		return <div>Loading...</div>;
 	}
 
-	if (user.households?.includes(household._id)) {
+	if (user?.households?.includes(household._id)) {
 		return (
 			<div>
 				<h1>

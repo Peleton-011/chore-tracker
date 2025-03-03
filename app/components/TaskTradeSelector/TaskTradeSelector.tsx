@@ -29,7 +29,6 @@ const TaskTradeSelector = ({
 	householdId,
 	onSelect,
 }: TaskTradeSelectorProps) => {
-	const { closeModal } = useGlobalState();
 	const [tasks, setTasks] = useState<Task[]>([]); // Initialize tasks as an empty array
 	const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 	const [date, setDate] = useState<Value | null>(new Date());
@@ -128,7 +127,6 @@ const TaskTradeSelector = ({
 							click={() => {
 								onSelect(selectedTask._id);
 								setIsOpen(false);
-								closeModal();
 							}}
 						/>
 					</div>
