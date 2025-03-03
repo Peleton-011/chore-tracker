@@ -4,93 +4,56 @@ import { edit, trash, exclamation } from "@/app/utils/Icons";
 import React, { useState } from "react";
 import formatDate from "@/app/utils/formatDate";
 import TaskTradeSelector from "../TaskTradeSelector/TaskTradeSelector";
+import { Task, DEFAULT_TASK } from "@/models/types";
 
 interface Props {
-	title: string;
-	description: string;
-	date: string;
-	isCompleted: boolean;
-	isImportant: boolean;
-	id: string;
-	editTask: ({
-		id,
-		isCompleted,
-		isImportant,
-		title,
-		description,
-		date,
-	}: {
-		id: string;
-		isCompleted: boolean;
-		isImportant: boolean;
-		title: string;
-		description: string;
-		date: string;
-	}) => void;
+	task: Task;
+	editTask: (task: Task) => void;
 }
 
-function TaskItem({
-	title,
-	description,
-	date,
-	isCompleted,
-	isImportant,
-	id,
-	editTask,
-}: Props) {
-	const { deleteTask, updateTask, solicitTaskTrade, currentHousehold } =
+function TaskItem({ task, editTask }: Props) {
+	const { deleteTask, updateTask, solicitTaskTrade } =
 		useGlobalState();
 	const [selectedTradeTask, setSelectedTradeTask] = useState<string | null>(
 		null
 	);
+
 	return (
 		<div className="task-item container">
 			<h1>
-				<span>{title}</span>{" "}
-				<span>{isImportant ? exclamation : ""}</span>
+				<span>{task.title}</span>{" "}
+				<span>{task.isImportant ? exclamation : ""}</span>
 			</h1>
-			<p>{description}</p>
-			<p className="date">{formatDate(date)}</p>
+			<p>{task.description}</p>
+			<p className="date">{formatDate(task.date)}</p>
 			<div className="task-footer">
 				<button
-					className={isCompleted ? "completed" : "incomplete"}
+					className={task.isCompleted ? "completed" : "incomplete"}
 					onClick={() => {
-						const task = {
-							id,
-							isCompleted: !isCompleted,
+						const newTask = {
+							...task,
+							isCompleted: !task.isCompleted,
 						};
 
 						updateTask(task);
 					}}
 				>
-					{isCompleted ? "Completed" : "Incomplete"}
+					{task.isCompleted ? "Completed" : "Incomplete"}
 				</button>
-				{currentHousehold && (
+				{task.household && (
 					<TaskTradeSelector
-						householdId={currentHousehold._id}
+						householdId={task.household}
 						onSelect={(taskId) => setSelectedTradeTask(taskId)}
 					/>
 				)}
-				<button
-					className="edit"
-					onClick={() =>
-						editTask({
-							id,
-							isCompleted,
-							isImportant,
-							title,
-							description,
-							date,
-						})
-					}
-				>
+				<button className="edit" onClick={() => editTask(task)}>
 					{edit}
 				</button>
 				<button
 					className="delete"
 					onClick={() => {
-						console.log(id);
-						deleteTask(id);
+						// console.log(task._id);
+						deleteTask(task._id);
 					}}
 				>
 					{trash}

@@ -133,9 +133,7 @@ export async function POST(req: Request) {
 		await session.commitTransaction(); // Commit the transaction if all goes well
 		session.endSession(); // End the session
 
-		return NextResponse.json({
-			task,
-		});
+		return NextResponse.json(task);
 	} catch (error) {
 		console.log("ERROR CREATING TASK", error);
 		await session.abortTransaction(); // Abort transaction if user not found
@@ -176,13 +174,13 @@ export async function PUT(req: Request) {
 		}
 
 		const updates = await req.json();
-		const { id, isCompleted, ...updateFields } = updates;
+		const { _id, isCompleted, ...updateFields } = updates;
 
-		if (!id) {
+		if (!_id) {
 			return NextResponse.json({ error: "Missing task ID", status: 400 });
 		}
 
-		const task = await Task.findById(id);
+		const task = await Task.findById(_id);
 
 		if (!task) {
 			return NextResponse.json({ error: "Task not found", status: 404 });
