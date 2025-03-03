@@ -4,8 +4,6 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import useDeviceType from "./hooks/useDeviceType";
 import AutonomousModal from "./components/Modals/AutonomousModal";
 import CreateTask from "./components/Forms/CreateTask";
-import { fetchTasks } from "./utils/tasks";
-import { Task } from "@/models/types";
 import { useGlobalState } from "./context/globalProvider";
 
 interface props {
@@ -14,7 +12,14 @@ interface props {
 }
 
 function App({ userId, children }: props) {
-	const {taskModal, setTaskModal, editingTask, setEditingTask} = useGlobalState();
+	const {
+		taskModal,
+		setTaskModal,
+		editingTask,
+		setEditingTask,
+		updateTask,
+		createTask,
+	} = useGlobalState();
 	const isMobile = useDeviceType();
 
 	return (
@@ -43,9 +48,14 @@ function App({ userId, children }: props) {
 			>
 				<CreateTask
 					task={editingTask || null}
-					closeModal={() => {
+					updateTask={(task) => {
+						updateTask(task);
+                        setEditingTask(null);
 						setTaskModal(false);
-						fetchTasks();
+					}}
+					createTask={(task) => {
+						createTask(task);
+						setTaskModal(false);
 					}}
 				></CreateTask>
 			</AutonomousModal>
