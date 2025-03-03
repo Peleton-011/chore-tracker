@@ -6,11 +6,9 @@ import dateTaskUtils from "./utils/dateTaskUtils";
 export default function Home() {
 	const { tasks } = useGlobalState();
 
-	const taskLists = dateTaskUtils.filterAll(tasks);
-
     return (
 		<>
-			<Tasks lists={ taskLists } />
+			<Tasks lists={ dateTaskUtils.filterAll(tasks) } />
 		</>
 	);
 }
