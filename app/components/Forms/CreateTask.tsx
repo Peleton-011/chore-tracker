@@ -9,45 +9,19 @@ import formatDateTime from "@/app/utils/formatDate";
 import DateTimeSelector from "../DateTimeSelector/DateTimeSelector";
 
 import { edit, add } from "@/app/utils/Icons";
-import { Household, Task } from "@/models/types";
+import { Household, Task, DEFAULT_TASK } from "@/models/types";
+import { useGlobalState } from "@/app/context/globalProvider";
 
 interface CreateTaskProps {
-	task: Task | null;
-	closeModal: () => void;
-	household?: Household;
+	task?: Task | null;
+	updateTask: (task: Task) => void;
+    createTask: (task: Task) => void
 }
 
-function CreateTask({ task, closeModal, household }: CreateTaskProps) {
-	const {
-		_id,
-		title: argTitle = "",
-		description: argDescription = "",
-		date: argDate = new Date(),
-		isCompleted: argIsCompleted = false,
-		isImportant: argIsImportant = false,
-		user: argUser = "",
-		household: argHousehold = "",
-		recurringTaskDefinition: argRecurringTask = "",
-		isPlaceholder: argIsPlaceholder = false,
-		reminders: argReminders = [],
-	} = task || {};
-
+function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 	const [taskState, setTaskState] = useState<Task>({
-		_id: _id || "", // Ensure we always have an ID
-		title: argTitle,
-		description: argDescription,
-		date: argDate,
-		isCompleted: argIsCompleted,
-		isImportant: argIsImportant,
-		user: argUser,
-		household: argHousehold,
-		recurringTaskDefinition: argRecurringTask,
-		isPlaceholder: argIsPlaceholder,
-		reminders: argReminders.length
-			? argReminders
-			: [{ type: "before", offsetMinutes: 30, notified: false }],
-		createdAt: new Date(),
-		updatedAt: new Date(),
+		...DEFAULT_TASK,
+		...task,
 	});
 
 	const [modals, setModals] = useState({
@@ -63,32 +37,16 @@ function CreateTask({ task, closeModal, household }: CreateTaskProps) {
 		setModals((prev) => ({ ...prev, [key]: value }));
 	};
 
-	const isUpdate = !!_id;
+	const isUpdate = !!taskState._id;
 
 	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		try {
-			const response = isUpdate
-				? await axios.put("/api/tasks", taskState)
-				: await axios.post("/api/tasks", {
-						...taskState,
-						household: household?._id,
-				  });
 
-			if (response.data.error) {
-				toast.error(response.data.error);
-			} else {
-				toast.success(
-					isUpdate
-						? "Task updated successfully"
-						: "Task created successfully"
-				);
-				closeModal();
-			}
-		} catch (error) {
-			console.error(error);
-			toast.error("Something went wrong");
-		}
+		if (isUpdate) {
+			updateTask(taskState);
+		} else {
+            createTask(taskState);
+        }
 	};
 
 	return (
