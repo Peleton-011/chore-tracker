@@ -19,7 +19,7 @@ function Sidebar({ isMobile }: props) {
 		router.push(link);
 	};
 
-	const { createTask } = useGlobalState();
+	const { setTaskModal } = useGlobalState();
 
 	const makeNavbarItems = (items: Array<any>) => {
 		return items.map((item) => {
@@ -58,7 +58,7 @@ function Sidebar({ isMobile }: props) {
 				{makeNavbarItems(menu.slice(0, 2))}
 				{isMobile && (
 					<li className="nav-new-task">
-						<button className="nav-add-button" onClick={createTask}>
+						<button className="nav-add-button" onClick={() => setTaskModal(true)}>
 							{plus}
 						</button>
 					</li>
@@ -73,7 +73,7 @@ function Sidebar({ isMobile }: props) {
 						<li className="nav-new-task">
 							<button
 								className="nav-add-button"
-								onClick={createTask}
+								onClick={() => setTaskModal(true)}
 							>
 								{plus}
 							</button>
