@@ -34,9 +34,11 @@ function Tasks({ lists, title }: Props) {
 								tasks.map((task: any) => (
 									<TaskItem
 										key={task._id}
-										id={task._id}
-										{...task}
-										editTask={setEditingTask}
+										task={task}
+                                        editTask={(newTask) => {
+                                            setEditingTask(newTask)
+                                            setTaskModal(true)
+                                        }}
 									/>
 								))}
 
