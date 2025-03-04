@@ -1,21 +1,23 @@
 "use client";
 
-import axios from "axios";
-import React, { useState } from "react";
-import toast from "react-hot-toast";
+import React, { useState, useEffect } from "react";
 import Button from "../Button/Button";
 import AutonomousModal from "../Modals/AutonomousModal";
 import formatDateTime from "@/app/utils/formatDate";
 import DateTimeSelector from "../DateTimeSelector/DateTimeSelector";
+import UserSelector from "../UserSelector/UserSelector";
 
 import { edit, add } from "@/app/utils/Icons";
-import { Household, Task, DEFAULT_TASK } from "@/models/types";
-import { useGlobalState } from "@/app/context/globalProvider";
+import { Household, Task, DEFAULT_TASK, User } from "@/models/types";
+import {
+	checkCurrentHousehold,
+	fetchHouseholdMembers,
+} from "@/app/utils/households";
 
 interface CreateTaskProps {
 	task?: Task | null;
 	updateTask: (task: Task) => void;
-    createTask: (task: Task) => void
+	createTask: (task: Task) => void;
 }
 
 function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
@@ -23,6 +25,31 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 		...DEFAULT_TASK,
 		...task,
 	});
+
+	const [currentHouseholdMembers, setCurrentHouseholdMembers] = useState<
+		User[] | null
+	>(null);
+
+	const [targetUsers, setTargetUsers] = useState<User[]>([]);
+
+	// Check if there is an active household, if so, add it to the task
+	const currentHouseholdId = checkCurrentHousehold();
+
+	useEffect(() => {
+		if (currentHouseholdId) {
+			setTaskState((prev) => ({
+				...prev,
+				household: currentHouseholdId,
+			}));
+
+			const fetchMembers = async () => {
+				const members = await fetchHouseholdMembers(currentHouseholdId);
+				setCurrentHouseholdMembers(members || null);
+			};
+
+			fetchMembers();
+		}
+	}, [currentHouseholdId]);
 
 	const [modals, setModals] = useState({
 		isUserSelectorOpen: false,
@@ -45,8 +72,8 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 		if (isUpdate) {
 			updateTask(taskState);
 		} else {
-            createTask(taskState);
-        }
+			createTask(taskState);
+		}
 	};
 
 	return (
@@ -101,6 +128,22 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 						}}
 					/>
 				</AutonomousModal>
+				{currentHouseholdId && (
+					<AutonomousModal
+						isOpen={modals.isUserSelectorOpen}
+						onClose={() =>
+							updateModalState("isUserSelectorOpen", false)
+						}
+					>
+						<UserSelector
+							users={currentHouseholdMembers || []}
+							selectedUserIds={[taskState.user]}
+							handleSubmit={(data) => {
+								updateModalState("isUserSelectorOpen", false);
+							}}
+						/>
+					</AutonomousModal>
+				)}
 
 				<div className="toggler-group">
 					<label>
