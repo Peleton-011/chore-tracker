@@ -7,6 +7,7 @@ export interface Task {
 	isImportant: boolean;
 	user: string; // Reference to the User model
 	household?: string; // Reference to the Household model
+	completions: { user: string; date: Date }[];
 	recurringTaskDefinition?: string; // Reference to the RecurringTaskDefinition model
 	isPlaceholder: boolean;
 	reminders: Reminder[];
@@ -21,6 +22,7 @@ export const DEFAULT_TASK: Task = {
 	isImportant: false,
 	user: "",
 	// household: "",
+    completions: [],
 	// recurringTaskDefinition: "",
 	isPlaceholder: false,
 	reminders: [],
@@ -35,7 +37,7 @@ export interface Reminder {
 export interface Household {
 	_id: string;
 	name: string;
-	members: string[];
+	members: string[] | User[];
 	description?: string;
 	tasks: any[];
 	recurringTasks: any[];
@@ -48,8 +50,9 @@ export interface TaskList {
 
 export interface User {
 	_id: string;
-    households: string[];
-	// add other properties as needed
+	households: string[];
+	name: string;
+	avatar: string;
 }
 
 export interface TaskTrade {

@@ -15,6 +15,19 @@ const TaskSchema = new Schema(
 		user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
 		household: { type: mongoose.Types.ObjectId, ref: "Household" },
 
+		// Optional array of objects with user: userid and date: completion date
+		completions: [ 
+			{ 
+				user: {
+					type: mongoose.Types.ObjectId,
+					ref: "User",
+					required: true,
+				},
+				date: { type: Date, required: true },
+			},
+            
+		],
+
 		recurringTaskDefinition: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "RecurringTaskDefinition",
