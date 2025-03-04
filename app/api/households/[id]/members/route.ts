@@ -19,7 +19,7 @@ export async function GET(
             "members"
 		);
 
-		console.log(household.members);
+		// console.log(household.members);
 
 		return NextResponse.json(household.members);
 	} catch (error) {

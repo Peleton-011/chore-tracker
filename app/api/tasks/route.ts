@@ -27,6 +27,7 @@ export async function POST(req: Request) {
 			isPlaceholder,
 			reminders,
 			recurrenceEndDate,
+            users
 		} = await req.json();
 
 		if (!title || !description || !date) {
@@ -128,6 +129,7 @@ export async function POST(req: Request) {
 			}
 		}
 
+        // If there is a users list, then add the task to each user
 		await task.save({ session });
 
 		await session.commitTransaction(); // Commit the transaction if all goes well

@@ -81,6 +81,7 @@ function page() {
 			</ul>
 			<button onClick={openModal}>Create Household</button>
 
+            {/* For households */}
 			<AutonomousModal
 				isOpen={isHouseholdModalOpen}
 				onClose={() => setHouseholdModalOpen(false)}

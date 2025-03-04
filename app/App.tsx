@@ -42,6 +42,7 @@ function App({ userId, children }: props) {
 				</footer>
 			)}
 
+            {/* For single user tasks, both recurring and single-time */}
 			<AutonomousModal
 				isOpen={taskModal}
 				onClose={() => setTaskModal(false)}
