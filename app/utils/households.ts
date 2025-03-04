@@ -1,3 +1,4 @@
+import { Household, User } from "@/models/types";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -5,11 +6,28 @@ export const fetchHouseholds = async () => {
 	try {
 		const response = await axios.get(`/api/households`);
 		// console.log(response.data);
-		return response.data.households
+		return response.data.households;
 	} catch (error: any) {
 		console.error("Failed to fetch households", error);
-		throw new Error(error.message);
+		toast.error("Failed to fetch households", error);
 	}
+};
+
+export const fetchHousehold = async (id: string): Promise<Household | undefined> => {
+	try {
+		const response = await axios.get(`/api/households/${id}`);
+		return response.data;
+	} catch (error: any) {
+		console.error("Failed to fetch household", error);
+		toast.error(error.message);
+    }
+};
+
+export const checkCurrentHousehold = () => {
+	const currentHouseholdId = window.location.href.includes("/households/")
+		? window.location.href.split("/households/")[1]
+		: null;
+	return currentHouseholdId;
 };
 
 export const deleteHousehold = async (id: string) => {
@@ -39,12 +57,24 @@ export const generateInviteLink = async (householdId: string) => {
 
 export const fetchHouseholdTasks = async (householdId: string) => {
 	try {
-		const {data } = await axios.get(
+		const { data } = await axios.get(
 			`/api/households/${householdId}/tasks`
 		);
-		console.log( data);
-        return data
+		// console.log(data);
+		return data;
 	} catch (error) {
 		console.log(error);
 	}
+};
+
+export const fetchHouseholdMembers = async (householdId: string): Promise<User[] | undefined> => {
+    try {
+        const { data } = await axios.get(
+            `/api/households/${householdId}/members`
+        );
+        // console.log(data);
+        return data;
+    } catch (error) {
+        console.log(error);
+    }
 };
