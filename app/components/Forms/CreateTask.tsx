@@ -8,9 +8,16 @@ import DateTimeSelector from "../DateTimeSelector/DateTimeSelector";
 import UserSelector from "../UserSelector/UserSelector";
 
 import { edit, add } from "@/app/utils/Icons";
-import { Household, Task, DEFAULT_TASK, User } from "@/models/types";
+import {
+	Household,
+	Task,
+	DEFAULT_TASK,
+	User,
+	DEFAULT_HOUSEHOLD,
+} from "@/models/types";
 import {
 	checkCurrentHousehold,
+	fetchHousehold,
 	fetchHouseholdMembers,
 } from "@/app/utils/households";
 
@@ -26,29 +33,47 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 		...task,
 	});
 
-	const [currentHouseholdMembers, setCurrentHouseholdMembers] = useState<
-		User[] | null
-	>(null);
+	const [recurrenceDefinition, setRecurrenceDefinition] = useState<any>(null);
 
 	const [targetUsers, setTargetUsers] = useState<User[]>([]);
 
-	// Check if there is an active household, if so, add it to the task
-	const currentHouseholdId = checkCurrentHousehold();
+	// Check if there is an active household
+	const [currentHouseholdId, setCurrentHouseholdId] = useState<string>("");
 
 	useEffect(() => {
-		if (currentHouseholdId) {
-			setTaskState((prev) => ({
-				...prev,
-				household: currentHouseholdId,
-			}));
+        const fetchedHh = checkCurrentHousehold();
+		console.log(fetchedHh);
+        setCurrentHouseholdId(fetchedHh || "ass");
+	}, []);
 
-			const fetchMembers = async () => {
-				const members = await fetchHouseholdMembers(currentHouseholdId);
-				setCurrentHouseholdMembers(members || null);
-			};
+	// Single piece of state to manage all of the household info at once
+	const [household, setHousehold] = useState<Household | null>(null);
 
-			fetchMembers();
+	// Fetch all of the important household data when the currentHouseholdId changes
+	useEffect(() => {
+		if (!currentHouseholdId) {
+			return;
 		}
+
+		setTaskState((prev) => ({
+			...prev,
+			household: currentHouseholdId,
+		}));
+
+		const fetchMembers = async () => {
+			const members =
+				(await fetchHouseholdMembers(currentHouseholdId)) || [];
+			const shallowHousehold =
+				(await fetchHousehold(currentHouseholdId)) || DEFAULT_HOUSEHOLD;
+
+			setHousehold({
+				...shallowHousehold,
+				_id: currentHouseholdId,
+				members: members,
+			});
+		};
+
+		fetchMembers();
 	}, [currentHouseholdId]);
 
 	const [modals, setModals] = useState({
@@ -123,7 +148,8 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 				>
 					<DateTimeSelector
 						handleSubmit={(data) => {
-							updateTaskState("date", data.selectedDate);
+							updateTaskState("date", data.dateTime);
+							setRecurrenceDefinition(data.recurrenceDefinition);
 							updateModalState("isDateTimeOpen", false);
 						}}
 					/>
@@ -136,7 +162,7 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 						}
 					>
 						<UserSelector
-							users={currentHouseholdMembers || []}
+							users={(household?.members as User[]) || []}
 							selectedUserIds={[taskState.user]}
 							handleSubmit={(data) => {
 								updateModalState("isUserSelectorOpen", false);

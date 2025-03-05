@@ -41,6 +41,15 @@ export interface Household {
 	description?: string;
 	tasks: any[];
 	recurringTasks: any[];
+    image?: string;
+}
+
+export const DEFAULT_HOUSEHOLD: Household = {
+    _id: "",
+    name: "",
+    members: [],
+    tasks: [],
+    recurringTasks: [],
 }
 
 export interface TaskList {

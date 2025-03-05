@@ -8,7 +8,8 @@ mongooseConnection();
 const TaskRotationSchema = new Schema({
 	task: { type: Schema.Types.ObjectId, ref: "Task" },
 	household: { type: Schema.Types.ObjectId, ref: "Household" },
-	rotationOrder: [{ type: Schema.Types.ObjectId, ref: "User" }],
+	members: [{ type: Schema.Types.ObjectId, ref: "User" }],
+	recurrenceSchedule: [[Boolean]],
 	currentIndex: { type: Number, default: 0 },
 });
 

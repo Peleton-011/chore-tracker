@@ -13,6 +13,7 @@ import {
 	TaskTrade,
 	FilteredTasks,
 } from "@/models/types";
+import { fetchHousehold } from "../utils/households";
 
 // Define the shape of your context
 interface GlobalContextType {
@@ -42,6 +43,9 @@ interface GlobalContextType {
 	fetchTasks: () => Promise<void>;
 	editingTask: Task | null;
 	setEditingTask: (task: Task | null) => void;
+
+	household: Household | null;
+	updateCurrentHousehold: (householdId: string) => Promise<void>;
 }
 
 // Define the shape of your update context if needed
@@ -62,13 +66,25 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [taskModal, setTaskModal] = useState(false);
 
-	const [editingTask, setEditingTask] = useState<Task | null>(null);
 	const [households, setHouseholds] = useState<Household[]>([]);
+	const [household, setHousehold] = useState<Household | null>(null);
+
+	const [editingTask, setEditingTask] = useState<Task | null>(null);
 	const [user, setUser] = useState<User | null>(null);
 	const [taskTrades, setTaskTrades] = useState<TaskTrade[]>([]);
 	const [taskTradesFromUser, setTaskTradesFromUser] = useState<TaskTrade[]>(
 		[]
 	);
+
+	const updateCurrentHousehold = async (householdId: string) => {
+		try {
+			setHousehold((await fetchHousehold(householdId)) || null);
+            console.log((await fetchHousehold(householdId)))
+		} catch (error: any) {
+			console.error("Failed to fetch households", error);
+			setError(error);
+		}
+	};
 
 	const fetchHouseholds = async () => {
 		try {
@@ -323,6 +339,8 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 				fetchTasks,
 				editingTask,
 				setEditingTask,
+				household,
+				updateCurrentHousehold,
 			}}
 		>
 			<GlobalUpdateContext.Provider value={{}}>
