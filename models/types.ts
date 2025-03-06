@@ -80,3 +80,10 @@ export interface FilteredTasks {
 	laterThisMonth: Task[];
 	someday: Task[];
 }
+
+export interface RecurrenceDefinition {
+    intervalValue: number;
+    intervalUnit: string;
+    doesRecurrenceEnd: boolean;
+    recurrenceEndDate: Date | null;
+  }
