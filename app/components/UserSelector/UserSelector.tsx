@@ -1,10 +1,5 @@
+import { User } from "@/models/types";
 import React, { useState, useEffect } from "react";
-
-interface User {
-	_id: string;
-	name: string;
-	avatar: string; // URL or path to the avatar image
-}
 
 interface UserSelectorProps {
 	users: User[]; // List of users

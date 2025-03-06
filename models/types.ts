@@ -22,7 +22,7 @@ export const DEFAULT_TASK: Task = {
 	isImportant: false,
 	user: "",
 	// household: "",
-    completions: [],
+	completions: [],
 	// recurringTaskDefinition: "",
 	isPlaceholder: false,
 	reminders: [],
@@ -41,16 +41,16 @@ export interface Household {
 	description?: string;
 	tasks: any[];
 	recurringTasks: any[];
-    image?: string;
+	image?: string;
 }
 
 export const DEFAULT_HOUSEHOLD: Household = {
-    _id: "",
-    name: "",
-    members: [],
-    tasks: [],
-    recurringTasks: [],
-}
+	_id: "",
+	name: "",
+	members: [],
+	tasks: [],
+	recurringTasks: [],
+};
 
 export interface TaskList {
 	title: string;
@@ -59,7 +59,7 @@ export interface TaskList {
 
 export interface User {
 	_id: string;
-	households: string[];
+	households?: string[];
 	name: string;
 	avatar: string;
 }
@@ -82,8 +82,8 @@ export interface FilteredTasks {
 }
 
 export interface RecurrenceDefinition {
-    intervalValue: number;
-    intervalUnit: string;
-    doesRecurrenceEnd: boolean;
-    recurrenceEndDate: Date | null;
-  }
+	intervalValue: number;
+	intervalUnit: string;
+	doesRecurrenceEnd: boolean;
+	recurrenceEndDate: Date | null;
+}
