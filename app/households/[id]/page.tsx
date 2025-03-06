@@ -14,24 +14,14 @@ import {
 	generateInviteLink,
 } from "@/app/utils/households";
 import toast from "react-hot-toast";
-import AutonomousModal from "@/app/components/Modals/AutonomousModal";
-import CreateTask from "@/app/components/Forms/CreateTask";
 import { useGlobalState } from "@/app/context/globalProvider";
 
 function page({ params }: { params: { id: string } }) {
 	const { id } = params; // Use params to get the token
+	const { household, updateCurrentHousehold } = useGlobalState();
 	const [error, setError] = useState<string>("");
-	const [household, setHousehold] = useState<any>({ tasks: [], members: [] });
 	const [link, setLink] = useState("");
 	const [taskLists, setTaskLists] = useState<TaskList[]>([]);
-
-    const DEFAULT_TASK = {...DEF, household: id};
-
-	const [taskModal, setTaskModal] = useState(false);
-	const [editingTask, setEditingTask] = useState<Task>({...DEFAULT_TASK});
-
-	const { updateTask, createTask } = useGlobalState();
-
 
 	// Fetch & filter tasks
 	useEffect(() => {
@@ -48,19 +38,9 @@ function page({ params }: { params: { id: string } }) {
 		fetch();
 	}, [id]);
 
-	// Fetch household from /api/households/[id]
-	useEffect(() => {
-		const fetchHousehold = async () => {
-			try {
-				const response = await axios.get(`/api/households/${id}`);
-				setHousehold(response.data);
-			} catch (err) {
-				console.error("Failed to fetch household:", err);
-			}
-		};
-
-		fetchHousehold();
-	}, []);
+    useEffect(() => {
+        updateCurrentHousehold(id);
+    }, [id]);
 
 	const handleGenerateLink = async () => {
 		try {
@@ -119,26 +99,6 @@ function page({ params }: { params: { id: string } }) {
 				<h3>Household Tasks</h3>
 				<Tasks lists={taskLists} />
 			</div>
-
-			{/* For household based/ multi user tasks */}
-			<AutonomousModal
-				isOpen={taskModal}
-				onClose={() => setTaskModal(false)}
-			>
-				<CreateTask
-					task={editingTask || {...DEFAULT_TASK}}
-					updateTask={(task) => {
-						updateTask({ ...task, household: id });
-						setEditingTask({...DEFAULT_TASK});
-						setTaskModal(false);
-					}}
-					createTask={(task) => {
-                        console.log(task)
-						createTask({ ...task, household: id });
-						setTaskModal(false);
-					}}
-				></CreateTask>
-			</AutonomousModal>
 		</div>
 	);
 }
