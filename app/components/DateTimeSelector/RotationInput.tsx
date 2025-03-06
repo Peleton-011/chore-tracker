@@ -23,7 +23,8 @@ const RotationScheduleInput: React.FC<RotationScheduleInputProps> = ({
     setSchedule(newSchedule);
   };
 
-  const handleAddRow = () => {
+  const handleAddRow = (e: React.MouseEvent) => {
+    e.preventDefault();
     setSchedule([...schedule, Array(members.length).fill(false)]);
   };
 
@@ -72,7 +73,7 @@ const RotationScheduleInput: React.FC<RotationScheduleInputProps> = ({
                                 <div ref={provided.innerRef} {...provided.draggableProps}>
                                   <button
                                     {...provided.dragHandleProps}
-                                    onClick={() => handleToggle(rowIndex, colIndex)}
+                                    onClick={(e) => {e.preventDefault(); handleToggle(rowIndex, colIndex)}}
                                     style={{ width: "50px", height: "30px", background: row[colIndex] ? "green" : "red" }}
                                   >
                                     {row[colIndex] ? "✔" : "✖"}
