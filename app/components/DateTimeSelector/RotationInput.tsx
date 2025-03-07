@@ -4,12 +4,12 @@ import { trash } from "@/app/utils/Icons";
 
 interface RotationInputProps {
 	rotationDefinition: RotationDefinition;
-	handleChange: (schedule: boolean[][]) => void;
+	setRotationSchedule: (schedule: boolean[][]) => void;
 }
 
 const RotationInput = ({
 	rotationDefinition: { members, rotationSchedule: argSchedule },
-	handleChange,
+	setRotationSchedule: handleChange,
 }: RotationInputProps) => {
 	const [schedule, setSchedule] = useState(argSchedule);
 

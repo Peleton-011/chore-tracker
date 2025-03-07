@@ -149,6 +149,25 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 					onClose={() => updateModalState("isDateTimeOpen", false)}
 				>
 					<DateTimeSelector
+						dateTime={new Date()}
+						recurrenceDefinition={recurrenceDefinition}
+						members={[
+							{
+								_id: "1",
+								name: "Antonio",
+								avatar: "https://static.vecteezy.com/system/resources/previews/024/183/502/original/male-avatar-portrait-of-a-young-man-with-a-beard-illustration-of-male-character-in-modern-color-style-vector.jpg",
+							},
+							{
+								_id: "2",
+								name: "Fernando",
+								avatar: "https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001877.png",
+							},
+							{
+								_id: "1",
+								name: "Alonso",
+								avatar: "http://www.marktechpost.com/wp-content/uploads/2023/05/7309681-scaled.jpg",
+							},
+						]}
 						handleSubmit={(data) => {
 							updateTaskState("date", data.dateTime);
 							setRecurrenceDefinition(data.recurrenceDefinition);
@@ -196,29 +215,6 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 					</label>
 				</div>
 			</div>
-
-			<RotationScheduleInput
-				schedule={[[]]}
-				members={[
-					{
-						_id: "1",
-						name: "Antonio",
-						avatar: "https://static.vecteezy.com/system/resources/previews/024/183/502/original/male-avatar-portrait-of-a-young-man-with-a-beard-illustration-of-male-character-in-modern-color-style-vector.jpg",
-					},
-                    {
-						_id: "2",
-						name: "Fernando",
-						avatar: "https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001877.png",
-					},
-                    {
-						_id: "1",
-						name: "Alonso",
-						avatar: "http://www.marktechpost.com/wp-content/uploads/2023/05/7309681-scaled.jpg",
-					},
-				]}
-				setSchedule={(a) => console.log(a)}
-				setMembers={(a) => console.log(a)}
-			/>
 
 			<div className="submit-btn" style={{ marginTop: "2rem" }}>
 				<Button

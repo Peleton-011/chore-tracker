@@ -88,6 +88,13 @@ export interface RecurrenceDefinition {
 	recurrenceEndDate: Date | null;
 }
 
+export const DEFAULT_RECURRENCE_DEFINITION: RecurrenceDefinition = {
+	intervalUnit: "days",
+	intervalValue: 1,
+	doesRecurrenceEnd: false,
+	recurrenceEndDate: null,
+};
+
 export interface RotationDefinition {
     members: User[]
     rotationSchedule: boolean[][]

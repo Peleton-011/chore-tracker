@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import RecurrenceInput from "./RecurrenceInput";
 import DateTimeInput from "./DateTimeInput";
+import { RotationDefinition, User } from "@/models/types";
+import RotationInput from "./RotationInput";
 
 interface RecurrenceDefinition {
 	intervalValue: number;
@@ -9,19 +11,28 @@ interface RecurrenceDefinition {
 	recurrenceEndDate: Date | null;
 }
 
-const defaultRecurrenceDefinition: RecurrenceDefinition = {
-	intervalUnit: "days",
-	intervalValue: 1,
-	doesRecurrenceEnd: false,
-	recurrenceEndDate: null,
-};
+interface DateTimeSelectorProps {
+	dateTime: Date;
+	recurrenceDefinition: RecurrenceDefinition;
+	members: User[];
+	handleSubmit: (data: any) => void;
+}
 
-const DateTimeSelector: React.FC<{ handleSubmit: (data: any) => void }> = ({
+const DateTimeSelector = ({
+	dateTime: argDateTime,
+	recurrenceDefinition: argRecurrenceDefinition,
+	members,
 	handleSubmit,
-}) => {
-	const [dateTime, setDateTime] = useState<Date | null>(null);
+}: DateTimeSelectorProps) => {
+	const [dateTime, setDateTime] = useState<Date>(argDateTime);
 	const [recurrenceDefinition, setRecurrenceDefinition] =
-		useState<RecurrenceDefinition>(defaultRecurrenceDefinition);
+		useState<RecurrenceDefinition>(argRecurrenceDefinition);
+
+	const [rotationDefinition, setRotationDefinition] =
+		useState<RotationDefinition>({
+			members,
+			rotationSchedule: [new Array(members.length).fill(false)],
+		});
 
 	return (
 		<div>
@@ -29,16 +40,26 @@ const DateTimeSelector: React.FC<{ handleSubmit: (data: any) => void }> = ({
 			<DateTimeInput dateTime={dateTime} setDateTime={setDateTime} />
 			<RecurrenceInput
 				recurrenceDefinition={recurrenceDefinition}
-				setRecurrenceDefinition={(rec) => {
-					setRecurrenceDefinition(rec);
-					console.log(rec);
-				}}
+				setRecurrenceDefinition={(rec) => setRecurrenceDefinition(rec)}
 			/>
+
+			{members && (
+				<RotationInput
+					rotationDefinition={rotationDefinition}
+					setRotationSchedule={(schedule) =>
+						setRotationDefinition({
+							...rotationDefinition,
+							rotationSchedule: schedule,
+						})
+					}
+				/>
+			)}
 			<button
 				onClick={() =>
 					handleSubmit({
 						dateTime,
 						recurrenceDefinition,
+						rotationDefinition,
 					})
 				}
 			>
