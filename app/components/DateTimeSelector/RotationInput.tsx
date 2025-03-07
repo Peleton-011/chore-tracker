@@ -4,16 +4,14 @@ import { trash } from "@/app/utils/Icons";
 
 interface RotationInputProps {
 	members: User[];
-	setMembers: (members: string[]) => void;
 	schedule: boolean[][];
-	setSchedule: (schedule: boolean[][]) => void;
+	handleSubmit: (schedule: boolean[][]) => void;
 }
 
 const RotationInput = ({
 	members,
-	setMembers,
 	schedule: argSchedule,
-	setSchedule: updateArgSchedule,
+	handleSubmit,
 }: RotationInputProps) => {
 	const [schedule, setSchedule] = useState(argSchedule);
 
@@ -48,9 +46,7 @@ const RotationInput = ({
 		<div
 			className="grid"
 			style={{
-				gridTemplateColumns: `repeat(${
-					members.length + 2
-				}, 1fr)`,
+				gridTemplateColumns: `repeat(${members.length + 2}, 1fr)`,
 			}}
 		>
 			{/* First row, members surrounded by two empty cells */}
@@ -78,7 +74,6 @@ const RotationInput = ({
 			{schedule.map((row, index) => {
 				const fullRow = ["title", ...row, "delete"];
 				return fullRow.map((cell, jindex) => {
-					console.log(fullRow);
 					if (typeof cell === "string") {
 						if (cell === "title") {
 							return (
@@ -101,6 +96,20 @@ const RotationInput = ({
 					}
 				});
 			})}
+
+			{/* Add row button */}
+			<div></div>
+            <div style={{ gridColumn: "span " + members.length, padding: "10px" }}>
+
+			<button
+				onClick={addRow}
+				style={{width: "100%", fontSize: "2rem", padding: "0px" }}
+                >
+				{" "}
+				+{" "}
+			</button>
+                </div>
+			<div></div>
 		</div>
 	);
 };

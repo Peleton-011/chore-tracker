@@ -62,9 +62,9 @@ const ExamplePage: React.FC = () => {
 			>
 				<RotationInput
 					members={members}
-					setMembers={() => {}}
+					
 					schedule={[Array(members.length).fill(false)]}
-					setSchedule={() => {}}
+					handleSubmit={() => {}}
 				/>
 			</AutonomousModal>
 		</div>
