@@ -13,7 +13,7 @@ import {
 	TaskTrade,
 	FilteredTasks,
 } from "@/models/types";
-import { fetchHousehold } from "../utils/households";
+import { fetchHousehold, fetchHouseholdMembers } from "../utils/households";
 
 // Define the shape of your context
 interface GlobalContextType {
@@ -78,8 +78,13 @@ export const GlobalProvider = ({ children }: { children: React.ReactNode }) => {
 
 	const updateCurrentHousehold = async (householdId: string) => {
 		try {
-			setHousehold((await fetchHousehold(householdId)) || null);
-            console.log((await fetchHousehold(householdId)))
+			const householdStructure = await fetchHousehold(householdId);
+			const members = await fetchHouseholdMembers(householdId);
+			setHousehold(
+				householdStructure
+					? { ...householdStructure, members: members || [] }
+					: null
+			);
 		} catch (error: any) {
 			console.error("Failed to fetch households", error);
 			setError(error);

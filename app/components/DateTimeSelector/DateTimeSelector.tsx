@@ -1,15 +1,8 @@
 import React, { useState } from "react";
 import RecurrenceInput from "./RecurrenceInput";
 import DateTimeInput from "./DateTimeInput";
-import { RotationDefinition, User } from "@/models/types";
+import { RecurrenceDefinition, RotationDefinition, User } from "@/models/types";
 import RotationInput from "./RotationInput";
-
-interface RecurrenceDefinition {
-	intervalValue: number;
-	intervalUnit: string;
-	doesRecurrenceEnd: boolean;
-	recurrenceEndDate: Date | null;
-}
 
 interface DateTimeSelectorProps {
 	dateTime: Date;

@@ -6,6 +6,7 @@ import AutonomousModal from "../Modals/AutonomousModal";
 import formatDateTime from "@/app/utils/formatDate";
 import DateTimeSelector from "../DateTimeSelector/DateTimeSelector";
 import UserSelector from "../UserSelector/UserSelector";
+import { addHours, startOfHour } from "date-fns";
 
 import { edit, add } from "@/app/utils/Icons";
 import {
@@ -33,6 +34,7 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 	const [taskState, setTaskState] = useState<Task>({
 		...DEFAULT_TASK,
 		...task,
+		date: task?.date || startOfHour(addHours(new Date(), 1)),
 	});
 
 	const [recurrenceDefinition, setRecurrenceDefinition] = useState<any>(null);
@@ -44,8 +46,7 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 
 	useEffect(() => {
 		const fetchedHh = checkCurrentHousehold();
-		console.log(fetchedHh);
-		setCurrentHouseholdId(fetchedHh || "ass");
+		setCurrentHouseholdId(fetchedHh || "");
 	}, []);
 
 	// Single piece of state to manage all of the household info at once
@@ -144,30 +145,15 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 					Date & Time <br />
 					{formatDateTime(taskState.date)}
 				</button>
+
 				<AutonomousModal
 					isOpen={modals.isDateTimeOpen}
 					onClose={() => updateModalState("isDateTimeOpen", false)}
 				>
 					<DateTimeSelector
-						dateTime={new Date()}
+						dateTime={taskState.date}
 						recurrenceDefinition={recurrenceDefinition}
-						members={[
-							{
-								_id: "1",
-								name: "Antonio",
-								avatar: "https://static.vecteezy.com/system/resources/previews/024/183/502/original/male-avatar-portrait-of-a-young-man-with-a-beard-illustration-of-male-character-in-modern-color-style-vector.jpg",
-							},
-							{
-								_id: "2",
-								name: "Fernando",
-								avatar: "https://png.pngtree.com/png-clipart/20230927/original/pngtree-man-avatar-image-for-profile-png-image_13001877.png",
-							},
-							{
-								_id: "1",
-								name: "Alonso",
-								avatar: "http://www.marktechpost.com/wp-content/uploads/2023/05/7309681-scaled.jpg",
-							},
-						]}
+						members={targetUsers}
 						handleSubmit={(data) => {
 							updateTaskState("date", data.dateTime);
 							setRecurrenceDefinition(data.recurrenceDefinition);
@@ -175,6 +161,20 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 						}}
 					/>
 				</AutonomousModal>
+
+				{currentHouseholdId && (
+					<button
+						className="outline"
+						onClick={(e) => {
+							e.preventDefault();
+							updateModalState("isUserSelectorOpen", true);
+						}}
+					>
+						Users <br />
+						{targetUsers.length + " selected"}
+					</button>
+				)}
+
 				{currentHouseholdId && (
 					<AutonomousModal
 						isOpen={modals.isUserSelectorOpen}
@@ -186,6 +186,8 @@ function CreateTask({ task, updateTask, createTask }: CreateTaskProps) {
 							users={(household?.members as User[]) || []}
 							selectedUserIds={[taskState.user]}
 							handleSubmit={(data) => {
+                                setTargetUsers(data.selectedUserIds)
+                                console.log(data)
 								updateModalState("isUserSelectorOpen", false);
 							}}
 						/>
