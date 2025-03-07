@@ -41,10 +41,16 @@ const RotationInput = ({
 		setSchedule(newSchedule);
 	};
 
+	const updateCell = (row: number, col: number, value: boolean) => {
+		const newSchedule = [...schedule];
+		newSchedule[row][col] = value;
+		setSchedule(newSchedule);
+	};
+
 	// Grid with members and checkboxes
 	return (
 		<div
-			className="grid"
+			className="grid center-children"
 			style={{
 				gridTemplateColumns: `repeat(${members.length + 2}, 1fr)`,
 			}}
@@ -92,24 +98,53 @@ const RotationInput = ({
 							);
 						}
 					} else {
-						return <div>{cell ? "✔️" : "❌"}</div>;
+						return (
+							<button
+								className="outline"
+								key={jindex}
+								onClick={() =>
+									updateCell(index, jindex - 1, !cell)
+								}
+							>
+								{cell ? "✔️" : "❌"}
+							</button>
+						);
 					}
 				});
 			})}
 
 			{/* Add row button */}
 			<div></div>
-            <div style={{ gridColumn: "span " + members.length, padding: "10px" }}>
-
-			<button
-				onClick={addRow}
-				style={{width: "100%", fontSize: "2rem", padding: "0px" }}
-                >
-				{" "}
-				+{" "}
-			</button>
-                </div>
+			<div
+				style={{
+					gridColumn: "span " + members.length,
+					padding: "1rem",
+				}}
+			>
+				<button
+					onClick={addRow}
+					style={{ width: "100%", fontSize: "2rem", padding: "0px" }}
+				>
+					{" "}
+					+{" "}
+				</button>
+			</div>
 			<div></div>
+
+			<div
+				style={{
+					gridColumn: "span " + (members.length + 2),
+					padding: "1rem",
+				}}
+			>
+				<button
+					className="outline"
+					onClick={() => handleSubmit(schedule)}
+					style={{ width: "100%" }}
+				>
+					Save
+				</button>
+			</div>
 		</div>
 	);
 };

@@ -513,7 +513,7 @@ footer {
 	.create-content-body {
 		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		gap: 1rem;
-        row-gap: 0;
+		row-gap: 0;
 	}
 
 	color: $default-color-grey1;
@@ -619,3 +619,10 @@ footer {
 // 		--background-end-rgb: 0, 0, 0;
 // 	}
 // }
+
+.center-children > div {
+	display: flex;
+	justify-content: center; /* Centers content horizontally */
+	align-items: center; /* Centers content vertically */
+	text-align: center; /* Ensures text is centered */
+}
