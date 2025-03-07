@@ -1,35 +1,17 @@
-import { User } from "@/models/types";
+import { RotationDefinition, User } from "@/models/types";
 import React, { useEffect, useState } from "react";
 import { trash } from "@/app/utils/Icons";
 
 interface RotationInputProps {
-	members: User[];
-	schedule: boolean[][];
-	handleSubmit: (schedule: boolean[][]) => void;
+	rotationDefinition: RotationDefinition;
+	handleChange: (schedule: boolean[][]) => void;
 }
 
 const RotationInput = ({
-	members,
-	schedule: argSchedule,
-	handleSubmit,
+	rotationDefinition: { members, rotationSchedule: argSchedule },
+	handleChange,
 }: RotationInputProps) => {
 	const [schedule, setSchedule] = useState(argSchedule);
-
-	const randomSchedule = (length: number) => {
-		const newSchedule = [];
-		for (let i = 0; i < length; i++) {
-			newSchedule.push(
-				new Array(members.length)
-					.fill(false)
-					.map(() => Math.random() < 0.5)
-			);
-		}
-		return newSchedule;
-	};
-
-	useEffect(() => {
-		setSchedule(randomSchedule(3));
-	}, []);
 
 	const addRow = () => {
 		setSchedule([...schedule, new Array(members.length).fill(false)]);
@@ -39,6 +21,7 @@ const RotationInput = ({
 		const newSchedule = [...schedule];
 		newSchedule.splice(index, 1);
 		setSchedule(newSchedule);
+		handleChange(newSchedule);
 	};
 
 	const updateCell = (row: number, col: number, value: boolean) => {
@@ -130,21 +113,6 @@ const RotationInput = ({
 				</button>
 			</div>
 			<div></div>
-
-			<div
-				style={{
-					gridColumn: "span " + (members.length + 2),
-					padding: "1rem",
-				}}
-			>
-				<button
-					className="outline"
-					onClick={() => handleSubmit(schedule)}
-					style={{ width: "100%" }}
-				>
-					Save
-				</button>
-			</div>
 		</div>
 	);
 };

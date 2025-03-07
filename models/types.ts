@@ -87,3 +87,8 @@ export interface RecurrenceDefinition {
 	doesRecurrenceEnd: boolean;
 	recurrenceEndDate: Date | null;
 }
+
+export interface RotationDefinition {
+    members: User[]
+    rotationSchedule: boolean[][]
+}
