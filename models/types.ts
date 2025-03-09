@@ -7,7 +7,7 @@ export interface Task {
 	isImportant: boolean;
 	user: string; // Reference to the User model
 	household?: string; // Reference to the Household model
-	completions: { user: string; date: Date }[];
+	completions?: { user: string; date: Date }[];
 	recurringTaskDefinition?: string; // Reference to the RecurringTaskDefinition model
 	isPlaceholder: boolean;
 	reminders: Reminder[];

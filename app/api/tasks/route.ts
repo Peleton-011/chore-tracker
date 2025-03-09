@@ -18,16 +18,15 @@ export async function POST(req: Request) {
 			title,
 			description,
 			date,
-			completed,
-			important,
-			householdId,
-			isRecurring,
-			intervalUnit,
-			intervalValue,
+			isCompleted,
+			isImportant,
+			users,
+			owner,
+			household: householdId,
 			isPlaceholder,
-			reminders,
-			recurrenceEndDate,
-            users
+            // reminders,
+            recurrenceDefinition,
+            rotationDefinition
 		} = await req.json();
 
 		if (!title || !description || !date) {
@@ -55,11 +54,11 @@ export async function POST(req: Request) {
 			title,
 			description,
 			date,
-			isCompleted: completed,
-			isImportant: important,
+			isCompleted: isCompleted,
+			isImportant: isImportant,
 			user: user._id,
 			isPlaceholder,
-			reminders,
+			// reminders,
 		});
 
 		if (householdId) {
@@ -93,14 +92,15 @@ export async function POST(req: Request) {
 			console.log(`Task ${task._id} added to household ${householdId}`);
 		}
 
-		if (isRecurring) {
+		if (recurrenceDefinition) {
+            const {intervalUnit, intervalValue, recurrenceEndDate} = recurrenceDefinition
 			const recurringTaskDefinition =
 				await RecurringTaskDefinition.create({
 					task: task._id,
 					intervalUnit,
 					intervalValue,
 					isPlaceholder,
-					reminders,
+					// reminders,
 					title,
 					description,
 					owner: user._id,
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
 			}
 		}
 
-        // If there is a users list, then add the task to each user
+		// If there is a users list, then add the task to each user
 		await task.save({ session });
 
 		await session.commitTransaction(); // Commit the transaction if all goes well
