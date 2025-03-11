@@ -40,6 +40,7 @@ This also results in coherent objects that are much more versatile and useful
     |--------|--------|-----------|------------|--------|-----|
     | !rec   | rec    | !rec      | rec        | !rec   | rec |
     | ST, SU | Rec SU | ST, SC, * | Rec, SC, * | MU, ** | *, *** |
+    |Task Data| TD + Rec| TD + HHD| TD + HHD + Rec | TD + HHD | TD + HHD + Rec + Schedule |
 
     Where: 
     
