@@ -19,7 +19,7 @@ const RecurringTaskDefinitionSchema = new mongoose.Schema({
 	nextOccurrence: Date, // Tracks the next instance
 	allowFutureTrades: { type: Boolean, default: true },
 	household: { type: mongoose.Schema.Types.ObjectId, ref: "Household" }, // For group tasks
-    rotation: { type: mongoose.Schema.Types.ObjectId, ref: "TaskRotation" }, 
+	rotation: { type: mongoose.Schema.Types.ObjectId, ref: "TaskRotation" },
 });
 
 export default mongoose.models["RecurringTaskDefinition"] ||

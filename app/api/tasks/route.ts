@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
-import { Household, Task, RecurringTaskDefinition } from "@/models/index";
+import {
+	Household,
+	Task,
+	RecurringTaskDefinition,
+	TaskRotation,
+} from "@/models/index";
 import { getUser } from "@/app/utils/getUser";
 import mongoose from "mongoose";
 import { calculateNextDate } from "@/app/utils/nextTaskDate";
@@ -15,18 +20,25 @@ export async function POST(req: Request) {
 		}
 
 		const {
+			// Task Data vv
 			title,
 			description,
 			date,
 			isCompleted,
 			isImportant,
-			users,
-			owner,
-			household: householdId,
+			user: owner,
+			// reminders,
+
+			// Recurrence Data vv
+			recurrenceDefinition,
 			isPlaceholder,
-            // reminders,
-            recurrenceDefinition,
-            rotationDefinition
+
+			// Household Data vv
+			household: householdId,
+			members,
+
+			// Rotation Data vv
+			rotationSchedule,
 		} = await req.json();
 
 		if (!title || !description || !date) {
@@ -50,17 +62,6 @@ export async function POST(req: Request) {
 			});
 		}
 
-		const task = await Task.create({
-			title,
-			description,
-			date,
-			isCompleted: isCompleted,
-			isImportant: isImportant,
-			user: user._id,
-			isPlaceholder,
-			// reminders,
-		});
-
 		if (householdId) {
 			//Get the household associated to the householdId
 			const household = await Household.findById(householdId);
@@ -78,22 +79,138 @@ export async function POST(req: Request) {
 					status: 403,
 				});
 			}
+		}
 
+		// Rotation vv
+		let rotationObj;
+
+		if (rotationSchedule) {
+			if (!rotationSchedule.length) {
+				return NextResponse.json({
+					error: "Missing required fields",
+					status: 400,
+				});
+			}
+
+			if (rotationSchedule.length > 100) {
+				return NextResponse.json({
+					error: "Rotation schedule must be less than 100 steps",
+					status: 400,
+				});
+			}
+
+			if (!householdId) {
+				return NextResponse.json({
+					error: "Missing required fields",
+					status: 400,
+				});
+			}
+
+			if (!members || !members.length) {
+				return NextResponse.json({
+					error: "Missing required fields",
+					status: 400,
+				});
+			}
+
+			rotationObj = await TaskRotation.create({
+				household: householdId,
+				members,
+				rotationSchedule,
+				currentIndex: 0,
+			});
+		}
+		// Rotation ^^
+
+		// Recurrence vv
+		let recurrenceObj;
+
+		if (recurrenceDefinition) {
+			if (
+				!recurrenceDefinition.intervalUnit ||
+				!recurrenceDefinition.intervalValue
+			) {
+				return NextResponse.json({
+					error: "Missing required fields",
+					status: 400,
+				});
+			}
+
+			if (recurrenceDefinition.intervalValue < 1) {
+				return NextResponse.json({
+					error: "Interval value must be greater than 0",
+					status: 400,
+				});
+			}
+
+			if (
+				recurrenceDefinition.intervalUnit !== "minutes" &&
+				recurrenceDefinition.intervalUnit !== "hours" &&
+				recurrenceDefinition.intervalUnit !== "days" &&
+				recurrenceDefinition.intervalUnit !== "weeks" &&
+				recurrenceDefinition.intervalUnit !== "months" &&
+				recurrenceDefinition.intervalUnit !== "years"
+			) {
+				return NextResponse.json({
+					error: "Invalid interval unit",
+					status: 400,
+				});
+			}
+
+			if (!recurrenceDefinition.startDate) {
+				return NextResponse.json({
+					error: "Missing required fields",
+					status: 400,
+				});
+			}
+
+			if (
+				recurrenceDefinition.endDate &&
+				recurrenceDefinition.endDate < recurrenceDefinition.startDate
+			) {
+				return NextResponse.json({
+					error: "End date must be after start date",
+					status: 400,
+				});
+			}
+
+			recurrenceObj = await RecurringTaskDefinition.create({
+				...recurrenceDefinition,
+				owner: owner || user._id,
+				household: householdId,
+				rotation: rotationObj?._id,
+			});
+		}
+		// Recurrence ^^
+
+		const task = await Task.create({
+			title,
+			description,
+			date,
+			isCompleted: isCompleted,
+			isImportant: isImportant,
+			user: owner || user._id,
+
+			household: householdId,
+
+			recurringTaskDefinition: recurrenceObj?._id,
+
+			isPlaceholder,
+			// reminders,
+		});
+
+		if (householdId) {
 			// Edit the household's tasks list to include a reference to the task
 			await Household.findByIdAndUpdate(householdId, {
 				$push: { tasks: task._id },
-			});
-
-			// Add the householdId to the household property of the task
-			await Task.findByIdAndUpdate(task._id, {
-				$set: { household: householdId },
 			});
 
 			console.log(`Task ${task._id} added to household ${householdId}`);
 		}
 
 		if (recurrenceDefinition) {
-            const {intervalUnit, intervalValue, recurrenceEndDate} = recurrenceDefinition
+			const { intervalUnit, intervalValue, recurrenceEndDate } =
+				recurrenceDefinition;
 			const recurringTaskDefinition =
 				await RecurringTaskDefinition.create({
 					task: task._id,

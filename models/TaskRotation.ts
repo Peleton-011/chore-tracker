@@ -6,10 +6,9 @@ import mongooseConnection from "@/app/utils/connect";
 mongooseConnection();
 
 const TaskRotationSchema = new Schema({
-	task: { type: Schema.Types.ObjectId, ref: "Task" },
 	household: { type: Schema.Types.ObjectId, ref: "Household" },
 	members: [{ type: Schema.Types.ObjectId, ref: "User" }],
-	recurrenceSchedule: [[Boolean]],
+	rotationSchedule: [[Boolean]],
 	currentIndex: { type: Number, default: 0 },
 });
 
