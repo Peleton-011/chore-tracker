@@ -55,6 +55,9 @@ This also results in coherent objects that are much more versatile and useful
     + \** : This generated task should be added to all users individually & not to the household (though it should have a reference to it)
     + \*** : This task should make use of a full rotation schedule to handle whatever kind of a recurrence it needs.
 
+<span style="color: red; font-weight: bold; background-color: yellow">
+¡¡¡ Update placeholder generation to take into account the new rotation schedules !!! </span>
+
 
 #### Pages
 
