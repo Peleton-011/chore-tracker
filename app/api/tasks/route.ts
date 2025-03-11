@@ -175,69 +175,175 @@ export async function POST(req: Request) {
 			}
 
 			recurrenceObj = await RecurringTaskDefinition.create({
+				title,
+				description,
+				startDate: date,
 				...recurrenceDefinition,
 				owner: owner || user._id,
+				allowFutureTrades: true,
 				household: householdId,
 				rotation: rotationObj?._id,
 			});
 		}
 		// Recurrence ^^
 
-		const task = await Task.create({
-			title,
-			description,
-			date,
-			isCompleted: isCompleted,
-			isImportant: isImportant,
-			user: owner || user._id,
+		// Single User Tasks
+		if (!householdId) {
+			const task = await Task.create({
+				title,
+				description,
+				date,
+				isCompleted: isCompleted,
+				isImportant: isImportant,
+				user: owner || user._id,
 
-			household: householdId,
+				recurringTaskDefinition: recurrenceObj?._id,
 
-			recurringTaskDefinition: recurrenceObj?._id,
+				isPlaceholder,
+				// reminders,
+			});
 
-			isPlaceholder,
-			// reminders,
-		});
+			// Save changes
+			await rotationObj?.save({ session });
+			await recurrenceObj?.save({ session });
+			await task.save({ session });
 
-		if (householdId) {
+			await session.commitTransaction(); // Commit the transaction if all goes well
+			session.endSession(); // End the session
+		}
+
+		// Shared Completion Tasks
+		if (!members && householdId) {
+			const task = await Task.create({
+				title,
+				description,
+				date,
+				isCompleted: isCompleted,
+				isImportant: isImportant,
+				household: householdId,
+
+				recurringTaskDefinition: recurrenceObj?._id,
+
+				isPlaceholder,
+				// reminders,
+			});
+
 			// Edit the household's tasks list to include a reference to the task
 			await Household.findByIdAndUpdate(householdId, {
 				$push: { tasks: task._id },
 			});
 
-			console.log(`Task ${task._id} added to household ${householdId}`);
+			// Save changes
+			await rotationObj?.save({ session });
+			await recurrenceObj?.save({ session });
+			await task.save({ session });
+
+			await session.commitTransaction(); // Commit the transaction if all goes well
+			session.endSession(); // End the session
+		}
+
+		// Multi-User Single Time Tasks
+		if (members && householdId && !recurrenceObj && !rotationObj) {
+			members.forEach(async (member: string) => {
+				const task = await Task.create(
+					{
+						title,
+						description,
+						date,
+						isCompleted: isCompleted,
+						isImportant: isImportant,
+						user: member,
+						household: householdId,
+
+						isPlaceholder,
+						// reminders,
+					}
+				);
+				
+                // Edit the household's tasks list to include a reference to the task
+				await Household.findByIdAndUpdate(householdId, {
+					$push: { tasks: task._id },
+				});
+
+                await task.save({ session });
+			});
+
+			await session.commitTransaction(); // Commit the transaction if all goes well
+			session.endSession(); // End the session
+		}
+
+		// Multi-User Tasks
+		if (members && householdId && recurrenceObj && !rotationObj) {
+			members.forEach(async (member: string) => {
+				const task = await Task.create(
+					{
+						title,
+						description,
+						date,
+						isCompleted: isCompleted,
+						isImportant: isImportant,
+						user: member,
+						household: householdId,
+
+						recurringTaskDefinition: recurrenceObj?._id,
+
+						isPlaceholder,
+						// reminders,
+					},
+					{ session }
+				);
+			});
+
+			// Edit the household's tasks list to include a reference to the task
+			await Household.findByIdAndUpdate(householdId, {
+				$push: { recurringTasks: recurrenceObj._id },
+			});
+
+			await recurrenceObj.save({ session });
+
+			await session.commitTransaction(); // Commit the transaction if all goes well
+			session.endSession(); // End the session
+		}
+
+		// Multi-User Rotating Tasks
+		if (members && householdId && recurrenceObj && rotationObj) {
+			members.forEach(async (member: string) => {
+				const task = await Task.create(
+					{
+						title,
+						description,
+						date,
+						isCompleted: isCompleted,
+						isImportant: isImportant,
+						user: member,
+						household: householdId,
+
+						recurringTaskDefinition: recurrenceObj?._id,
+
+						isPlaceholder,
+						// reminders,
+					},
+					{ session }
+				);
+			});
+
+			// Edit the household's tasks list to include a reference to the task
+			await Household.findByIdAndUpdate(householdId, {
+				$push: { recurringTasks: recurrenceObj._id },
+			});
+
+			await rotationObj.save({ session });
+			await recurrenceObj.save({ session });
+
+			await session.commitTransaction(); // Commit the transaction if all goes well
+			session.endSession(); // End the session
 		}
 
 		if (recurrenceDefinition) {
-			const { intervalUnit, intervalValue, recurrenceEndDate } =
-				recurrenceDefinition;
-			const recurringTaskDefinition =
-				await RecurringTaskDefinition.create({
-					task: task._id,
-					intervalUnit,
-					intervalValue,
-					isPlaceholder,
-					// reminders,
-					title,
-					description,
-					owner: user._id,
-					startDate: date,
-					endDate: recurrenceEndDate,
-					allowFutureTrades: true,
-					household: householdId,
-				});
-
-			// Add the recurringTaskDefinitionId to the corresponding property of the task
-			await Task.findByIdAndUpdate(task._id, {
-				$set: { recurringTaskDefinition: recurringTaskDefinition._id },
-			});
-
-			await recurringTaskDefinition.save({ session });
-
 			// Call /api/tasks/generatePlaceholders
 			try {
 				await axios.post(
-					`http://localhost:3000/api/tasks/placeholders/${recurringTaskDefinition._id}`
+					`http://localhost:3000/api/tasks/placeholders/${recurrenceObj._id}`
 				);
 			} catch (err) {
 				return NextResponse.json({
@@ -246,13 +352,7 @@ export async function POST(req: Request) {
 			}
 		}
 
-		// If there is a users list, then add the task to each user
-		await task.save({ session });
-
-		await session.commitTransaction(); // Commit the transaction if all goes well
-		session.endSession(); // End the session
-
-		return NextResponse.json(task);
+        return NextResponse.json({ message: "Task created succesfully", status: 201 });
 	} catch (error) {
 		console.log("ERROR CREATING TASK", error);
 		await session.abortTransaction(); // Abort transaction if user not found

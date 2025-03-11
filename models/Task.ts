@@ -12,7 +12,7 @@ const TaskSchema = new Schema(
 		date: { type: Date, required: true },
 		isCompleted: { type: Boolean, default: false },
 		isImportant: { type: Boolean, default: false },
-		user: { type: mongoose.Types.ObjectId, ref: "User", required: true },
+		user: { type: mongoose.Types.ObjectId, ref: "User"},
 		household: { type: mongoose.Types.ObjectId, ref: "Household" },
 
 		// Optional array of objects with user: userid and date: completion date

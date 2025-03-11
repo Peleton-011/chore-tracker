@@ -15,7 +15,7 @@ const RecurringTaskDefinitionSchema = new mongoose.Schema({
 	},
 	intervalValue: Number,
 	startDate: Date,
-	endDate: Date, // Can be null if infinite
+	recurrenceEndDate: Date, // Can be null if infinite
 	nextOccurrence: Date, // Tracks the next instance
 	allowFutureTrades: { type: Boolean, default: true },
 	household: { type: mongoose.Schema.Types.ObjectId, ref: "Household" }, // For group tasks
