@@ -352,6 +352,9 @@ export async function POST(req: Request) {
 			}
 		}
 
+        await session.commitTransaction(); // Commit the transaction if all goes well
+        session.endSession(); // End the session
+
         return NextResponse.json({ message: "Task created succesfully", status: 201 });
 	} catch (error) {
 		console.log("ERROR CREATING TASK", error);
