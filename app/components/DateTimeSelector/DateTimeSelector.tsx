@@ -36,7 +36,7 @@ const DateTimeSelector = ({
 				setRecurrenceDefinition={(rec) => setRecurrenceDefinition(rec)}
 			/>
 
-			{members && (
+			{!!members.length && (
 				<RotationInput
 					rotationDefinition={rotationDefinition}
 					setRotationSchedule={(schedule) =>
