@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { share } from "@/app/utils/Icons";
 
 const CopyShareButton = ({
-	content,
+	generateContent,
 	buttonText,
 	buttonActivatedText,
 }: {
-	content: any;
+	//async function generating the content
+	generateContent: () => Promise<string>;
 	buttonText: string;
 	buttonActivatedText?: string;
 }) => {
@@ -16,8 +17,10 @@ const CopyShareButton = ({
 			<button
 				className={isActivated ? " secondary" : ""}
 				onClick={() => {
-					navigator.clipboard.writeText(content);
-					setIsActivated(true);
+					const content = generateContent().then((content) => {
+						navigator.clipboard.writeText(content);
+						setIsActivated(true);
+					});
 				}}
 			>
 				{buttonActivatedText
@@ -26,13 +29,15 @@ const CopyShareButton = ({
 						: buttonText
 					: buttonText}
 			</button>
-			{navigator.share && (
+			{typeof navigator.share === "function" && (
 				<button
 					className={isActivated ? " secondary" : ""}
-					onClick={() => {
-						navigator.share(content);
-						setIsActivated(true);
-					}}
+                    onClick={() => {
+                        const content = generateContent().then((content) => {
+                            navigator.clipboard.writeText(content);
+                            setIsActivated(true);
+                        });
+                    }}
 				>
 					{share}
 				</button>

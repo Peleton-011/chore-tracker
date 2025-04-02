@@ -36,23 +36,35 @@ function page({ params }: { params: { id: string } }) {
 			}
 		};
 		fetch();
+		updateCurrentHousehold(id);
 	}, [id]);
-
-    useEffect(() => {
-        updateCurrentHousehold(id);
-    }, [id]);
 
 	const handleGenerateLink = async () => {
 		try {
 			const inviteLink = await generateInviteLink(id);
+			toast.success("Invite link generated successfully");
 			setLink(inviteLink);
-			console.log(inviteLink);
-
-			// Copy the link to the clipboard automatically
-			await navigator.clipboard.writeText(inviteLink);
-			alert("Invite link copied to clipboard!"); // You can use a more custom UI for this
+			// console.log(inviteLink);
+			return inviteLink;
 		} catch (err) {
 			console.error("Failed to generate invite link:", err);
+			toast.error("Failed to generate invite link: " + err);
+			return "";
+		}
+	};
+
+	const handleGenerateCode = async () => {
+		try {
+			if (!link) {
+				await handleGenerateLink();
+			}
+			const code = link.split("/")[link.split("/").length - 1];
+			toast.success("Invite code generated successfully");
+			return code;
+		} catch (err) {
+			console.error("Failed to generate invite code:", err);
+			toast.error("Failed to generate invite code: " + err);
+			return "";
 		}
 	};
 
@@ -85,9 +97,13 @@ function page({ params }: { params: { id: string } }) {
 			<div>
 				<h3>Share Household</h3>
 				{/* Trigger link generation only when button is clicked */}
-				<button onClick={handleGenerateLink}>Get Invite Link</button>
 				<CopyShareButton
-					content={link.split("/")[link.split("/").length - 1]}
+					generateContent={handleGenerateLink}
+					buttonText="Get Invite Link"
+					buttonActivatedText="Invite Link Copied!"
+				/>
+				<CopyShareButton
+					generateContent={handleGenerateCode}
 					buttonText="Get Invite Code"
 					buttonActivatedText="Invite Code Copied!"
 				/>
