@@ -63,4 +63,4 @@ This also results in coherent objects that are much more versatile and useful
 
 ##### /households/[id]
 
-* Use modal/ hot toast to notify of successful invite link/code copying 
+* ~~Use modal/ hot toast to notify of successful invite link/code copying~~ (2/4/25)
