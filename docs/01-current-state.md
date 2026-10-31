@@ -81,7 +81,7 @@ English identifiers throughout.
 | Views | Today (buckets, mine/everyone, up for grabs, recently done), calendar, household (tasks/chores/people/activity/settings), trades inbox |
 | Fairness | 30-day done count, effort share bar, open/overdue counts |
 | Live | Realtime refresh of tasks and trades |
-| Tests | 30+ SQL assertions (RLS, rotation, trades, re-planning, leave, clamping), TS↔SQL recurrence parity over 4 years × 9 rules, 24 unit tests, Playwright smoke on desktop + mobile |
+| Tests | 60+ SQL assertions (RLS, rotation, trades, re-planning, leave, clamping), TS↔SQL recurrence parity over 4 years × 9 rules, 24 unit tests, Playwright smoke on desktop + mobile |
 
 **Deliberately not done yet** (see the roadmap): push/email reminders, i18n,
 PWA install/offline, migrating data from Mongo (the legacy app appears to have
