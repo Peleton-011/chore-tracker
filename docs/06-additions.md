@@ -21,7 +21,7 @@ risk with this stack), and **Effort** (S < 1 wk, M 1–3 wk, L > 3 wk).
 | 9 | Photo proof on completion | 2 | 5 | S | Later (opt-in) |
 | 10 | NFC / QR tags on objects ("tap the bin = done") | 3 | 4 | S | Later |
 | 11 | Asset registry: warranties, manuals, purchase info | 4 | 5 | M | **Do** (P4) |
-| 12 | Open-banking import | 3 | 2 | L | Skip for now |
+| 12 | Open-banking import | 4 | 3 | L | **Do** (P7, now core for organisations) |
 | 13 | Bank CSV / Excel import | 4 | 5 | S | **Do** (P8) |
 | 14 | Budgets and spend analytics | 4 | 5 | M | **Do** (P8) |
 | 15 | Recurring bills and subscriptions tracker | 4 | 5 | S | **Do** (P3/P8) |
@@ -93,11 +93,13 @@ app and marks the current occurrence done. Trivial with deep links
 plus warranty expiry reminders and manuals as attachments. Natural extension
 of TKT-10.
 
-**12. Open banking.** Aggregator terms, pricing and availability in the EU
-have shifted repeatedly (verify current options such as GoCardless Bank
-Account Data, Tink, Salt Edge before relying on them). There's regulatory
-weight (you'd be an AISP's customer handling bank data) and maintenance cost.
-CSV import (13) gets 80% of the value for 5% of the cost.
+**12. Open banking.** *Re-scored after the move to organisations:* for a
+treasurer, a live bank feed with auto-matching is the difference between
+"books that build themselves" and data entry. Still keep CSV import (13) as
+the always-available fallback. Aggregator terms and coverage shift often:
+evaluate Plaid, Tink, Salt Edge, Enable Banking, TrueLayer and GoCardless
+Bank Account Data against the organisation's actual banks before building
+(design in 03 §3.10).
 
 **16. Two-way calendar sync.** Google's API requires app verification for
 sensitive scopes, and two-way sync is notoriously fiddly (recurrence
@@ -128,3 +130,59 @@ productivity community (the Grocy / Homebox crowd).
 onboarding items (keys, Wi-Fi, house rules). When someone leaves, the app
 re-plans rotations (done) and produces an exit settlement (money). This is
 real flatshare pain, and cheap given the rest.
+
+---
+
+## Additions for organisations (after the semi-pro refocus)
+
+| # | Addition | Use | Via | Effort | Verdict |
+|---|---|:-:|:-:|:-:|---|
+| 33 | Pair rules (never together / always with a mentor) | 5 | 4 | M | **Do** (P3+) |
+| 34 | Training progression (tag upgrade after N mentored shifts) | 4 | 5 | S | **Do** |
+| 35 | Certification expiry reminders (food handler, first aid) | 4 | 5 | S | **Do** (tag `valid_until`) |
+| 36 | Availability polls for the next season | 5 | 5 | S | **Do** (P3) |
+| 37 | WhatsApp / Telegram notifications and rota sharing | 5 | 3 | M | **Do** (Telegram first, WhatsApp via Business API later) |
+| 38 | QR check-in at the venue | 4 | 5 | S | **Do** (P3) |
+| 39 | Payroll / hours export (gestoría formats) | 4 | 4 | S | Later (paid-staff segment) |
+| 40 | Shift bonuses / incentives for hard-to-fill shifts | 3 | 4 | S | Maybe |
+| 41 | Card terminal integration (SumUp, Stripe Terminal, Redsys) | 4 | 3 | M–L | Later (after 5b) |
+| 42 | Customer QR ordering / table service | 3 | 3 | L | Maybe (hospitality segment) |
+| 43 | Kitchen display (orders to the kitchen screen) | 3 | 4 | M | Maybe |
+| 44 | Suppliers and purchase orders | 4 | 5 | M | Later (P6+) |
+| 45 | Event mode: temporary registers, stalls, volunteer surges | 5 | 4 | M | **Do** (fiestas; mostly config + multi-register) |
+| 46 | Grants and subsidies tracking (non-profits) | 3 | 5 | S | Later (Money + Tickets) |
+| 47 | Public page: opening hours from the roster, events, menu | 3 | 5 | S | Later |
+| 48 | SEPA direct debit for member fees (via payment provider) | 4 | 3 | M | Maybe (payments regulation sits with the provider) |
+| 49 | Natural-language rule builder ("always one experienced, at most one new") | 4 | 4 | M | **Do** (after P3, LLM to selector JSON, shown back as plain text for confirmation) |
+| 50 | Incident / safety log | 3 | 5 | S | Later (`note` items with a template) |
+
+**33. Pair rules.** Count requirements can't express "Dani and Eva never on
+the same shift" or "a trainee always with their mentor". Extend requirements
+with `kind = 'pair'` (forbid/require co-assignment of selector A with
+selector B). The fill search prunes them the same way. High value for
+volunteer groups (personal conflicts, mentoring).
+
+**34. Training progression.** "Inexperienced becomes experienced after 5
+shifts with an experienced partner" is a rule over attendance history.
+A nightly job proposes the tag upgrade to a coordinator. It turns the bar's
+two pools into a pipeline.
+
+**37. Messaging channels.** Volunteer organisations live on WhatsApp.
+Telegram bots are free and simple. WhatsApp needs the Business Platform
+(per-conversation costs, template approval). Start with a weekly rota
+*image/link* shared to the group and a Telegram bot for reminders and swaps.
+
+**41. Card terminals.** Many small venues use their bank's standalone
+terminal. "External terminal" mode (enter the amount there, mark paid here) is
+enough to start. Integrations remove double entry and errors, but each
+provider is its own project and its own country coverage.
+
+**45. Event mode.** Fiestas are the bar's peak: extra registers (stalls), a
+surge roster with its own season, simplified product grid, cash pickups during
+the night (cash out with a witness). Mostly configuration of things already
+designed, so it's high leverage for festival committees too.
+
+**49. Rule builder.** Selector JSON is precise but unfriendly. A form builder
+("At least [1] of [experienced]") covers most rules. An LLM translating a
+sentence into selector JSON, echoed back in plain language for confirmation,
+covers the rest.

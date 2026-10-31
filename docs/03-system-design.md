@@ -3,7 +3,8 @@
 Companion artifacts, all validated:
 [`reference/schema.sql`](./reference/schema.sql) (target DDL, applies to Postgres; check with `docs/reference/check.sh`) ·
 [`reference/types.ts`](./reference/types.ts) (domain types, `tsc --strict` clean) ·
-[`reference/algorithms.ts`](./reference/algorithms.ts) (split, balances, simplify, daily draw, conflicts; tested in `tests/algorithms.test.ts`).
+[`reference/algorithms.ts`](./reference/algorithms.ts) (split, balances, simplify, daily draw, conflicts; tested in `tests/algorithms.test.ts`) ·
+[`reference/rostering.ts`](./reference/rostering.ts) (selectors, staffing rules, fair fill, constrained trades; tested in `tests/rostering.test.ts`).
 
 ## 1. Architecture at a glance
 
@@ -11,8 +12,8 @@ Companion artifacts, all validated:
 flowchart LR
   subgraph Client["Nuxt 4 SPA / PWA"]
     Shell["core layer: auth, spaces, shell, agenda, design system"]
-    M1["chores layer"]; M2["money layer"]; M3["tickets layer"]; M4["calendar layer"]
-    Shell --- M1 & M2 & M3 & M4
+    M1["chores"]; M2["money + bank"]; M3["tickets"]; M4["calendar"]; M5["roster"]; M6["pos (offline-first)"]; M7["members"]
+    Shell --- M1 & M2 & M3 & M4 & M5 & M6 & M7
   end
   subgraph Supabase
     PG[("Postgres\ncore · work · money · time\nRLS + triggers + RPCs")]
@@ -50,6 +51,10 @@ mise/                         (monorepo, pnpm workspaces)
 ├─ layers/money/              expenses, splits, balances, settle; accounts (from contabilify)
 ├─ layers/tickets/            issues, workflows, boards, materials, assets
 ├─ layers/calendar/           calendars, events, activities, pools, term planner (from schedules)
+├─ layers/roster/             seasons, shift templates, rules, draw/sign-up, availability, attendance
+├─ layers/pos/                till UI (PWA, offline), catalogue, stock, sessions, fiscal log
+├─ layers/members/            association members, fees, member pricing
+├─ supabase/functions/bank/   aggregator adapters (one per provider) + sync + matching
 ├─ packages/domain/           pure TS: dates, recurrence, split, simplify, draw, conflicts (+ tests)
 ├─ packages/db-types/         generated Supabase types
 ├─ supabase/migrations/       ordered, one folder per schema: core/, work/, money/, time/
@@ -99,6 +104,7 @@ They differ by **workflow** and by **which optional fields they use**:
 | `issue` | Repair (Reported → Diagnosing → Parts needed → Deferred → In progress → Resolved) | body (symptoms/diagnosis), `next_action`, materials, asset, children, estimated vs actual cost |
 | `purchase` | Purchase (Wanted → Researching → Ready to buy → Bought) | estimated cost, url, children ("what I'll do with the drill"), → expense when bought |
 | `note` | none | body only; a parent for grouping |
+| `shift` | Shift (Draft → Published → Done / Cancelled) | time window, several seats (`item_assignees`), staffing requirements, attendance, till session (§3.7) |
 
 Why one table: hierarchy, dependencies, boards, tags, agenda, search and
 trades work identically for every kind, and modules add *behaviour*, not
@@ -205,13 +211,141 @@ balances view = Σ paid − Σ owed ± settlements          per user per space
   money nudges ("You owe Bob €12. Settle?"). Each module contributes a
   provider. The core sorts and renders.
 
+### 3.7 Roster: shifts, staffing rules, fair draws
+
+A shift is an item (`kind = 'shift'`) with a time window and **several
+seats** (`work.item_assignees`). Everything else is configuration:
+
+```
+season (date range, priority)
+ └─ shift_template (weekdays, 18:00–24:00, headcount 2–2, eligible selector, fill mode)
+     └─ requirements: [≥1 tag:experienced] [≤1 tag:inexperienced]
+policy (horizon, publish lead time, max shifts/week, min rest, fairness window, trades need approval?)
+availability (unavailable / prefer / prefer-not, one-off or weekly)
+```
+
+**Selectors** are small JSON boolean expressions over member tags and people
+(`{"tag":"electrician"}`, `{"anyOf":[…]}`, `{"not":…}`, `{"people":[…]}`).
+A **requirement** says how many of a shift's people must match a selector
+(min/max). The total headcount is its own min/max, and an `eligible` selector
+filters who can work the shift at all. Requirements count *people who match*,
+not fixed slots, so overlapping skills work naturally: an experienced
+electrician counts toward both "≥1 experienced" and "≥1 electrician". That
+expresses both the town bar ("≥1 experienced, ≤1 inexperienced, exactly 2")
+and the crew ("≥1 electrician, the rest any of mechanic, electrician,
+plumber or HVAC") with no special cases.
+
+**Generation** (same lazy pattern as chores):
+1. For each date in the horizon, the highest-priority season covering it
+   selects templates. Each matching template creates one `roster.shifts` row +
+   item in `draft`.
+2. **Fill**, by the template's mode:
+   - `draw`: `fillRoster` processes shifts chronologically. Candidates are
+     eligible people who are available, not overlapping, within the weekly cap
+     and with enough rest. They're ordered by **load** (hours worked in the
+     fairness window, plus hours already drawn this run), with a seeded random
+     tie-break. A backtracking search picks the first team satisfying every
+     rule, preferring the largest allowed headcount. Pruning: no rule over its
+     max, and enough remaining matching candidates and seats for every min.
+     Team sizes are small (≤ ~10 seats, ≤ ~100 people), so this runs in
+     milliseconds. If there's no valid team, the shift is marked
+     **understaffed** and coordinators are notified, rather than breaking rules.
+   - `signup`: shifts are published empty. People claim seats, and each claim is
+     validated (a claim that would make the rules unsatisfiable is refused).
+   - `signup_then_draw`: sign-ups first, then the draw fills the remaining
+     seats *around* the volunteers (`fixed`) at `signup_closes_hours` before
+     the shift.
+3. Drafts become **published** `publish_days_ahead` before the date. Publishing
+   notifies everyone of their shifts and adds them to their agenda and iCal feed.
+4. **Attendance:** check-in/out (button, QR at the venue, or till open/close)
+   records actual hours, feeds the fairness load and gives employers the
+   time-tracking record that Spanish employment law requires for staff
+   (*registro de jornada*). Volunteers get an hours log for their records.
+
+The engine is pure TypeScript (`docs/reference/rostering.ts`), so it can run
+client-side for previews ("what would next month look like?") and inside an
+Edge Function for the real run. Unlike recurrence, it doesn't need a SQL
+twin: shifts are written in one transaction by the function, and validity on
+writes is enforced by `validate_assignment()` (§3.8).
+
+### 3.8 Universal trades (and assignment validation)
+
+Trades were chores-only. They become a **core capability for any assignable
+item**: chore occurrence, task, issue, purchase, shift seat.
+
+- Each module registers `validate_assignment(item, proposed_assignees) →
+  AssignmentCheck`:
+  - chores/tasks: assignees are members (+ optional eligibility requirement);
+  - tickets: eligibility requirements on the issue ("needs `plumber`");
+  - roster: staffing rules of *every affected shift* plus each person's
+    availability, overlaps, weekly cap and rest (`validateTrade`).
+- **A trade is valid iff the state after the trade introduces no violation
+  that didn't exist before.** An already-understaffed shift can still be
+  traded in ways that don't make it worse.
+- The UI never offers an invalid trade. "Who can take this?" lists only valid
+  takers (`validTakers`), and swaps only list counter-items that keep both
+  sides valid. Rejections explain the rule that would break.
+- Acceptance re-validates inside the RPC transaction (state may have changed),
+  exactly like chores' `respond_trade` today.
+- Optional **approval** (`trades_need_approval`): an accepted trade waits for an
+  admin's OK. Some organisations want this for paid staff.
+- Trades are disabled in spaces with a single member (personal spaces).
+
+### 3.9 EPOS
+
+**Goals:** fast at a busy bar, works offline, posts to the books automatically,
+legally compliant where it's used.
+
+| Concern | Design |
+|---|---|
+| **UI** | Separate till route in the PWA: product grid by category, big targets, quick quantity, open tabs, member lookup (member prices), split payment, refund, cash in/out. Pinned to a tablet with a PIN per volunteer (fast user switch, no full login). |
+| **Offline-first** | Orders get client-generated UUIDs and are written to IndexedDB first, then synced in order. Numbering is per register, reserved in blocks while online so it stays gapless offline. The catalogue is cached. Sync conflicts are impossible by construction because orders are append-only. |
+| **Till sessions** | Open with a float (optionally linked to the current shift). Close by counting cash: expected vs counted, with the difference attributed to the session and shift. Closing posts a summary `money.transactions` row per payment method to the register's cash/card accounts (`source = 'pos'`). |
+| **Stock** | Recipes deduct stock per sale. Reorder points create a purchase item (Tickets/Chores) for the people tagged `supplier-runs`. Stocktakes reconcile. |
+| **Hardware** | Receipt printing (ESC/POS) via the browser (WebUSB/Web Bluetooth where supported) or a tiny local print bridge. Cash drawer opened through the printer. Card payments start as **"external terminal"** (staff types the amount on the bank's terminal and marks it paid). Later, terminal integrations (SumUp, Stripe Terminal, Redsys) where available. |
+| **Fiscal compliance** | A pluggable `fiscal` adapter per jurisdiction. **Spain:** the anti-fraud law's invoicing-software rules (*VERI\*FACTU*) apply from **1 Jan 2027** for corporate-tax payers and **1 Jul 2027** for others (Real Decreto-ley 15/2025). They require a hash-chained, unalterable record of every invoice/ticket, a QR code on tickets, optional real-time submission to the AEAT, and a *declaración responsable* from the software producer. `pos.fiscal_records` holds the chain. Whether a non-profit association falls under it, and from which date, must be confirmed with a tax adviser. Basque and Navarre territories have their own systems (TicketBAI). Options: (a) implement and self-certify, or (b) delegate record-keeping to a certified invoicing API and store its references. (b) is lower-risk to start. |
+| **Reporting** | Sales by product, hour and shift; margins via stock unit costs; VAT summary; export for the gestoría. |
+
+### 3.10 Bank feeds
+
+- **Adapter pattern** (`BankAdapter` in `reference/types.ts`): `startConsent`,
+  `listAccounts`, `fetchTransactions`, `fetchBalance`. Implemented per
+  aggregator in Edge Functions. Nothing provider-specific leaks into the app.
+- **Provider choice** (verify current terms before building, because this
+  market shifts): Plaid (strongest in US/UK, partial EU), **Tink**, **Salt
+  Edge**, **Enable Banking**, TrueLayer, GoCardless Bank Account Data.
+  For Spanish and Portuguese banks, pick the provider with the best coverage
+  of *your* banks and a plan small organisations can afford. Under PSD2 you
+  consume account information *through* a licensed provider. You don't need
+  your own licence.
+- **Consent lifecycle:** PSD2 consents expire (commonly up to 180 days). Store
+  the expiry, warn 14 days ahead, and one-click re-consent. Tokens live in
+  Supabase **Vault**, never in tables or the client.
+- **Sync:** a scheduled function pulls new transactions (dedupe on
+  `(account_id, external_id)`) and stores balances for drift checks.
+- **Matching:** each bank transaction is matched against open expenses,
+  till-close deposits, member fees and recurring rules by amount ± tolerance,
+  date window and counterparty similarity. Confident matches auto-link.
+  The rest goes to a review inbox. Reconciliation state per transaction:
+  unmatched → suggested → matched (by whom).
+- **Read-only**, deliberately. No payment initiation, which keeps the product
+  out of payment regulation.
+
+### 3.11 Members (associations)
+
+`core.org_members` is the member register (socios), separate from app users:
+most members never log in. Fee plans generate expected income (recurrence
+engine), and payments are matched from the bank feed or recorded at the till.
+Member pricing is applied at the EPOS by member number or card QR. Exports
+cover the assembly report and the register required by association law.
+
 ## 4. API surface
 
 | Layer | Used for | Examples |
 |---|---|---|
 | PostgREST (tables/views) | Plain CRUD under RLS | `items`, `expenses`, `events`, `balances` |
-| RPC (security definer, membership-checked) | Multi-row invariants | `create_space`, `accept_invite`, `propose_trade`, `respond_trade`, `complete_purchase(item, amount, split)`, `settle_up(space)`, `draw_today(activity, date)`, `promote_candidate_set(...)` |
-| Edge Functions | Anything needing secrets or the outside world | push/email delivery, iCal feed (`/ics/:token`), webhooks to plugins, CSV/Splitwise import, receipt OCR |
+| RPC (security definer, membership-checked) | Multi-row invariants | `create_space`, `accept_invite`, `propose_trade` / `respond_trade` (any item, validated), `claim_seat(shift)`, `publish_roster(space, range)`, `open_till` / `close_till`, `complete_purchase(item, amount, split)`, `settle_up(space)`, `match_bank_tx(tx, target)`, `draw_today(activity, date)` |
+| Edge Functions | Anything needing secrets or the outside world, or heavy compute | roster fill runs, bank sync + matching, fiscal submission, push/email delivery, iCal feed (`/ics/:token`), webhooks, imports, receipt OCR |
 | Realtime | Live refresh | `items`, `trades`, `expenses`, `settlements` |
 | Public REST API (later) | Plugins and automation | Personal access tokens scoped by space and permission; same RLS. |
 
@@ -232,6 +366,12 @@ human messages.
   are protected by triggers.
 - **Guests** (`role = guest`): read and complete what's assigned to them, for
   a cleaner or a landlord.
+- **Till PINs:** a registered till device holds a device-scoped session.
+  Volunteers switch in with a 4–6 digit PIN that maps to their member id and
+  is rate-limited. The device can only call `pos.*` RPCs for its register.
+- **Money roles:** in organisations, `treasurer` and `coordinator` are tags
+  that unlock bank, reconciliation and roster-publishing permissions, so
+  permissions follow the same tag model as staffing rules.
 - **Tokens:** invites are 128-bit, expiring and revocable. iCal tokens are
   per-user and rotatable.
 - **GDPR:** export everything for a user (JSON + CSV), delete account (profile

@@ -13,4 +13,4 @@ run "pg_ctl -D '$tmp/data' -o '-k $tmp -p 54330 -c listen_addresses=' -l '$tmp/l
 psql_() { psql -h "$tmp" -p 54330 -U postgres -v ON_ERROR_STOP=1 -q "$@"; }
 psql_ -f "$here/../../supabase/tests/supabase_stub.sql"
 psql_ -f "$here/schema.sql"
-psql_ -Atc "select count(*) || ' tables, ' || (select count(*) from pg_policies) || ' policies' from information_schema.tables where table_schema in ('core','work','money','time') and table_type='BASE TABLE'"
+psql_ -Atc "select count(*) || ' tables, ' || (select count(*) from pg_policies) || ' policies' from information_schema.tables where table_schema in ('core','work','money','time','roster','pos') and table_type='BASE TABLE'"

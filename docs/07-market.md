@@ -1,144 +1,151 @@
 # 07 · Market analysis and overall viability
 
-> Method note: competitor facts come from public app listings and reviews
-> (sources at the end). Many 2026 roundups are vendor-written, so prices and
-> ratings are indicative only. I've avoided quoting market-size figures I
-> couldn't verify. The sizing below is a bottom-up reasoning model with stated
-> assumptions, not a cited statistic.
+> Method note: competitor facts come from public listings and reviews
+> (sources at the end), and many roundups are vendor-written, so treat prices
+> and ratings as indicative. I don't quote market-size statistics I couldn't
+> verify. Sizing is a reasoning model with stated assumptions to replace with
+> real data (e.g. counts from the national and regional registers of associations).
 
-## 1. The landscape
+## 1. Positioning
 
-The product sits where five crowded categories overlap. Nobody owns the
-overlap.
+**Target:** small, people-powered organisations, the *semi-professional*
+band between "group chat + spreadsheet" and "real ERP":
 
-| Category | Representative products | What they do well | What they miss (for us) |
+- volunteer-run venues: association bars, peñas, casals, ateneos, txokos,
+  social and sports clubs with a canteen;
+- festival and event committees (comisiones de fiestas);
+- small hospitality: cafés and bars with 2–10 staff;
+- small crews: maintenance, events, trades (skill-mixed teams);
+- makerspaces, co-ops, community gardens, coworking;
+- **plus** households as the free tier and funnel.
+
+**Their shared problem:** *people × time × money × things* under simple but
+specific rules, run by non-specialists, with a budget that is small but real.
+
+## 2. Competition
+
+| Need | Typical tools | Strength | Gap for this segment |
 |---|---|---|---|
-| **Chore apps** | Flatastic, Sweepy, Tody, OurHome, Cozi | Rotas, reminders, gamified cleaning (Sweepy), family lists (OurHome, Cozi). Flatastic adds shared expenses and a shopping list for flatshares | Shallow task model. No issues/repairs, no dependencies or hand-offs, weak calendar, money is an add-on |
-| **Bill splitting** | Splitwise, Tricount, Settle Up | Splits, balances, debt simplification, multi-currency | Expenses float free of *why* they happened. Splitwise's free tier is capped (roughly 3–5 expenses/day, plus ads), and Pro is around $40–50/yr in the US, which has pushed users to look for alternatives |
-| **Personal tasks / all-in-one** | Todoist, TickTick, Notion, Anytype, Capacities | Fast capture, projects, flexible databases (Notion) | Single-player first. Fairness and rotation don't exist. Notion can model anything but you have to build it, and nothing is automatic |
-| **Issue trackers** | Trello, Linear, Jira, GitHub Issues | Workflows, boards, hierarchy, history | Built for teams and software. Overkill and cold for a broken door. No costs or household context |
-| **Home maintenance** | HomeZada, Centriq, Homebox / Grocy (self-hosted) | Asset inventories, manuals, maintenance schedules | Owner-centric, single-user, little sharing. Grocy is powerful but complex |
-| **Time planning** | Google Calendar, Motion, Reclaim, Sunsama | Scheduling, auto time-blocking | No household dimension. No pools of "upkeep" tasks |
+| Staff rota | Sling, When I Work, Deputy, Homebase, Planday, Skello, Shiftbase, Factorial (ES) | Mature scheduling, time clocks, payroll | Built for employees and managers. Composition rules (≥1 experienced) are rare or rigid. Volunteer swaps under rules almost never. Per-user pricing hurts volunteer groups |
+| Volunteer scheduling | SignUpGenius, VolunteerHub, Better Impact, Rosterfy, Galaxy Digital | Sign-ups, hours logs | Sign-up only, no fair draw. Weak rules. No till, no books |
+| POS | Square, SumUp POS, Loyverse (free tier), Lightspeed, Revo / Ágora / Glop (ES hospitality) | Fast, hardware ecosystems, compliance (ES vendors) | Know nothing about who's on shift, member prices for associations, or the association's books |
+| Accounting | Holded, Quipu, Contasimple (ES), contabilify (yours) | Invoicing, tax | No link to till sessions, rota or maintenance |
+| All-in-one ERP | **Odoo**, Holded | Everything, integrated | Too complex and expensive in setup time for volunteers. Odoo is the real "integrated" competitor, and our pitch is *Odoo for people who'd never install Odoo* |
+| Maintenance | Trello, Notion, UpKeep/MaintainX (pro) | Boards, work orders | Pro CMMS is overkill. Boards don't link to costs and budgets |
+| Households | Flatastic, Sweepy, Splitwise | Polished consumer apps | Covered in the free tier. Not where revenue comes from |
 
-**Closest competitor: Flatastic.** Roommate-focused, chores + expenses +
-shopping list + pinboard, free with a premium tier. It validates that the
-*chores + money* combination resonates with flatshares. Where we differ:
-fair assignment that explains itself (rotation and effort balancing), trades
-and swaps, issues with materials and cost roll-up, purchases that become
-expenses, time pools, and an open, self-hostable core.
+**Where we win:** rules-based fair rostering with constrained trades,
+plus a till that knows the shift, plus books that build themselves, plus an
+improvement backlog with costs, all in one place and in ES/PT/EN. No
+incumbent combines these for this size of organisation.
 
-## 2. Segments and beachhead
+## 3. The "small, cash-poor niche" problem, and the answer
 
-| Segment | Pain | Willingness to pay | Reachability | Fit |
-|---|---|---|---|---|
-| Flatshares (students, young professionals) | High: fairness fights, money awkwardness | Low per person, OK per household | High: one organiser invites 3–5. Viral loop | ★★★★★ |
-| Couples | Medium-high: invisible mental load, shared finances | Medium | Medium | ★★★★ |
-| Families with kids | High | Medium-high | Crowded (Cozi, OurHome) | ★★★ |
-| Life-admin power users | Medium (but they love tools) | Medium. They pay for Notion and Todoist | Communities: r/selfhosted, r/productivity, HN | ★★★★ (evangelists) |
-| Small landlords / co-living operators | High for maintenance | **High (B2B)** | Low-medium. Needs sales | ★★★ (later) |
-| Associations (contabilify) | Medium | Low | Word of mouth | ★★ (keep as a niche) |
+You're right: *volunteer-run bars* alone is a small market with little money.
+Four levers change the picture:
 
-**Beachhead: flatshares in Spain and Portugal, built in EN/ES/PT.**
-- Large shared-housing culture (students, Erasmus, young professionals priced
-  out of solo rentals), so a constant churn of new flats means a constant
-  onboarding moment.
-- Local payment habits (Bizum, MB WAY) fit a "settle up" flow that just
-  *records* the payment, no money movement or licence needed.
-- English-first competitors under-serve ES/PT. Every household invite is
-  free distribution.
-- You live in that context (contabilify is Spanish, schedules is Portuguese),
-  so dogfooding is real.
+1. **One engine, many niches.** The product is horizontal (tags, rules,
+   items, trades, money, till) and ships as **vertical packs**: templates +
+   default modules + copy. *Community bar* · *Festival committee* · *Small
+   café* · *Maintenance crew* · *Sports club* · *Flatshare*. Each niche is
+   small. Together they're a real market, and every pack is mostly
+   configuration, not new code.
+2. **Charge where money already flows: the till.** Hospitality and venues
+   already pay for POS (monthly subscriptions, hardware, or card fees). A
+   compliant EPOS that also does rota, books and maintenance replaces several
+   bills. Rota-only and volunteer-only customers pay little. Venues pay.
+3. **A regulatory buying window.** VERI\*FACTU forces Spanish businesses
+   (and likely many associations with sales) to adopt compliant invoicing
+   software in 2027. Many small venues currently on a cash box or old
+   till must switch, and that's when they evaluate. To use it you must
+   *be* compliant on time (see roadmap P5b) or partner with a certified provider.
+4. **Price per organisation, never per volunteer.** Per-user pricing is what
+   makes Deputy-class tools unaffordable for a 40-volunteer bar. Flat
+   per-place pricing is the differentiator and the hook.
 
-## 3. Sizing (bottom-up, illustrative)
+### Illustrative pricing
+| Plan | For | Price idea |
+|---|---|---|
+| Free | Households, 1 small team, chores + split money | €0 |
+| Community | Associations / non-profits: roster, tickets, accounts, members, bank feed | €9–15 / month per organisation (non-profit rate) |
+| Venue | + EPOS (1 register), stock, fiscal compliance, attendance | €29–39 / month |
+| Extra register / event stall | Fiestas, second bar | +€9 / month, or €15 per event weekend |
 
-Assumptions to replace with real numbers as you learn:
-- A city-level start: 1 metro area × ~20k shared flats reachable via
-  university and expat channels.
-- 2% try it in year 1 → 400 households → ~1,400 users.
-- 35% still active at month 3 (typical for utility apps with a strong
-  weekly habit and reminders) → ~140 active households.
-- Freemium conversion of active households at €3/month per household: 5–8%
-  → **€25–40/month**.
+### Illustrative sizing (replace assumptions with data)
+- *Assumption:* one Spanish region has a few thousand associations and small
+  venues that run a bar, canteen or stall, plus several thousand small cafés.
+- Year 2 target: 0.5–1% of a single region's reachable organisations through
+  word of mouth (federations of peñas and associations, fiestas committees,
+  gestorías) → ~50–100 paying places.
+- Blended ~€20/month → **€12k–24k ARR**. That pays for infrastructure many times
+  over and is a meaningful side income, but it isn't a venture-scale business.
+  Each additional region or vertical pack adds roughly linearly.
+- The upside case is **gestorías and federations as channels**: one
+  gestoría managing 50 small clients, or one regional federation of peñas,
+  changes acquisition cost by an order of magnitude.
 
-**Conclusion:** consumer revenue from one beachhead won't fund development.
-It's a **product to build for yourself and your circle first**, open-source
-for reputation and contributors, and only a business if (a) organic spread
-across flats compounds, or (b) the landlord/co-living B2B angle shows real
-demand (€2–5 per unit per month across portfolios is a different scale).
+## 4. Go-to-market
 
-## 4. Business model options
+1. **Customer zero: the town bar** (P3–P5). Run a full season. Document
+   before/after: hours spent on the rota, WhatsApp swap messages, cash
+   discrepancies, time to close the month.
+2. **Neighbouring organisations** (same town and region): fiestas
+   committee, sports club, other associations. Templates from customer
+   zero. Personal demos.
+3. **Channels:** gestorías (they need clean books from small clients and
+   VERI\*FACTU readiness), federations of associations and peñas, local
+   hospitality associations, town councils' associations departments.
+4. **Open-source core + hosted service.** Credibility with tech-savvy
+   volunteers and a self-host option for the stubborn. Revenue from hosting,
+   EPOS/compliance and support.
+5. **Content in ES/PT:** "Cómo organizar los turnos de voluntarios del bar de
+   la asociación", "VERI\*FACTU para asociaciones", rota templates.
+6. **Households stay free** as brand awareness and a funnel. Volunteers use
+   it at home, and organisers discover it.
 
-| Model | How | Pros | Cons |
-|---|---|---|---|
-| **Open-core + hosted** (recommended) | MIT core, self-hostable. Hosted version free for 1 household. "Plus" (€3/mo per household): unlimited history, receipt OCR, AI capture, advanced boards, multiple households | Trust, contributors, low CAC with the self-host crowd. Aligns with "own your data" | Low conversion. Hosting costs on free users (small on Supabase) |
-| Per-seat SaaS | €2/user/month | Familiar | Kills the household viral loop: flatmates refuse to pay |
-| B2B portal | Landlords / co-living pay per unit for maintenance + tenant chores | Real WTP | Sales-heavy. Different product surface |
-| Donations / sponsorship | GitHub Sponsors | Zero friction | Unreliable |
+## 5. Overall viability and usefulness
 
-Never monetise by holding money: settle-up records payments, it doesn't move
-them. That avoids payment-licence regulation entirely.
+### Usefulness: **very high for the target**
+Rule-respecting rotas with safe swaps, a till tied to shifts and books, and a
+backlog with costs are daily, painful problems that today's tools solve
+separately and badly for this size of organisation. You have direct access to
+a real user (the bar), which is the most valuable asset in this whole plan.
 
-## 5. Go-to-market (if you choose to grow it)
+### Technical viability: **high, with two hard parts**
+- Rostering under flexible rules is solved at this scale: the reference engine
+  handles the bar's low and high seasons, skill-mixed crews and constrained
+  trades, and is tested.
+- **Hard part 1: an offline-safe till.** It's well understood (append-only
+  orders, device ids, gapless numbering by block reservation), but it needs
+  care and testing.
+- **Hard part 2: fiscal compliance.** It's real engineering plus legal
+  responsibility as a software producer. Mitigate by partnering or
+  delegating at first.
+- Bank feeds depend on third-party aggregators. Use an adapter pattern with a CSV fallback.
 
-1. **Dogfood** (P1): your own flat plus 2–3 friends' flats. Weekly feedback.
-2. **Open-source launch** (after P3): a README with GIFs, self-host docs,
-   "Show HN" / r/selfhosted / r/flatsharing. The angle: *"the chore rota that
-   explains why it's your turn, plus Splitwise without the daily cap."*
-3. **Campus and Erasmus channels** (P3–P4): university housing offices,
-   Erasmus Student Network sections, flat-hunting Facebook/WhatsApp groups.
-   A "new flat starter" template is the hook.
-4. **Content:** "How to split rent fairly", "Chore rota templates", in ES/PT/EN
-   for SEO.
-5. **Landlord discovery** (P4+): interview 5 small landlords and 2 co-living
-   operators about maintenance tickets before building anything B2B.
-
-## 6. Overall viability and usefulness
-
-### Usefulness: **high**
-- The **graph between domains** is the product: a chore causes a purchase,
-  which causes an expense; an issue has steps that hand off between people;
-  a time block pulls from a pool. No incumbent does this for households.
-- Real, recurring pains: fairness and mental load (chores), money
-  awkwardness (splits), forgotten repairs (tickets), habits that never get
-  scheduled (pools).
-- Even at n = 1 (just you) it's useful: tickets, purchases, pools and
-  calendar justify themselves without any network effect.
-
-### Technical viability: **high**
-- The stack is proven in your own repos. The hardest parts (recurrence,
-  atomic trades, RLS multi-tenancy) are already built and tested in P0.
-- The remaining modules are well-understood problems with reference
-  algorithms in this repo (split, simplify, draw, conflicts).
-- Running costs stay near zero until real scale (static hosting + Supabase
-  free or $25 tier).
-
-### Commercial viability: **low-to-moderate, path-dependent**
-- Consumer productivity is crowded and low-WTP. Households amplify reach
-  (invites) but also amplify the "nobody wants to pay" problem.
-- The defensible position is *integration + fairness + openness*, not any
-  single feature. That's hard to communicate in one line, so lead with one
-  sharp wedge (**"fair chores + split costs for flatshares"**) and let the
-  rest be the reason people stay.
-- The B2B maintenance angle is the most credible revenue path, but it's a
-  different business. Validate it before committing.
-
-### Main risks
-1. **Scope:** an "everything app" never ships. Mitigated by phase gates where
-   each module is useful alone (05).
-2. **Habit decay:** chore apps lose users when nudges stop. Mitigated by
-   digests and push, and by low-friction completion (NFC, one tap).
-3. **Network cold start:** one reluctant flatmate breaks a rota. Mitigated by
-   guest access, email-only participation and PWA-by-link (no store install).
-4. **Trust in money features:** a single wrong balance kills them.
-   Mitigated by integer cents, property tests and immutable history.
+### Commercial viability: **moderate, if focused**
+- Better than the consumer version: organisations pay, especially venues
+  for POS, and the regulatory window helps.
+- Still a "many small niches" business. The path is a regional, channel-led
+  rollout (gestorías, federations), not viral growth.
+- Main risks: scope (nine modules, one part-time developer), compliance
+  liability, and EPOS competition from free or cheap tills (Loyverse, SumUp).
+  The answer to the last one is to never compete on the till alone, only on
+  *till + rota + books*.
 
 ### Recommendation
-Build it, **for yourself and your flat first**. Treat P1–P3 (ship chores →
-core → money) as the real test. If after P3 your flat and two others still use
-it daily without being asked, open-source it and push the ES/PT flatshare
-wedge. Re-evaluate commercial ambitions only with real retention data in hand.
+1. Finish P1–P3 and run the bar's rota on it for a season. If volunteers and
+   coordinators prefer it to WhatsApp + spreadsheet, the core thesis holds.
+2. Bring contabilify in (P4), then build the EPOS tally (P5a) and use it
+   internally at the bar.
+3. Decide on fiscal compliance (self-build vs certified partner) with a
+   gestoría **before** offering the EPOS to anyone else.
+4. Only then pick 2–3 neighbouring organisations and test willingness to pay
+   at the Community and Venue price points.
 
 ## Sources
-- Splitwise pricing and free-tier limits (2026): [App Store listing](https://apps.apple.com/us/app/splitwise/id458023433), [getfinny.app: Splitwise pricing 2026](https://getfinny.app/blog/splitwise-pricing-2026), [Splitwise free vs Pro 2026](https://split-circle-landing.pages.dev/en/blog/splitwise-free-vs-pro), [Gerald: Splitwise Pro](https://joingerald.com/learn/money-basics/splitwise-pro)
-- Chore-app landscape (Flatastic, Sweepy, Tody, OurHome): [visionvix: best roommate apps 2026](https://visionvix.com/best-roommate-apps/), [top10.com household chore apps](https://www.top10.com/household-chore-apps), [heynori: best family chore apps 2026](https://heynori.com/article/family-operations-system/best-family-chore-apps), [AlternativeTo: Sweepy](https://alternativeto.net/software/sweepy), [Flatastic App Store data](https://apps.appfollow.io/ios/flatastic-chore-checklist/840810742?country=it)
-- All-in-one life management positioning: [toolfinder: best organization apps 2026](https://toolfinder.co/lists/best-organization-apps), [Pocket Informant: productivity apps 2026](https://www.pocketinformant.com/best-productivity-apps-for-2026-and-why-pocket-informant-leads-the-list/)
+- VERI\*FACTU postponement to 2027 (Real Decreto-ley 15/2025): [Legal Today](https://www.legaltoday.com/actualidad-juridica/noticias-de-derecho/nueva-prorroga-verifactu-no-sera-obligatorio-hasta-2027-para-sociedades-y-otros-contribuyentes-2025-12-04/), [Infoautónomos](https://www.infoautonomos.com/blog/verifactu-cuando-es-obligatorio-a-quien-afecta/), [Maldita.es](https://maldita.es/malditobulo/20251203/hacienda-retrasa-a-2027-la-entrada-en-vigor-de-verifactu-el-sistema-de-verificacion-de-facturas-para-pymes-y-autonomos), [Billin](https://www.billin.net/blog/hacienda-retrasa-verifactu-a-2027/), [Holded](https://www.holded.com/es/blog/hacienda-retrasa-entrada-vigor-verifactu), [elDiario.es / EFE](https://www.eldiario.es/economia/hacienda-aplaza-2027-entrada-vigor-sistema-verificacion-facturas-verifactu_1_12814827.amp.html)
+- Spanish bank PSD2 APIs and aggregators: [Open Banking Tracker: Santander España](https://openbankingtracker.com/provider/banco-santander-es), [Open Banking Tracker: Openbank APIs](https://www.openbankingtracker.com/provider/openbank/apis), [Open Banking Tracker: imagin APIs](https://openbankingtracker.com/provider/imagin/apis)
+- Splitwise pricing and limits (household free tier context): [App Store](https://apps.apple.com/us/app/splitwise/id458023433), [getfinny.app](https://getfinny.app/blog/splitwise-pricing-2026)
+- Household chore apps: [visionvix: best roommate apps 2026](https://visionvix.com/best-roommate-apps/), [top10.com chore apps](https://www.top10.com/household-chore-apps), [AlternativeTo: Sweepy](https://alternativeto.net/software/sweepy)
+- All-in-one positioning: [toolfinder 2026](https://toolfinder.co/lists/best-organization-apps)

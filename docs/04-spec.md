@@ -22,6 +22,11 @@ reference them in issues and commits. Status: ✅ implemented on this branch ·
 | **Activity** | A recurring time commitment (weekly blocks) and/or an item pool. |
 | **Draw** | Selecting *k* pool items into a user's day. |
 | **Today** | The user's local calendar date, as supplied by the client. |
+| **Tag** | A label on a member within a space: skill, pool, certification. |
+| **Selector** | A boolean expression over tags and people that matches members. |
+| **Requirement** | (selector, min?, max?) over the assignees of an item or shift. |
+| **Shift** | A time-windowed item with several seats, generated from a template. |
+| **Till session** | The period between opening and closing a register, with a cash count. |
 
 ## 2. Global invariants
 
@@ -40,6 +45,10 @@ reference them in issues and commits. Status: ✅ implemented on this branch ·
 | INV-11 | Generator bookkeeping (`generated_until`, `generated_count`) is writable only by the generator. |
 | INV-12 | No item may block itself, transitively. `blocks` links form a DAG. |
 | INV-13 | A day's draw for (user, activity, date) never changes once made, except by explicit reroll. |
+| INV-14 | No published shift has an assignment violating a hard constraint unless a coordinator overrode it explicitly (logged). Accepting a trade never creates a new violation. |
+| INV-15 | POS orders, payments and fiscal records are append-only. Corrections are new records. Fiscal records form an unbroken hash chain per space. |
+| INV-16 | Σ payments of a paid order = order total. Σ till-close postings = Σ payments in the session by method. |
+| INV-17 | A bank transaction is linked to at most one reconciliation target set, and its external id is unique per account. |
 
 ## 3. Requirements
 
@@ -181,6 +190,69 @@ stateDiagram-v2
 | PLG-3 | Enabling a plugin MUST require owner or admin approval of its permissions. Disabling MUST revoke its tokens immediately. |
 | PLG-4 | Templates (workflows, series, boards, activities) MUST be importable and exportable as JSON. |
 
+### 3.10 Roster (ROS)
+
+| Id | Requirement |
+|---|---|
+| ROS-1 | Spaces MUST be able to tag members with any number of free-form tags (skills, pools, certifications), optionally with an expiry date. Expired tags MUST NOT satisfy selectors. |
+| ROS-2 | Selectors MUST support: any, tag, specific people, any-of, all-of, not, arbitrarily nested (§5.8). |
+| ROS-3 | A shift template MUST define weekdays, start and end (may cross midnight), headcount min–max, an eligibility selector, zero or more count requirements (selector + min and/or max), a fill mode (draw / signup / signup-then-draw) and an optional season. |
+| ROS-4 | Seasons are date ranges with a priority. On a date, only templates of the highest-priority season covering it (plus season-less templates) apply. |
+| ROS-5 | The system MUST generate shifts for the configured horizon and keep them in *draft* until `publish_days_ahead`, then publish and notify. |
+| ROS-6 | Draw fill MUST produce, for every shift, a team satisfying all hard constraints (§5.8), or mark the shift *understaffed* and leave it partially filled with only rule-respecting seats. It MUST NOT silently break a rule. |
+| ROS-7 | Hard constraints: eligibility, headcount, requirements, no overlapping shifts per person, declared unavailability, max shifts per week, minimum rest. Soft: preferences (prefer / prefer-not) and fairness. |
+| ROS-8 | Fairness: among valid teams, the draw MUST prefer people with lower worked + assigned hours within the fairness window. Ties are broken by a seeded PRNG so a run is reproducible. |
+| ROS-9 | Sign-up MUST refuse a claim that makes the shift's requirements unsatisfiable given the remaining eligible people. Signup-then-draw MUST keep all volunteers and draw only the gaps. |
+| ROS-10 | Coordinators MUST be able to edit any shift manually. The UI MUST show live violations and MAY allow saving with violations only when explicitly overridden (logged). |
+| ROS-11 | Members MUST be able to declare unavailability (one-off ranges and recurring weekdays) and preferences. |
+| ROS-12 | Attendance: check-in/out per seat, no-show marking, and an hours report per person and period (CSV), suitable for the employer time records required in Spain for staff. |
+| ROS-13 | A preview MUST show next period's generated roster and its fairness distribution before publishing. |
+
+### 3.11 Trades, generalised (TRD, continued)
+
+| Id | Requirement |
+|---|---|
+| TRD-9 | Trades MUST be available for every assignable item kind (chore, task, issue, purchase, shift seat) in any space with more than one member. Personal spaces MUST NOT offer trades. |
+| TRD-10 | **Validity:** a trade (hand-over, open offer or swap) is valid iff applying it introduces no hard-constraint violation (ROS-7, item eligibility requirements, membership) in any affected item that didn't already exist. Validation MUST run at proposal time and again atomically at acceptance. |
+| TRD-11 | The UI MUST only offer valid options: valid takers for a hand-over, valid counter-items for a swap. It MUST explain any rejection by naming the rule. |
+| TRD-12 | Open offers on items with requirements MUST only be acceptable by people for whom the trade is valid. |
+| TRD-13 | A space MAY require admin approval of accepted trades. Until approved, the original assignment stands. |
+
+### 3.12 EPOS (POS)
+
+| Id | Requirement |
+|---|---|
+| POS-1 | Catalogue: categories, products with tax-inclusive price, tax rate, optional member price, active flag, ordering. |
+| POS-2 | Selling MUST work offline: orders are created with device-generated ids and gapless per-register numbers, stored locally, and synced in order when online. No sale may be lost or duplicated. |
+| POS-3 | Orders support quantities, line discounts, open tabs, member lookup, split payments across methods (cash, card via external terminal, Bizum, member tab, voucher), refunds and voids (as new records, never edits). |
+| POS-4 | Till sessions MUST be opened with a float and closed with a cash count. The system computes expected cash and the difference, and links the session to the current shift if any. |
+| POS-5 | Closing a session MUST post per-method totals as transactions to the register's linked accounts (`source = pos`). |
+| POS-6 | Stock: products MAY have recipes. Each sale deducts stock. Crossing a reorder point MUST create a purchase item assigned per space rules. Stocktakes reconcile on-hand. |
+| POS-7 | Receipts: printable (ESC/POS) and shareable digitally (link/QR). |
+| POS-8 | Fiscal: every issued, cancelled or corrected ticket MUST produce an append-only, hash-chained fiscal record. Jurisdiction adapters handle the rest (Spain: VERI\*FACTU QR and submission from the applicable 2027 date). Records MUST NOT be editable or deletable by any role. |
+| POS-9 | Reports: sales by product, category, hour, shift and payment method; VAT summary; cash differences by session; exports. |
+| POS-10 | Volunteers switch users on a shared till with a PIN. Each order records who sold it. |
+
+### 3.13 Bank feeds (BNK)
+
+| Id | Requirement |
+|---|---|
+| BNK-1 | Admins with the `treasurer` tag MUST be able to connect bank accounts through a supported aggregator, map external accounts to `money.accounts`, and disconnect at any time. |
+| BNK-2 | Credentials and tokens MUST be stored only in a secrets vault and MUST never reach the client. |
+| BNK-3 | Transactions MUST sync at least daily and on demand, deduplicated by external id. Balances MUST be fetched and compared with computed balances, and drift flagged. |
+| BNK-4 | Consent expiry MUST be tracked, with a warning 14 days before and a one-step renewal. |
+| BNK-5 | Matching MUST auto-link high-confidence matches (amount, date window, counterparty) to expenses, till deposits, member fees and recurring rules, and queue the rest for review. Every link records who or what made it. |
+| BNK-6 | The integration MUST be read-only (no payment initiation). |
+
+### 3.14 Members (MEM)
+
+| Id | Requirement |
+|---|---|
+| MEM-1 | An organisation MUST be able to keep a member register independent of app accounts (number, name, contact, join/leave dates, fee plan), optionally linked to an app user. |
+| MEM-2 | Fee plans generate expected fees. Payments are matched from the bank or recorded at the till. Arrears list. |
+| MEM-3 | Member pricing at the EPOS by number or QR card. |
+| MEM-4 | Exports: member register, fees status, yearly income/expense summary for the general assembly. |
+
 ## 4. Non-functional requirements
 
 | Id | Requirement |
@@ -193,6 +265,9 @@ stateDiagram-v2
 | NFR-6 Correctness | Money in integer cents. Recurrence parity TS↔SQL enforced in CI. Property tests for split/simplify. |
 | NFR-7 Maintainability | Module boundaries enforced (a layer imports only from core/domain). Typecheck and lint clean. Every migration has SQL tests. |
 | NFR-8 i18n | All user-visible strings externalised. Locale-aware dates and currency. |
+| NFR-9 Till | Add-item-to-order < 100 ms on a mid-range tablet. Fully functional offline for ≥ 12 h of trading. Zero sale loss across crash, refresh or reconnection (tested). |
+| NFR-10 Compliance | Fiscal records immutable at the database level (no UPDATE/DELETE grants, trigger guard). Data retention per local tax law (Spain: ≥ 4 years for tax records). |
+| NFR-11 Roster scale | Draw for 3 months × 5 shifts/day × 60 people in < 2 s. |
 
 ## 5. Algorithms (normative)
 
@@ -244,3 +319,23 @@ Two blocks conflict iff same weekday ∧ start₂ < end₁ ∧ start₁ < end₂
 is not a conflict). Compatible *k*-sets: backtracking over candidates sorted by
 name, pruning any partial set containing a conflicting pair. Reference:
 `conflicts`, `compatibleSets`.
+
+### 5.8 Staffing rules, fill and trade validity
+Selector semantics: `any` ⇒ true; `tag t` ⇒ t ∈ tags(p) (and unexpired);
+`people L` ⇒ p ∈ L; `anyOf S` ⇒ ∃s∈S match; `allOf S` ⇒ ∀s∈S match; `not s` ⇒ ¬match.
+
+A team *T* for shift *s* is **valid** iff: ∀p∈T eligible(p); |T| ∈ [h_min, h_max];
+∀ requirement (σ, lo, hi): lo ≤ |{p∈T : σ(p)}| ≤ hi; no duplicates; and ∀p∈T the
+person constraints hold (no overlap with p's other shifts, not unavailable,
+weekly count ≤ cap, rest ≥ minimum).
+
+**Fill:** order candidates by (load asc, seeded random). Search team sizes from
+h_max down to h_min. Depth-first over the ordered candidates. Prune when any
+requirement exceeds its max, or when some requirement's remaining deficit
+exceeds min(remaining seats, remaining matching candidates). Return the first
+valid team, or *understaffed*. Shifts are filled chronologically and loads
+updated after each one. Reference: `fillShift`, `fillRoster`.
+
+**Trade validity:** let V(x) be the set of violations of assignment x across
+all affected items. A trade turning x into x′ is valid iff V(x′) ⊆ V(x).
+Reference: `validateTrade`, `validTakers`.

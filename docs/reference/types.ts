@@ -1,4 +1,6 @@
 // Domain types of the TARGET unified platform (mirror of schema.sql).
+import type { Selector } from './rostering'
+export type { Selector } from './rostering'
 // The chores module's live types are in shared/types/schema.ts — a subset.
 // Conventions: ids are UUID strings, money is integer minor units (cents)
 // plus an ISO 4217 currency, calendar dates are 'YYYY-MM-DD', times 'HH:MM'.
@@ -13,9 +15,9 @@ export type Cents = number
 export interface Money { amount: Cents; currency: Currency }
 
 // ================================================================= CORE
-export type SpaceKind = 'personal' | 'household' | 'project' | 'organization'
+export type SpaceKind = 'personal' | 'household' | 'project' | 'organization' | 'team'
 export type MemberRole = 'owner' | 'admin' | 'member' | 'guest'
-export type ModuleId = 'chores' | 'money' | 'tickets' | 'calendar' | `x.${string}`
+export type ModuleId = 'chores' | 'money' | 'tickets' | 'calendar' | 'roster' | 'pos' | 'members' | `x.${string}`
 
 export interface Profile {
   id: UUID
@@ -92,7 +94,7 @@ export interface Attachment {
 }
 
 // ================================================================= WORK
-export type ItemKind = 'task' | 'chore' | 'issue' | 'purchase' | 'note'
+export type ItemKind = 'task' | 'chore' | 'issue' | 'purchase' | 'note' | 'shift'
 export type StateCategory = 'backlog' | 'todo' | 'active' | 'waiting' | 'done' | 'cancelled'
 export type Priority = 0 | 1 | 2 | 3 | 4
 export type Weekday = 1 | 2 | 3 | 4 | 5 | 6 | 7
@@ -305,4 +307,145 @@ export interface ModuleManifest {
   /** Scopes requested from the space owner when enabling. */
   permissions?: Array<'items:read' | 'items:write' | 'money:read' | 'money:write' | 'calendar:read' | 'calendar:write' | 'members:read'>
   settingsSchema?: Record<string, unknown> // JSON Schema
+}
+
+// ======================================================= PEOPLE & RULES
+export interface MemberTag { spaceId: UUID; userId: UUID; tag: string; validUntil: ISODate | null }
+
+export interface OrgMember {
+  id: UUID
+  spaceId: UUID
+  number: number | null
+  name: string
+  email: string | null
+  userId: UUID | null
+  joinedOn: ISODate | null
+  leftOn: ISODate | null
+  feePlan: string | null
+}
+
+export interface ItemAssignee { itemId: UUID; userId: UUID; seat: string | null; source: 'manual' | 'drawn' | 'volunteered' | 'traded' }
+
+/** "Between min and max of the assignees must match selector." */
+export interface Requirement {
+  id: UUID
+  owner: { type: 'item' | 'series' | 'shift_template'; id: UUID }
+  kind: 'count' | 'eligible' | 'headcount'
+  label: string
+  selector: Selector
+  min: number | null
+  max: number | null
+}
+
+/** Result of a module's validate_assignment hook, used by trades everywhere. */
+export interface AssignmentCheck { ok: boolean; violations: Array<{ code: string; message: string }> }
+
+// ================================================================ ROSTER
+export type FillMode = 'draw' | 'signup' | 'signup_then_draw'
+
+export interface Season { id: UUID; spaceId: UUID; name: string; startsOn: ISODate; endsOn: ISODate; priority: number }
+
+export interface ShiftTemplate {
+  id: UUID
+  spaceId: UUID
+  seasonId: UUID | null
+  name: string
+  weekdays: Weekday[]
+  starts: ISOTime
+  ends: ISOTime
+  headcount: { min: number; max: number }
+  eligible: Selector
+  rules: Requirement[]
+  fillMode: FillMode
+  signupClosesHours: number
+  location: string | null
+}
+
+export interface RosterPolicy {
+  spaceId: UUID
+  horizonDays: number
+  publishDaysAhead: number
+  maxShiftsPerWeek: number | null
+  minRestHours: number | null
+  fairnessWindowDays: number
+  tradesNeedApproval: boolean
+}
+
+export interface Availability {
+  id: UUID
+  userId: UUID
+  startsAt: Timestamp
+  endsAt: Timestamp
+  kind: 'unavailable' | 'prefer' | 'prefer_not'
+  recurringWeekdays: Weekday[] | null
+}
+
+export interface Shift {
+  itemId: UUID
+  spaceId: UUID
+  templateId: UUID | null
+  startsAt: Timestamp
+  endsAt: Timestamp
+  status: 'draft' | 'published' | 'understaffed' | 'done' | 'cancelled'
+  seats: ItemAssignee[]
+  violations: AssignmentCheck['violations']
+}
+
+export interface Attendance { itemId: UUID; userId: UUID; checkedInAt: Timestamp | null; checkedOutAt: Timestamp | null; noShow: boolean }
+
+// =================================================================== POS
+export interface Product { id: UUID; categoryId: UUID | null; name: string; price: Cents; memberPrice: Cents | null; taxRate: number; active: boolean }
+export interface StockItem { id: UUID; name: string; unit: string; onHand: number; reorderAt: number | null; unitCost: Cents | null }
+export interface Register { id: UUID; spaceId: UUID; name: string; cashAccountId: UUID | null; cardAccountId: UUID | null }
+
+export interface TillSession {
+  id: UUID
+  registerId: UUID
+  shiftItemId: UUID | null
+  openedBy: UUID
+  openedAt: Timestamp
+  openingFloat: Cents
+  closedBy: UUID | null
+  closedAt: Timestamp | null
+  countedCash: Cents | null
+  expectedCash: Cents | null
+}
+
+export type PaymentMethod = 'cash' | 'card' | 'bizum' | 'member_tab' | 'voucher'
+export interface OrderLine { line: number; productId: UUID | null; name: string; quantity: number; unitPrice: Cents; taxRate: number; discount: Cents }
+export interface Order {
+  id: UUID // generated on the device: sales work offline
+  sessionId: UUID
+  number: number
+  status: 'open' | 'paid' | 'refunded' | 'voided'
+  memberId: UUID | null
+  lines: OrderLine[]
+  payments: Array<{ method: PaymentMethod; amount: Cents; externalRef: string | null }>
+  total: Cents
+  createdAt: Timestamp
+}
+
+export interface FiscalRecord { id: number; orderId: UUID; type: 'issue' | 'cancel' | 'correct'; previousHash: string | null; hash: string; submittedAt: Timestamp | null }
+
+// ================================================================== BANK
+export type BankProvider = 'plaid' | 'tink' | 'saltedge' | 'enablebanking' | 'truelayer' | 'gocardless'
+export interface BankConnection {
+  id: UUID
+  spaceId: UUID
+  provider: BankProvider
+  institution: string
+  status: 'active' | 'expiring' | 'expired' | 'error'
+  consentExpiresAt: Timestamp | null
+  lastSyncedAt: Timestamp | null
+}
+
+/** The adapter every aggregator implements (Edge Function side). */
+export interface BankAdapter {
+  provider: BankProvider
+  startConsent(institutionId: string, redirectUrl: string): Promise<{ externalRef: string; authUrl: string }>
+  listAccounts(externalRef: string): Promise<Array<{ externalAccountId: string; iban?: string; name: string; currency: Currency }>>
+  fetchTransactions(externalAccountId: string, since: ISODate): Promise<Array<{
+    externalId: string; bookedOn: ISODate; amount: Cents; currency: Currency; description: string; counterparty?: string
+  }>>
+  fetchBalance(externalAccountId: string): Promise<Money>
 }

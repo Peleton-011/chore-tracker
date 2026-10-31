@@ -1,123 +1,132 @@
 # 05 · Roadmap
 
-Sizes assume one developer part-time (~10 h/week). "Exit criteria" are what
-must be true to call a phase done. Each phase ships something usable. No
-phase depends on a later one.
+Re-sequenced for the **semi-professional focus**, with the town bar as
+customer zero. Sizes assume one developer part-time (~10 h/week). Each phase
+ships something the bar or a household can use on its own, and has exit
+criteria.
 
 ```mermaid
 gantt
   dateFormat YYYY-MM-DD
   axisFormat %b %y
   section Foundation
-  P0 Chores rebuild (done)           :done, p0, 2026-10-31, 1d
-  P1 Ship chores                      :p1, 2026-11-02, 4w
-  P2 Platform core extraction         :p2, after p1, 4w
-  section Modules
-  P3 Money (split + settle)           :p3, after p2, 6w
-  P4 Tickets (issues, boards, costs)  :p4, after p3, 7w
-  P5 Calendar + activities + pools    :p5, after p4, 7w
-  section Platform
-  P6 Notifications, PWA, offline      :p6, after p3, 4w
-  P7 Plugins, API, imports            :p7, after p5, 6w
-  P8 Accounts (contabilify parity)    :p8, after p5, 5w
+  P0 Chores rebuild (done)                 :done, p0, 2026-10-31, 1d
+  P1 Ship chores + i18n + reminders        :p1, 2026-11-02, 4w
+  P2 Core extraction (tags, seats, trades) :p2, after p1, 5w
+  section Customer zero: the bar
+  P3 Roster                                :p3, after p2, 7w
+  P4 Money: accounts (contabilify in)      :p4, after p3, 6w
+  P5 EPOS (tally → fiscal)                 :p5, after p4, 10w
+  section Broaden
+  P6 Tickets & improvement backlog         :p6, after p4, 7w
+  P7 Bank feeds + reconciliation           :p7, after p5, 5w
+  P8 Members & fees                        :p8, after p7, 4w
+  P9 Calendar, pools, household money      :p9, after p8, 6w
+  P10 Plugins, API, templates              :p10, after p9, 6w
 ```
 
+> **Regulatory clock.** Spain's VERI\*FACTU invoicing-software rules apply from
+> **1 Jan 2027** (corporate-tax payers) / **1 Jul 2027** (others). A till that
+> issues tickets in Spain must comply by then. On the timeline above, the
+> fiscal part of P5 lands around mid-2027. That's tight, so P5 is split: a
+> *non-fiscal tally* first (internal control and stock, alongside whatever
+> issues legal tickets today), and *fiscal* either self-built or via a
+> certified invoicing API. Confirm the association's exact obligation and
+> date with its gestoría.
+
 ---
 
-### P0 · Chores rebuild ✅ (this branch)
-Nuxt 4 + Supabase, recurring chores, rotation/balanced assignment, trades,
-households, invites, activity, fairness stats, SQL/unit/e2e tests.
+### P0 · Chores rebuild ✅
+Nuxt 4 + Supabase. Recurrence, rotation/balancing, trades, households, invites,
+fairness, SQL/unit/e2e tests.
 
 ### P1 · Ship chores (≈ 4 weeks)
-**Goal:** you and your flatmates use it every day.
-- Deploy: Supabase EU project, Vercel static deploy, auth redirect URLs, keep-alive cron.
-- i18n en/es/pt (`@nuxtjs/i18n`). Locale and timezone in the profile (CORE-9, CORE-13).
-- PWA manifest and installable icon. Basic offline shell.
-- Daily digest email (Edge Function + pg_cron) and web push for trade requests (NTF-1..3, subset).
-- Away / vacation mode (CORE-10).
-- Account export and deletion (CORE-12).
-- CI on GitHub Actions: typecheck, vitest, `test:db`, `test:e2e`.
-- Polish from real use: bulk actions, a "what changed" view, an empty-state onboarding checklist.
+Deploy (EU Supabase + static hosting). i18n en/es/pt. Daily digest + push for
+trades. Away mode. Data export/delete. CI.
+**Exit:** 2+ households using it for 2 weeks. CI green.
 
-**Exit:** 2+ households using it for 2 weeks. No data-loss bugs. CI green on every PR.
+### P2 · Core extraction: the multi-person foundation (≈ 5 weeks)
+- Monorepo with Nuxt layers. Move the schema to `core.*` / `work.*` (03 §10).
+- **Member tags** (ROS-1), **selectors** and **requirements** (ROS-2, `work.requirements`).
+- **Multi-seat items** (`work.item_assignees`).
+- **Universal trades** with the `validate_assignment` hook (TRD-9..13). Chores
+  keep working unchanged.
+- `team` / `organisation` space kinds. Organisation roles via tags (treasurer, coordinator).
+- Module manifest + per-space toggles. Brand and name decision.
 
-### P2 · Platform core extraction (≈ 4 weeks)
-**Goal:** the second module can be built without touching the chores code.
-- Monorepo (pnpm workspaces): `layers/core`, `layers/chores`, `packages/domain`, `apps/web`.
-- Schema move to `core.*` / `work.*` with compatibility views (03 §10 steps 1–3).
-  Rename chores→series, tasks→items. Add `number`, `rank`, `state_category`,
-  `parent_id`, `item_links`, tags.
-- Module manifest + `space_modules` toggles. Navigation and settings assembled from manifests.
-- Generalised `core.events` + agenda provider interface.
-- Settle the name and brand (02 §3). Rename the app shell.
+**Exit:** chores runs as a layer. A test item with "needs ≥1 `plumber`" can only be traded to plumbers.
 
-**Exit:** chores runs as a layer. All tests pass unchanged. A stub "hello" module can be added in < 1 hour.
+### P3 · Roster (≈ 7 weeks), for the bar
+- Seasons, shift templates with requirements, policy (ROS-3, ROS-4).
+- Generation, fair draw, understaffed handling, preview and publish (ROS-5..8, ROS-13).
+  Port `docs/reference/rostering.ts` into `packages/domain` with its tests.
+- Sign-up and sign-up-then-draw modes (ROS-9). Manual edits with live
+  violations (ROS-10). Availability (ROS-11).
+- Shift trades through the generic trade flow with valid-taker lists (TRD-10..12).
+- Attendance + hours report (ROS-12). iCal feed of my shifts.
+- Notifications: published rota, trade requests, understaffed alerts, day-before reminder.
 
-### P3 · Money (≈ 6 weeks)
-**Goal:** replace Splitwise for the flat.
-- Expenses with all split methods and contacts (FIN-1..4).
-- Balances, pairwise view, **Settle up** with simplification (FIN-5..7).
-- Multi-currency with fx snapshots (FIN-8).
-- **Chore ↔ cost link:** "Add cost" on any item. "Ran out of X" creates a purchase for anyone (FIN-9, FIN-10).
-- Import from Splitwise CSV.
+**Exit:** the bar runs one full low-season month and one fiestas week on it.
+Zero rule-breaking published shifts. Swaps happen in-app instead of on WhatsApp.
 
-**Exit:** a month of the flat's spending tracked. Balances match a hand-computed spreadsheet. Property tests for split and simplify.
+### P4 · Money: accounts (≈ 6 weeks), contabilify comes home
+- `money.accounts` / `transactions`. Port contabilify's quick entry, transfers,
+  recurring fee/interest engine and Excel import/export (FIN-11).
+- Reimbursable expenses (a volunteer paid for lemons). Budgets per category (FIN-12).
+- Migrate the bar's ledger (03 §10 step 4). Contabilify goes read-only.
 
-### P4 · Tickets (≈ 7 weeks)
-**Goal:** the door and the console live here, from symptom to receipt.
-- Hierarchy, workflows (Simple, Repair, Purchase), custom states (TKT-1..3).
-- Issue detail: notes, next action, diagnosis, materials, asset, history (TKT-4, TKT-7, TKT-10).
-- `blocks` links, hand-off notifications (TKT-5). Material → purchase → expense (TKT-6).
-- Boards: list / kanban / table with saved queries (TKT-8).
-- Waiting-for-budget and shopping-list views (TKT-9).
-- Recurring maintenance via series (TKT-11).
+**Exit:** the treasurer closes a month entirely in the platform. Totals match contabilify for the overlap period.
 
-**Exit:** the toilet-seal scenario works end to end (02 §1). The kanban drag-and-drop is keyboard-accessible.
+### P5 · EPOS (≈ 10 weeks, two stages)
+- **5a · Tally (non-fiscal):** catalogue, member prices, tabs, offline orders,
+  till sessions with cash count, close → accounts, stock + recipes + reorder
+  purchases, reports (POS-1..7, POS-9, POS-10).
+- **5b · Fiscal:** hash-chained records, the Spain adapter (QR, submission) or a
+  certified-provider integration, compliance documentation (POS-8, NFR-10).
+  Must be done **before** the applicable 2027 date for any Spanish user
+  relying on it for legal tickets.
 
-### P5 · Calendar, activities, pools (≈ 7 weeks)
-**Goal:** time is part of the system, not a separate app.
-- Week, day and month views. Events with RRULE. Time-boxing items by drag (CAL-1..3).
-- Activities with weekly blocks and terms. Conflict detection (CAL-2, CAL-4).
-- Term planner ported from `schedules` (CAL-5).
-- **Pools + daily draws** (CAL-6..8). The "Upkeep" scenario.
-- iCal export feed, import of external feeds (CAL-9).
-- Unified "My day" agenda across modules (AGD-1..3).
+**Exit (5a):** the bar trades a full weekend offline-safe. Cash differences
+per shift visible. **(5b):** compliance reviewed by a gestoría.
 
-**Exit:** a full semester planned. Upkeep draws in use for 2 weeks. The agenda replaces the Today page.
+### P6 · Tickets & improvement backlog (≈ 7 weeks, can run in parallel after P4)
+Hierarchy, workflows (Repair, Purchase, Improvement: Idea → Evaluating →
+Approved → Budgeted → In progress → Done), materials and costs, `blocks` +
+hand-offs, boards, waiting-for-budget, shopping list, assets, recurring
+maintenance (TKT-1..11). Skill requirements on issues use the P2 rules.
+**Exit:** the bar's broken tap and "second register for fiestas" live here, with costs.
 
-### P6 · Notifications, PWA, offline (≈ 4 weeks, parallel after P3)
-- Full notification matrix and preferences, quiet hours (NTF).
-- Offline read cache, queued writes, conflict handling.
-- Capacitor wrapper for app stores, only if push on iOS PWAs proves insufficient.
+### P7 · Bank feeds (≈ 5 weeks)
+Provider evaluation for the bar's actual banks. Adapter + Vault + sync +
+consent lifecycle + matching inbox (BNK-1..6).
+**Exit:** 90%+ of a month's bank lines auto-matched or matched in one tap.
 
-### P7 · Plugins, API, imports (≈ 6 weeks)
-- Personal access tokens, REST docs, webhooks (PLG-1..3).
-- Template packs (PLG-4): "New flat starter", "Moving house", "Bike maintenance".
-- Importers: Todoist, Trello, Google Calendar (via iCal), Splitwise (if not done in P3).
-- First integration plugin as a reference (e.g. Home Assistant: a sensor event creates an item).
+### P8 · Members & fees (≈ 4 weeks)
+Register, fee plans, arrears, member QR for till pricing, assembly exports (MEM-1..4).
 
-### P8 · Accounts, contabilify parity (≈ 5 weeks)
-- `money.accounts` / `transactions`, the recurring fee/interest engine port, quick entry, Excel sync (FIN-11).
-- Migrate "El Chiring" ledger. Contabilify becomes read-only, then retired.
-- Budgets (FIN-12).
+### P9 · Calendar, pools, household money (≈ 6 weeks)
+Events, activities, term planner, upkeep pools (CAL-*). Household splits and
+settle-up with simplification (FIN-1..10) for the free tier.
+
+### P10 · Plugins, API, templates (≈ 6 weeks)
+Personal access tokens, webhooks, template packs ("Community bar", "Festival
+committee", "Maintenance crew", "Flatshare"), importers (PLG-*).
 
 ---
 
-## Cross-cutting tracks (always on)
-
+## Cross-cutting tracks
 | Track | Practice |
 |---|---|
-| Testing | Every migration ships SQL tests (outsider + happy path). Every pure algorithm in `packages/domain` with unit and property tests. The Playwright smoke test grows one flow per feature. |
-| Security | RLS review checklist in the PR template. Yearly dependency audit. No service key in the client. |
-| Design | Token-based design system in the core. Every new screen checked at 320 px and in dark mode. |
-| Docs | These docs stay current: requirement ids referenced in commits, status columns updated. |
+| Testing | SQL suites per migration (outsider + happy path). Domain engines with unit + property tests (roster: random rule sets must never yield invalid teams). Playwright flow per feature. Offline till tests (kill/restore network mid-order). |
+| Security | RLS checklist in PRs. Vault for secrets. Fiscal tables without UPDATE/DELETE grants. |
+| Compliance | Keep a `docs/compliance/` log per jurisdiction (VERI\*FACTU, registro de jornada, GDPR). Review with a gestoría before selling EPOS. |
+| Design | Separate till design language (touch, contrast). Every screen at 320 px and in dark mode. |
 
 ## Risks and mitigations
-
 | Risk | Impact | Mitigation |
 |---|---|---|
-| Scope creep (everything app) | Never ships | Phase gates with exit criteria. Each phase usable alone. Dogfood before adding. |
-| Supabase free-tier pause and limits | Downtime | Keep-alive cron (as in contabilify). Paid tier once others depend on it (~$25/mo). |
-| Model generalisation too early | Rewrites | P2 only generalises what chores already uses. Tickets and calendar extend it in their own phases. |
-| Flatmates won't install another app | No network effect | PWA via link, no store needed. Guest role. Email digests work without opening the app. |
-| Money correctness | Trust lost forever | Integer cents, property tests, immutable history, settlements confirmable. |
+| Scope (now 9 modules) | Never finishes | Customer-zero discipline: only build what the bar or a household uses next month. Phase exits are real usage, not features. |
+| Fiscal compliance effort and liability | Can't legally sell EPOS in Spain | Start non-fiscal. Evaluate a certified-API partner. Get a gestoría review. Treat 5b as a gate for selling, not for using internally. |
+| Bank aggregator terms change | Feature breaks | Adapter pattern, CSV import fallback (always available). |
+| Volunteers resist a new app | No adoption | Link-based PWA, ES/PT, PIN at the till, rota also visible as iCal and WhatsApp-shareable image. |
+| One-developer bus factor | Project stalls | Open-source core, docs as they are now, tests as the spec. |
